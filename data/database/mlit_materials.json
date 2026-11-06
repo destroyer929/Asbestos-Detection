@@ -1,0 +1,1324 @@
+[
+  {
+    "id": "MAT-L1-001",
+    "canonical_name_ja": "吹付け石綿",
+    "canonical_name_en": "Sprayed Asbestos",
+    "synonyms_ja": [
+      "吹付けアスベスト",
+      "石綿吹付",
+      "アスベスト吹付け",
+      "吹き付け石綿",
+      "吹付石綿"
+    ],
+    "synonyms_en": [
+      "Sprayed asbestos",
+      "Asbestos spray coating",
+      "Sprayed limpet asbestos"
+    ],
+    "hazard_level": "LEVEL_1",
+    "status": "POSITIVE",
+    "friability": "EXTREMELY_HIGH",
+    "component_category": "Sprayed Material",
+    "application_locations": [
+      "Ceiling",
+      "Steel Beams",
+      "Machinery Room",
+      "Boiler Room"
+    ],
+    "typical_specifications": [
+      "t=10",
+      "t=15",
+      "t=20",
+      "t=25",
+      "t=30"
+    ],
+    "regulatory_note": "MLIT Level 1. Spraying prohibited in Japan in 1975. Extreme friability."
+  },
+  {
+    "id": "MAT-L1-002",
+    "canonical_name_ja": "吹付けロックウール",
+    "canonical_name_en": "Sprayed Rock Wool (Asbestos-Containing)",
+    "synonyms_ja": [
+      "ロックウール吹付け",
+      "ロックウール吹付",
+      "吹付ロックウール",
+      "石綿含有吹付けロックウール",
+      "RW吹付"
+    ],
+    "synonyms_en": [
+      "Sprayed rock wool",
+      "Rockwool spray",
+      "Asbestos-containing sprayed mineral wool"
+    ],
+    "hazard_level": "LEVEL_1",
+    "status": "POSITIVE",
+    "friability": "EXTREMELY_HIGH",
+    "component_category": "Sprayed Material",
+    "application_locations": [
+      "Structural Steel",
+      "Beams",
+      "Ceiling",
+      "Underground Parking"
+    ],
+    "typical_specifications": [
+      "t=20",
+      "t=25",
+      "t=30",
+      "t=35",
+      "t=40",
+      "t=50"
+    ],
+    "regulatory_note": "MLIT Level 1. Used heavily until 1980 (semi-dry) and phased out in 1989."
+  },
+  {
+    "id": "MAT-L1-003",
+    "canonical_name_ja": "吹付けバーミキュライト",
+    "canonical_name_en": "Sprayed Vermiculite",
+    "synonyms_ja": [
+      "バーミキュライト吹付け",
+      "バーミキュライト吹付",
+      "石綿含有吹付けバーミキュライト"
+    ],
+    "synonyms_en": [
+      "Sprayed vermiculite",
+      "Asbestos-containing sprayed vermiculite"
+    ],
+    "hazard_level": "LEVEL_1",
+    "status": "POSITIVE",
+    "friability": "EXTREMELY_HIGH",
+    "component_category": "Sprayed Material",
+    "application_locations": [
+      "Interior Wall",
+      "Ceiling",
+      "Corridor",
+      "Acoustic Coating"
+    ],
+    "typical_specifications": [
+      "t=10",
+      "t=15",
+      "t=20"
+    ],
+    "regulatory_note": "MLIT Level 1. Acoustic and condensation prevention sprayed coating."
+  },
+  {
+    "id": "MAT-L2-001",
+    "canonical_name_ja": "石綿保温材",
+    "canonical_name_en": "Asbestos Thermal Insulation",
+    "synonyms_ja": [
+      "アスベスト保温材",
+      "石綿管保温材",
+      "石綿配管保温材"
+    ],
+    "synonyms_en": [
+      "Asbestos pipe insulation",
+      "Asbestos thermal insulation",
+      "Asbestos insulation cover"
+    ],
+    "hazard_level": "LEVEL_2",
+    "status": "POSITIVE",
+    "friability": "HIGH",
+    "component_category": "Thermal Insulation",
+    "application_locations": [
+      "Piping",
+      "Boiler",
+      "Duct",
+      "Plumbing Chases"
+    ],
+    "typical_specifications": [
+      "t=20",
+      "t=25",
+      "t=30",
+      "t=40",
+      "50A",
+      "100A"
+    ],
+    "regulatory_note": "MLIT Level 2. Pipe covers and boiler jackets. Manufactured until ~1990."
+  },
+  {
+    "id": "MAT-L2-002",
+    "canonical_name_ja": "けい藻土保温材",
+    "canonical_name_en": "Diatomaceous Earth Insulation",
+    "synonyms_ja": [
+      "珪藻土保温材",
+      "ケイ藻土保温材"
+    ],
+    "synonyms_en": [
+      "Diatomite insulation",
+      "Diatomaceous earth pipe insulation"
+    ],
+    "hazard_level": "LEVEL_2",
+    "status": "POSITIVE",
+    "friability": "HIGH",
+    "component_category": "Thermal Insulation",
+    "application_locations": [
+      "High-temperature Piping",
+      "Chimney Flues",
+      "Boilers"
+    ],
+    "typical_specifications": [
+      "t=30",
+      "t=40",
+      "t=50"
+    ],
+    "regulatory_note": "MLIT Level 2. Common in industrial and heating plant facilities."
+  },
+  {
+    "id": "MAT-L2-003",
+    "canonical_name_ja": "けい酸カルシウム保温材第1種",
+    "canonical_name_en": "Calcium Silicate Pipe Insulation Type 1",
+    "synonyms_ja": [
+      "けい酸カルシウム保温材1種",
+      "ケイ酸カルシウム保温材第1種",
+      "ケイカル保温材1種",
+      "けいカル保温筒"
+    ],
+    "synonyms_en": [
+      "Calcium silicate pipe insulation type 1",
+      "CalSil pipe cover type 1"
+    ],
+    "hazard_level": "LEVEL_2",
+    "status": "POSITIVE",
+    "friability": "HIGH",
+    "component_category": "Thermal Insulation",
+    "application_locations": [
+      "Steam Piping",
+      "Ductwork",
+      "Mechanical Room"
+    ],
+    "typical_specifications": [
+      "t=25",
+      "t=30",
+      "t=50",
+      "25A",
+      "50A",
+      "100A"
+    ],
+    "regulatory_note": "MLIT Level 2. Contains amosite/chrysotile prior to 2004 prohibition."
+  },
+  {
+    "id": "MAT-L2-004",
+    "canonical_name_ja": "耐火被覆板",
+    "canonical_name_en": "Fireproof Covering Board (Asbestos-Containing)",
+    "synonyms_ja": [
+      "耐火被覆板1号",
+      "石綿含有耐火被覆板",
+      "耐火被覆ケイカル板"
+    ],
+    "synonyms_en": [
+      "Fireproof board",
+      "Asbestos fireproofing board"
+    ],
+    "hazard_level": "LEVEL_2",
+    "status": "POSITIVE",
+    "friability": "HIGH",
+    "component_category": "Fireproof Board",
+    "application_locations": [
+      "Structural Columns",
+      "Beams",
+      "Shafts"
+    ],
+    "typical_specifications": [
+      "t=15",
+      "t=20",
+      "t=25",
+      "t=30"
+    ],
+    "regulatory_note": "MLIT Level 2. Board form fireproofing with significant asbestos content."
+  },
+  {
+    "id": "MAT-L3-001",
+    "canonical_name_ja": "スレート波板",
+    "canonical_name_en": "Corrugated Asbestos Slate Sheet",
+    "synonyms_ja": [
+      "スレート大波",
+      "スレート小波",
+      "波形スレート",
+      "石綿スレート波板"
+    ],
+    "synonyms_en": [
+      "Corrugated slate sheet",
+      "Asbestos corrugated sheet",
+      "Corrugated cement sheet"
+    ],
+    "hazard_level": "LEVEL_3",
+    "status": "POSITIVE",
+    "friability": "LOW",
+    "component_category": "Molded Cement Product",
+    "application_locations": [
+      "Roof",
+      "Exterior Wall",
+      "Warehouse Sheds",
+      "Factories"
+    ],
+    "typical_specifications": [
+      "t=6.3",
+      "t=6",
+      "大波",
+      "小波"
+    ],
+    "regulatory_note": "MLIT Level 3. Molded product widely used for industrial roofs until 2004."
+  },
+  {
+    "id": "MAT-L3-002",
+    "canonical_name_ja": "けい酸カルシウム板第1種",
+    "canonical_name_en": "Calcium Silicate Board Type 1",
+    "synonyms_ja": [
+      "けいカル板第1種",
+      "ケイカル板第1種",
+      "けい酸カルシウム板1種",
+      "ケイ酸カルシウム板第1種",
+      "ケイカル板1種",
+      "けいカル板1.0"
+    ],
+    "synonyms_en": [
+      "Calcium silicate board type 1",
+      "CalSil board type 1",
+      "Calcium silicate sheet 1st class"
+    ],
+    "hazard_level": "LEVEL_3",
+    "status": "POSITIVE",
+    "friability": "LOW",
+    "component_category": "Interior/Exterior Board",
+    "application_locations": [
+      "Interior Wall",
+      "Ceiling",
+      "Kitchen",
+      "Toilet",
+      "Shaft Wall"
+    ],
+    "typical_specifications": [
+      "t=6",
+      "t=8",
+      "t=10",
+      "t=12"
+    ],
+    "regulatory_note": "MLIT Level 3. Very common in commercial buildings. Phased out 2004."
+  },
+  {
+    "id": "MAT-L3-003",
+    "canonical_name_ja": "ビニル床タイル",
+    "canonical_name_en": "Vinyl Floor Tile (Asbestos-Containing)",
+    "synonyms_ja": [
+      "Pタイル",
+      "プラスチック床タイル",
+      "石綿含有ビニル床タイル",
+      "コンポジションビニル床タイル"
+    ],
+    "synonyms_en": [
+      "Vinyl floor tile",
+      "Asbestos vinyl tile",
+      "P-tile",
+      "VAT",
+      "Composition vinyl tile"
+    ],
+    "hazard_level": "LEVEL_3",
+    "status": "POSITIVE",
+    "friability": "LOW",
+    "component_category": "Floor Finish",
+    "application_locations": [
+      "Floor",
+      "Corridor",
+      "Office Rooms",
+      "Classrooms"
+    ],
+    "typical_specifications": [
+      "t=2.0",
+      "t=3.0",
+      "300x300",
+      "300角",
+      "303角"
+    ],
+    "regulatory_note": "MLIT Level 3. Bound in resin matrix, phased out in 1987-1990 in Japan."
+  },
+  {
+    "id": "MAT-L3-004",
+    "canonical_name_ja": "住宅屋根用化粧スレート",
+    "canonical_name_en": "Residential Decorative Roofing Slate",
+    "synonyms_ja": [
+      "カラーベスト",
+      "コロニアル",
+      "化粧スレート",
+      "石綿セメント瓦"
+    ],
+    "synonyms_en": [
+      "Colorbest",
+      "Colonial roof slate",
+      "Decorative roofing slate",
+      "Fibre-cement roofing tile"
+    ],
+    "hazard_level": "LEVEL_3",
+    "status": "POSITIVE",
+    "friability": "LOW",
+    "component_category": "Roofing",
+    "application_locations": [
+      "Roof",
+      "Gable Wall"
+    ],
+    "typical_specifications": [
+      "t=5.2",
+      "t=5.5"
+    ],
+    "regulatory_note": "MLIT Level 3. Brand names Colorbest (カラーベスト) and Colonial (コロニアル) dominate Japanese residential roofs pre-2004."
+  },
+  {
+    "id": "MAT-L3-005",
+    "canonical_name_ja": "岩綿吸音板",
+    "canonical_name_en": "Mineral Wool Acoustic Ceiling Board (Asbestos-Containing)",
+    "synonyms_ja": [
+      "ロックウール吸音板",
+      "岩綿板",
+      "ソーラトン"
+    ],
+    "synonyms_en": [
+      "Rockwool acoustic ceiling board",
+      "Mineral fiber acoustic tile"
+    ],
+    "hazard_level": "LEVEL_3",
+    "status": "POSITIVE",
+    "friability": "LOW",
+    "component_category": "Ceiling Board",
+    "application_locations": [
+      "Ceiling",
+      "Meeting Rooms",
+      "Lobbies"
+    ],
+    "typical_specifications": [
+      "t=9",
+      "t=12",
+      "t=15",
+      "600x300",
+      "300x600"
+    ],
+    "regulatory_note": "MLIT Level 3. Pre-1988 products frequently contained chrysotile."
+  },
+  {
+    "id": "MAT-SAFE-001",
+    "canonical_name_ja": "グラスウール保温材",
+    "canonical_name_en": "Glass Wool Thermal Insulation",
+    "synonyms_ja": [
+      "グラスウール",
+      "GW断熱材",
+      "グラスウールマット",
+      "GW保温筒"
+    ],
+    "synonyms_en": [
+      "Glass wool",
+      "Fiberglass insulation",
+      "Glass wool blanket"
+    ],
+    "hazard_level": "NON_ASBESTOS",
+    "status": "NEGATIVE",
+    "friability": "NONE",
+    "component_category": "Thermal Insulation",
+    "application_locations": [
+      "Wall cavity",
+      "Ceiling plenum",
+      "Piping",
+      "Partition Wall"
+    ],
+    "typical_specifications": [
+      "t=25",
+      "t=50",
+      "t=100",
+      "16K",
+      "24K",
+      "32K"
+    ],
+    "regulatory_note": "Safe. Made of spun glass filaments; zero asbestos content."
+  },
+  {
+    "id": "MAT-SAFE-002",
+    "canonical_name_ja": "石膏ボード",
+    "canonical_name_en": "Gypsum Plaster Board",
+    "synonyms_ja": [
+      "プラスターボード",
+      "GB-R",
+      "GB-F",
+      "せっこうボード",
+      "タイガボード"
+    ],
+    "synonyms_en": [
+      "Gypsum board",
+      "Plasterboard",
+      "Drywall",
+      "Gypsum wallboard"
+    ],
+    "hazard_level": "NON_ASBESTOS",
+    "status": "NEGATIVE",
+    "friability": "NONE",
+    "component_category": "Interior Board",
+    "application_locations": [
+      "Interior Wall",
+      "Ceiling",
+      "Dry Partition"
+    ],
+    "typical_specifications": [
+      "t=9.5",
+      "t=12.5",
+      "t=15",
+      "t=21"
+    ],
+    "regulatory_note": "Safe standard Japanese drywall material (JIS A 6901)."
+  },
+  {
+    "id": "MAT-SAFE-003",
+    "canonical_name_ja": "けい酸カルシウム板第2種",
+    "canonical_name_en": "Calcium Silicate Board Type 2",
+    "synonyms_ja": [
+      "けいカル板第2種",
+      "ケイカル板第2種",
+      "ケイカル板2種",
+      "けい酸カルシウム板2種"
+    ],
+    "synonyms_en": [
+      "Calcium silicate board type 2",
+      "CalSil board type 2"
+    ],
+    "hazard_level": "NON_ASBESTOS",
+    "status": "NEGATIVE",
+    "friability": "NONE",
+    "component_category": "Interior Board",
+    "application_locations": [
+      "Interior Wall",
+      "Ceiling",
+      "Kitchen",
+      "Fire barrier"
+    ],
+    "typical_specifications": [
+      "t=6",
+      "t=8",
+      "t=10",
+      "t=12"
+    ],
+    "regulatory_note": "Safe. Formulated without asbestos fibers; reinforced with cellulose pulp."
+  },
+  {
+    "id": "MAT-SAFE-004",
+    "canonical_name_ja": "押出成形セメント板",
+    "canonical_name_en": "Extruded Cement Panel",
+    "synonyms_ja": [
+      "ECP板",
+      "メース",
+      "無石綿押出成形セメント板"
+    ],
+    "synonyms_en": [
+      "Extruded cement panel",
+      "ECP"
+    ],
+    "hazard_level": "NON_ASBESTOS",
+    "status": "NEGATIVE",
+    "friability": "NONE",
+    "component_category": "Exterior Wall",
+    "application_locations": [
+      "Exterior Wall",
+      "Curtain Wall"
+    ],
+    "typical_specifications": [
+      "t=50",
+      "t=60"
+    ],
+    "regulatory_note": "Safe hollow extruded cement panel. Post-1990 products are non-asbestos."
+  },
+  {
+    "id": "MAT-SAFE-005",
+    "canonical_name_ja": "磁器質タイル",
+    "canonical_name_en": "Porcelain Ceramic Tile",
+    "synonyms_ja": [
+      "モザイクタイル",
+      "床タイル",
+      "壁タイル",
+      "せっ器質タイル"
+    ],
+    "synonyms_en": [
+      "Ceramic tile",
+      "Porcelain tile",
+      "Floor tile"
+    ],
+    "hazard_level": "NON_ASBESTOS",
+    "status": "NEGATIVE",
+    "friability": "NONE",
+    "component_category": "Finish Material",
+    "application_locations": [
+      "Bathroom",
+      "Entrance Hall",
+      "Exterior Facade"
+    ],
+    "typical_specifications": [
+      "100角",
+      "150角",
+      "200角",
+      "t=8"
+    ],
+    "regulatory_note": "Safe fired clay/ceramic mineral product."
+  },
+  {
+    "id": "MAT-SAFE-006",
+    "canonical_name_ja": "ロックウールボード (無石綿)",
+    "canonical_name_en": "Rock Wool Board (Non-Asbestos Certified)",
+    "synonyms_ja": [
+      "ノンアスベストロックウール",
+      "無石綿ロックウール保温板",
+      "ロックウール断熱ボード"
+    ],
+    "synonyms_en": [
+      "Non-asbestos rock wool board",
+      "Mineral wool insulation board"
+    ],
+    "hazard_level": "NON_ASBESTOS",
+    "status": "NEGATIVE",
+    "friability": "NONE",
+    "component_category": "Thermal Insulation",
+    "application_locations": [
+      "Roof Insulation",
+      "Exterior Wall Cavity",
+      "Fire Doors"
+    ],
+    "typical_specifications": [
+      "t=25",
+      "t=50",
+      "t=75"
+    ],
+    "regulatory_note": "Safe certified rockwool manufactured without asbestos additives."
+  },
+  {
+    "id": "MAT-L1-004",
+    "canonical_name_ja": "吹付けモルタル (石綿含有)",
+    "canonical_name_en": "Sprayed Asbestos Mortar",
+    "synonyms_ja": [
+      "石綿含有吹付けモルタル",
+      "吹付モルタル",
+      "吹付けアスベストモルタル",
+      "石綿モルタル吹付"
+    ],
+    "synonyms_en": [
+      "Sprayed asbestos mortar",
+      "Asbestos mortar spray"
+    ],
+    "hazard_level": "LEVEL_1",
+    "status": "POSITIVE",
+    "friability": "EXTREMELY_HIGH",
+    "component_category": "Sprayed Material",
+    "application_locations": [
+      "Exterior Wall",
+      "Underground Vault",
+      "Structural Steel",
+      "Beams"
+    ],
+    "typical_specifications": [
+      "t=15",
+      "t=20",
+      "t=25",
+      "t=30"
+    ],
+    "regulatory_note": "MLIT Level 1. Used for fireproofing and condensation protection until 1980."
+  },
+  {
+    "id": "MAT-L1-005",
+    "canonical_name_ja": "トムレックス (石綿吹付材)",
+    "canonical_name_en": "Tomlex Sprayed Asbestos Material",
+    "synonyms_ja": [
+      "トムレックス",
+      "トモレックス",
+      "TOMLEX",
+      "トムレックス吹付"
+    ],
+    "synonyms_en": [
+      "Tomlex sprayed asbestos"
+    ],
+    "hazard_level": "LEVEL_1",
+    "status": "POSITIVE",
+    "friability": "EXTREMELY_HIGH",
+    "component_category": "Sprayed Material",
+    "application_locations": [
+      "Ceiling",
+      "Steel Structure",
+      "Parking Garage",
+      "Machine Room"
+    ],
+    "typical_specifications": [
+      "t=10",
+      "t=15",
+      "t=20",
+      "t=25"
+    ],
+    "regulatory_note": "MLIT Level 1 historical trade name. Manufactured by Nichias (1960-1975)."
+  },
+  {
+    "id": "MAT-L1-006",
+    "canonical_name_ja": "ブロベスト (吹付け材)",
+    "canonical_name_en": "Blowbest Asbestos Spray",
+    "synonyms_ja": [
+      "ブロベスト",
+      "ブロウベスト",
+      "BLOWBEST"
+    ],
+    "synonyms_en": [
+      "Blowbest spray fireproofing"
+    ],
+    "hazard_level": "LEVEL_1",
+    "status": "POSITIVE",
+    "friability": "EXTREMELY_HIGH",
+    "component_category": "Sprayed Material",
+    "application_locations": [
+      "Structural Steel",
+      "Ceiling",
+      "Machinery Room"
+    ],
+    "typical_specifications": [
+      "t=15",
+      "t=25",
+      "t=35"
+    ],
+    "regulatory_note": "MLIT Level 1 historical trade name. Widely sprayed in 1965-1975."
+  },
+  {
+    "id": "MAT-L1-007",
+    "canonical_name_ja": "スターベスト (吹付け耐火材)",
+    "canonical_name_en": "Starbest Sprayed Fireproofing",
+    "synonyms_ja": [
+      "スターベスト",
+      "STARBEST",
+      "スターベスト吹付"
+    ],
+    "synonyms_en": [
+      "Starbest sprayed asbestos"
+    ],
+    "hazard_level": "LEVEL_1",
+    "status": "POSITIVE",
+    "friability": "EXTREMELY_HIGH",
+    "component_category": "Sprayed Material",
+    "application_locations": [
+      "Steel Columns",
+      "Beams",
+      "Elevator Shafts"
+    ],
+    "typical_specifications": [
+      "t=20",
+      "t=25",
+      "t=30"
+    ],
+    "regulatory_note": "MLIT Level 1 historical trade name."
+  },
+  {
+    "id": "MAT-L2-005",
+    "canonical_name_ja": "トンライト (けい酸カルシウム板)",
+    "canonical_name_en": "Tonlite Calcium Silicate Board",
+    "synonyms_ja": [
+      "トンライト",
+      "トンライト板",
+      "TONLITE",
+      "トンライト耐火板",
+      "トンライト断熱板"
+    ],
+    "synonyms_en": [
+      "Tonlite calcium silicate asbestos board"
+    ],
+    "hazard_level": "LEVEL_2",
+    "status": "POSITIVE",
+    "friability": "HIGH",
+    "component_category": "Fireproofing Insulation Board",
+    "application_locations": [
+      "Structural Steel Cover",
+      "Columns",
+      "Beams",
+      "Furnace Walls"
+    ],
+    "typical_specifications": [
+      "t=20",
+      "t=25",
+      "t=30",
+      "t=40",
+      "t=50"
+    ],
+    "regulatory_note": "MLIT Level 2. Historical trade name by Nichias. High amosite content."
+  },
+  {
+    "id": "MAT-L2-006",
+    "canonical_name_ja": "ヘキスト断熱板",
+    "canonical_name_en": "Hoechst Asbestos Insulation Board",
+    "synonyms_ja": [
+      "ヘキスト",
+      "ヘキスト板",
+      "ヘキスト断熱材",
+      "ヘキストパッキング"
+    ],
+    "synonyms_en": [
+      "Hoechst asbestos thermal board"
+    ],
+    "hazard_level": "LEVEL_2",
+    "status": "POSITIVE",
+    "friability": "HIGH",
+    "component_category": "Thermal Insulation",
+    "application_locations": [
+      "Boiler Flues",
+      "High-Temp Pipe Ducts",
+      "Electrical Substations"
+    ],
+    "typical_specifications": [
+      "t=15",
+      "t=20",
+      "t=25",
+      "t=30"
+    ],
+    "regulatory_note": "MLIT Level 2. Showa-era high-temperature insulation."
+  },
+  {
+    "id": "MAT-L2-007",
+    "canonical_name_ja": "石綿セメント円筒",
+    "canonical_name_en": "Asbestos Cement Pipe Cover",
+    "synonyms_ja": [
+      "石綿セメント円筒",
+      "石綿円筒",
+      "石綿保温円筒",
+      "ACP円筒",
+      "石綿パイプカバー"
+    ],
+    "synonyms_en": [
+      "Asbestos cement pipe cover",
+      "Asbestos cylinder insulation"
+    ],
+    "hazard_level": "LEVEL_2",
+    "status": "POSITIVE",
+    "friability": "HIGH",
+    "component_category": "Pipe Insulation",
+    "application_locations": [
+      "Steam Pipes",
+      "Boiler Exhaust",
+      "Drainage Stacks"
+    ],
+    "typical_specifications": [
+      "50A",
+      "75A",
+      "100A",
+      "150A",
+      "t=20",
+      "t=25"
+    ],
+    "regulatory_note": "MLIT Level 2. Widely specified on Showa mechanical blueprints."
+  },
+  {
+    "id": "MAT-L2-008",
+    "canonical_name_ja": "石綿糸・石綿布・石綿リボン",
+    "canonical_name_en": "Asbestos Textile & Ribbon Gasket",
+    "synonyms_ja": [
+      "石綿糸",
+      "石綿布",
+      "石綿リボン",
+      "石綿テープ",
+      "アスベストクロス",
+      "アスベストリボン",
+      "石綿パッキン"
+    ],
+    "synonyms_en": [
+      "Asbestos textile",
+      "Asbestos cloth",
+      "Asbestos ribbon",
+      "Asbestos rope"
+    ],
+    "hazard_level": "LEVEL_2",
+    "status": "POSITIVE",
+    "friability": "HIGH",
+    "component_category": "Gasket & Textile",
+    "application_locations": [
+      "Pipe Flanges",
+      "Duct Flexible Joints",
+      "Fire Damper Connections"
+    ],
+    "typical_specifications": [
+      "厚3mm",
+      "巾50mm",
+      "巾100mm"
+    ],
+    "regulatory_note": "MLIT Level 2. Woven chrysotile textile used in air handling ducts."
+  },
+  {
+    "id": "MAT-L2-009",
+    "canonical_name_ja": "バーミキュライト保温材",
+    "canonical_name_en": "Vermiculite Insulation Material",
+    "synonyms_ja": [
+      "バーミキュライト保温材",
+      "蛭石保温材",
+      "バーミキュライトブロック"
+    ],
+    "synonyms_en": [
+      "Vermiculite insulation block"
+    ],
+    "hazard_level": "LEVEL_2",
+    "status": "POSITIVE",
+    "friability": "HIGH",
+    "component_category": "Thermal Insulation",
+    "application_locations": [
+      "Boilers",
+      "Kilns",
+      "Chimney Flues"
+    ],
+    "typical_specifications": [
+      "t=25",
+      "t=50"
+    ],
+    "regulatory_note": "MLIT Level 2. Moulded insulation block."
+  },
+  {
+    "id": "MAT-L3-006",
+    "canonical_name_ja": "アスロック (押出成形セメント板)",
+    "canonical_name_en": "Asroc Extruded Cement Panel",
+    "synonyms_ja": [
+      "アスロック",
+      "アスロック板",
+      "ASROC",
+      "石綿含有押出成形セメント板"
+    ],
+    "synonyms_en": [
+      "Asroc asbestos extruded cement board"
+    ],
+    "hazard_level": "LEVEL_3",
+    "status": "POSITIVE",
+    "friability": "LOW",
+    "component_category": "Cement Panel",
+    "application_locations": [
+      "Exterior Cladding",
+      "Spandrel Wall",
+      "Staircase Enclosure"
+    ],
+    "typical_specifications": [
+      "t=60",
+      "t=50",
+      "幅600"
+    ],
+    "regulatory_note": "MLIT Level 3 historical trade name. Manufactured by Nihon Cement (1970-1995)."
+  },
+  {
+    "id": "MAT-L3-007",
+    "canonical_name_ja": "フレキシブル板 (石綿スレート)",
+    "canonical_name_en": "Asbestos Flexible Board",
+    "synonyms_ja": [
+      "フレキシブル板",
+      "フレキ板",
+      "石綿フレキシブル板",
+      "フレキシブルシート",
+      "F板"
+    ],
+    "synonyms_en": [
+      "Asbestos flexible board",
+      "Flexible sheet"
+    ],
+    "hazard_level": "LEVEL_3",
+    "status": "POSITIVE",
+    "friability": "LOW",
+    "component_category": "Molded Cement Board",
+    "application_locations": [
+      "Interior Wall",
+      "Exterior Soffit",
+      "Partitions",
+      "Balcony Wall"
+    ],
+    "typical_specifications": [
+      "t=3",
+      "t=4",
+      "t=5",
+      "t=6",
+      "t=8"
+    ],
+    "regulatory_note": "MLIT Level 3. High-density asbestos cement flat sheet. Extensively used in 1960-1995."
+  },
+  {
+    "id": "MAT-L3-008",
+    "canonical_name_ja": "石綿含有ビニル床シート",
+    "canonical_name_en": "Asbestos-Containing Vinyl Sheet Flooring",
+    "synonyms_ja": [
+      "ビニル床シート (石綿含有)",
+      "長尺ビニルシート",
+      "クッションフロア (石綿含有)",
+      "CFシート (石綿含有)",
+      "ビニールシート (石綿)"
+    ],
+    "synonyms_en": [
+      "Asbestos vinyl sheet flooring",
+      "Asbestos cushion floor"
+    ],
+    "hazard_level": "LEVEL_3",
+    "status": "POSITIVE",
+    "friability": "LOW",
+    "component_category": "Flooring Material",
+    "application_locations": [
+      "Corridors",
+      "Hospital Floors",
+      "Kitchen",
+      "Washroom"
+    ],
+    "typical_specifications": [
+      "t=1.8",
+      "t=2.0",
+      "t=2.5"
+    ],
+    "regulatory_note": "MLIT Level 3. Felt backing often contained 30-50% chrysotile."
+  },
+  {
+    "id": "MAT-L3-009",
+    "canonical_name_ja": "スレート平板",
+    "canonical_name_en": "Flat Asbestos Cement Slate",
+    "synonyms_ja": [
+      "スレート平板",
+      "石綿スレート平板",
+      "平板スレート",
+      "セメントスレート平板"
+    ],
+    "synonyms_en": [
+      "Flat asbestos slate",
+      "Asbestos cement flat sheet"
+    ],
+    "hazard_level": "LEVEL_3",
+    "status": "POSITIVE",
+    "friability": "LOW",
+    "component_category": "Roofing & Siding",
+    "application_locations": [
+      "Interior Wall Linings",
+      "Eaves Ceiling",
+      "Partition Walls"
+    ],
+    "typical_specifications": [
+      "t=4",
+      "t=5",
+      "t=6"
+    ],
+    "regulatory_note": "MLIT Level 3. Non-corrugated asbestos cement sheet."
+  },
+  {
+    "id": "MAT-L3-010",
+    "canonical_name_ja": "パルプセメント板",
+    "canonical_name_en": "Pulp Cement Board (Asbestos-Containing)",
+    "synonyms_ja": [
+      "パルプセメント板",
+      "石綿パルプ板",
+      "木毛セメント板 (石綿混入)"
+    ],
+    "synonyms_en": [
+      "Asbestos pulp cement board"
+    ],
+    "hazard_level": "LEVEL_3",
+    "status": "POSITIVE",
+    "friability": "LOW",
+    "component_category": "Building Board",
+    "application_locations": [
+      "Ceiling Underlay",
+      "Roof Substrate",
+      "Partition Core"
+    ],
+    "typical_specifications": [
+      "t=8",
+      "t=10",
+      "t=12"
+    ],
+    "regulatory_note": "MLIT Level 3. Manufactured with chrysotile reinforcement."
+  },
+  {
+    "id": "MAT-L3-011",
+    "canonical_name_ja": "ダイケン ダイロートン (石綿含有)",
+    "canonical_name_en": "Daiken Dailotone Acoustic Tile (Historical)",
+    "synonyms_ja": [
+      "ダイロートン",
+      "ダイロートン板",
+      "DAILOTONE",
+      "ダイケンダイロートン"
+    ],
+    "synonyms_en": [
+      "Dailotone acoustic ceiling board"
+    ],
+    "hazard_level": "LEVEL_3",
+    "status": "POSITIVE",
+    "friability": "LOW",
+    "component_category": "Acoustic Ceiling Tile",
+    "application_locations": [
+      "Office Ceiling",
+      "Conference Rooms",
+      "Lobbies"
+    ],
+    "typical_specifications": [
+      "t=9",
+      "t=12",
+      "t=15",
+      "300x600",
+      "600x600"
+    ],
+    "regulatory_note": "MLIT Level 3 historical trade name. Pre-1988 models contained mineral wool and amosite/chrysotile."
+  },
+  {
+    "id": "MAT-L3-012",
+    "canonical_name_ja": "コロニアル (化粧スレート屋根材)",
+    "canonical_name_en": "Colonial Synthetic Roofing Slate",
+    "synonyms_ja": [
+      "コロニアル",
+      "COLONIAL",
+      "クボタコロニアル",
+      "ニューコロニアル"
+    ],
+    "synonyms_en": [
+      "Colonial asbestos roofing slate"
+    ],
+    "hazard_level": "LEVEL_3",
+    "status": "POSITIVE",
+    "friability": "LOW",
+    "component_category": "Roofing Shingle",
+    "application_locations": [
+      "Sloped Roof",
+      "Mansard Roof",
+      "Gable Siding"
+    ],
+    "typical_specifications": [
+      "t=4.5",
+      "t=5.2"
+    ],
+    "regulatory_note": "MLIT Level 3 historical trade name. Manufactured by Kubota (1961-2001)."
+  },
+  {
+    "id": "MAT-L3-013",
+    "canonical_name_ja": "石綿ルーフィング",
+    "canonical_name_en": "Asbestos Waterproofing Roofing Felt",
+    "synonyms_ja": [
+      "石綿ルーフィング",
+      "アスベストルーフィング",
+      "石綿フェルト",
+      "石綿アスファルトルーフィング"
+    ],
+    "synonyms_en": [
+      "Asbestos asphalt roofing",
+      "Asbestos felt"
+    ],
+    "hazard_level": "LEVEL_3",
+    "status": "POSITIVE",
+    "friability": "LOW",
+    "component_category": "Waterproofing Membrane",
+    "application_locations": [
+      "Rooftop Slab",
+      "Basement Waterproofing",
+      "Parapet Coping"
+    ],
+    "typical_specifications": [
+      "t=1.5",
+      "t=2.0",
+      "1層",
+      "2層",
+      "3層"
+    ],
+    "regulatory_note": "MLIT Level 3. Built-up bitumen roof membrane reinforced with chrysotile fiber."
+  },
+  {
+    "id": "MAT-L3-014",
+    "canonical_name_ja": "石綿目地材・シーリング材",
+    "canonical_name_en": "Asbestos Joint Sealant & Mastic",
+    "synonyms_ja": [
+      "石綿目地材",
+      "アスベストコーキング",
+      "石綿シーリング",
+      "石綿パテ",
+      "アスベストマスチック"
+    ],
+    "synonyms_en": [
+      "Asbestos mastic",
+      "Asbestos caulking",
+      "Asbestos sealant"
+    ],
+    "hazard_level": "LEVEL_3",
+    "status": "POSITIVE",
+    "friability": "LOW",
+    "component_category": "Joint Sealant",
+    "application_locations": [
+      "Window Perimeter",
+      "Precast Concrete Joints",
+      "Curtain Wall Gaps"
+    ],
+    "typical_specifications": [
+      "幅10mm",
+      "幅15mm",
+      "深さ10mm"
+    ],
+    "regulatory_note": "MLIT Level 3. Exterior Showa joints."
+  },
+  {
+    "id": "MAT-SAFE-007",
+    "canonical_name_ja": "グラスウールボード (無石綿)",
+    "canonical_name_en": "Glass Wool Rigid Board (Non-Asbestos)",
+    "synonyms_ja": [
+      "グラスウールボード",
+      "GWボード",
+      "吸音グラスウールボード"
+    ],
+    "synonyms_en": [
+      "Glass wool acoustic board"
+    ],
+    "hazard_level": "NON_ASBESTOS",
+    "status": "NEGATIVE",
+    "friability": "NONE",
+    "component_category": "Thermal/Acoustic Insulation",
+    "application_locations": [
+      "Mechanical Room Wall",
+      "Soundproofing Partitions",
+      "Ceilings"
+    ],
+    "typical_specifications": [
+      "t=25",
+      "t=50",
+      "24k",
+      "32k",
+      "48k"
+    ],
+    "regulatory_note": "Certified Non-Asbestos control material."
+  },
+  {
+    "id": "MAT-SAFE-008",
+    "canonical_name_ja": "発泡ポリスチレン断熱材 (スタイロフォーム)",
+    "canonical_name_en": "Extruded Polystyrene Insulation (Styrofoam)",
+    "synonyms_ja": [
+      "スタイロフォーム",
+      "ポリスチレンフォーム",
+      "EPS断熱材",
+      "XPS断熱材",
+      "ミラフォーム"
+    ],
+    "synonyms_en": [
+      "Extruded polystyrene",
+      "Styrofoam board"
+    ],
+    "hazard_level": "NON_ASBESTOS",
+    "status": "NEGATIVE",
+    "friability": "NONE",
+    "component_category": "Synthetic Insulation",
+    "application_locations": [
+      "Underfloor Insulation",
+      "Perimeter Wall",
+      "Roof Terrace"
+    ],
+    "typical_specifications": [
+      "t=20",
+      "t=25",
+      "t=30",
+      "t=50"
+    ],
+    "regulatory_note": "Certified Non-Asbestos synthetic insulation control."
+  },
+  {
+    "id": "MAT-SAFE-009",
+    "canonical_name_ja": "硬質ウレタンフォーム断熱材",
+    "canonical_name_en": "Rigid Polyurethane Foam Insulation",
+    "synonyms_ja": [
+      "ウレタンフォーム",
+      "硬質ウレタンフォーム",
+      "現場発泡ウレタン",
+      "PU断熱材"
+    ],
+    "synonyms_en": [
+      "Polyurethane foam insulation",
+      "Spray urethane"
+    ],
+    "hazard_level": "NON_ASBESTOS",
+    "status": "NEGATIVE",
+    "friability": "NONE",
+    "component_category": "Synthetic Insulation",
+    "application_locations": [
+      "Concrete Wall Interior",
+      "Soffit Thermal Break",
+      "Cold Storage"
+    ],
+    "typical_specifications": [
+      "t=20",
+      "t=25",
+      "t=30"
+    ],
+    "regulatory_note": "Certified Non-Asbestos synthetic insulation."
+  },
+  {
+    "id": "MAT-SAFE-010",
+    "canonical_name_ja": "モルタル金ゴテ仕上げ",
+    "canonical_name_en": "Troweled Mortar Finish",
+    "synonyms_ja": [
+      "モルタル金ゴテ",
+      "モルタル金ゴテ仕上げ",
+      "モルタル金鏝",
+      "モルタル直押え",
+      "モルタル金コテ"
+    ],
+    "synonyms_en": [
+      "Troweled cement mortar finish",
+      "Smooth mortar"
+    ],
+    "hazard_level": "NON_ASBESTOS",
+    "status": "NEGATIVE",
+    "friability": "NONE",
+    "component_category": "Mineral Cement Finish",
+    "application_locations": [
+      "Floor Finish",
+      "Machinery Room Floor",
+      "Storage Floor"
+    ],
+    "typical_specifications": [
+      "t=20",
+      "t=30",
+      "直押え"
+    ],
+    "regulatory_note": "Certified Non-Asbestos mineral floor finish."
+  },
+  {
+    "id": "MAT-SAFE-011",
+    "canonical_name_ja": "防塵塗料仕上げ",
+    "canonical_name_en": "Dust-Proof Epoxy/Polyurethane Floor Coating",
+    "synonyms_ja": [
+      "防塵塗料",
+      "防塵塗装",
+      "防塵塗料仕上げ",
+      "エポキシ防塵塗装",
+      "ウレタン防塵塗布"
+    ],
+    "synonyms_en": [
+      "Dust-proof floor coating",
+      "Epoxy floor paint"
+    ],
+    "hazard_level": "NON_ASBESTOS",
+    "status": "NEGATIVE",
+    "friability": "NONE",
+    "component_category": "Coating / Paint",
+    "application_locations": [
+      "Warehouse Floor",
+      "Factory Assembly Floor",
+      "Clean Room"
+    ],
+    "typical_specifications": [
+      "2回塗り",
+      "厚膜型",
+      "薄膜型"
+    ],
+    "regulatory_note": "Certified Non-Asbestos floor coating."
+  },
+  {
+    "id": "MAT-SAFE-012",
+    "canonical_name_ja": "木製巾木・合板",
+    "canonical_name_en": "Wood Skirting & Plywood",
+    "synonyms_ja": [
+      "木製巾木",
+      "合板",
+      "普通合板",
+      "耐水合板",
+      "フローリング"
+    ],
+    "synonyms_en": [
+      "Wood baseboard",
+      "Plywood",
+      "Hardwood flooring"
+    ],
+    "hazard_level": "NON_ASBESTOS",
+    "status": "NEGATIVE",
+    "friability": "NONE",
+    "component_category": "Timber / Wood",
+    "application_locations": [
+      "Skirting",
+      "Interior Partitions",
+      "Subfloor"
+    ],
+    "typical_specifications": [
+      "H=60",
+      "H=75",
+      "t=9",
+      "t=12"
+    ],
+    "regulatory_note": "Certified Non-Asbestos natural wood product."
+  }
+]

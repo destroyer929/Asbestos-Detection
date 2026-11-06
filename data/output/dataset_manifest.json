@@ -1,0 +1,75 @@
+{
+  "dataset_name": "DrawingScan Synthetic Asbestos Blueprint Benchmark",
+  "created_for": "Alfred Company Ltd. R&D AI Engineer Evaluation",
+  "total_documents": 5,
+  "total_annotations": 350,
+  "total_asbestos_positive_items": 55,
+  "total_non_asbestos_items": 50,
+  "entries": [
+    {
+      "drawing_id": "ALFRED-DWG-1982-001",
+      "seed": 101,
+      "clean_png": "clean\\ALFRED-DWG-1982-001.png",
+      "clean_dxf": "clean\\ALFRED-DWG-1982-001.dxf",
+      "vector_pdf": "pdf_test_suite\\ALFRED-DWG-1982-001_vector.pdf",
+      "scanned_jpg": "degraded\\ALFRED-DWG-1982-001_scanned.jpg",
+      "scanned_pdf": "pdf_test_suite\\ALFRED-DWG-1982-001_scanned.pdf",
+      "total_annotations": 70,
+      "asbestos_positive_count": 11,
+      "non_asbestos_count": 10,
+      "applied_skew": -1.6
+    },
+    {
+      "drawing_id": "ALFRED-DWG-1982-002",
+      "seed": 102,
+      "clean_png": "clean\\ALFRED-DWG-1982-002.png",
+      "clean_dxf": "clean\\ALFRED-DWG-1982-002.dxf",
+      "vector_pdf": "pdf_test_suite\\ALFRED-DWG-1982-002_vector.pdf",
+      "scanned_jpg": "degraded\\ALFRED-DWG-1982-002_scanned.jpg",
+      "scanned_pdf": "pdf_test_suite\\ALFRED-DWG-1982-002_scanned.pdf",
+      "total_annotations": 70,
+      "asbestos_positive_count": 11,
+      "non_asbestos_count": 10,
+      "applied_skew": 2.0
+    },
+    {
+      "drawing_id": "ALFRED-DWG-1982-003",
+      "seed": 103,
+      "clean_png": "clean\\ALFRED-DWG-1982-003.png",
+      "clean_dxf": "clean\\ALFRED-DWG-1982-003.dxf",
+      "vector_pdf": "pdf_test_suite\\ALFRED-DWG-1982-003_vector.pdf",
+      "scanned_jpg": "degraded\\ALFRED-DWG-1982-003_scanned.jpg",
+      "scanned_pdf": "pdf_test_suite\\ALFRED-DWG-1982-003_scanned.pdf",
+      "total_annotations": 70,
+      "asbestos_positive_count": 11,
+      "non_asbestos_count": 10,
+      "applied_skew": -2.4000000000000004
+    },
+    {
+      "drawing_id": "ALFRED-DWG-1982-004",
+      "seed": 104,
+      "clean_png": "clean\\ALFRED-DWG-1982-004.png",
+      "clean_dxf": "clean\\ALFRED-DWG-1982-004.dxf",
+      "vector_pdf": "pdf_test_suite\\ALFRED-DWG-1982-004_vector.pdf",
+      "scanned_jpg": "degraded\\ALFRED-DWG-1982-004_scanned.jpg",
+      "scanned_pdf": "pdf_test_suite\\ALFRED-DWG-1982-004_scanned.pdf",
+      "total_annotations": 70,
+      "asbestos_positive_count": 11,
+      "non_asbestos_count": 10,
+      "applied_skew": 2.8
+    },
+    {
+      "drawing_id": "ALFRED-DWG-1982-005",
+      "seed": 105,
+      "clean_png": "clean\\ALFRED-DWG-1982-005.png",
+      "clean_dxf": "clean\\ALFRED-DWG-1982-005.dxf",
+      "vector_pdf": "pdf_test_suite\\ALFRED-DWG-1982-005_vector.pdf",
+      "scanned_jpg": "degraded\\ALFRED-DWG-1982-005_scanned.jpg",
+      "scanned_pdf": "pdf_test_suite\\ALFRED-DWG-1982-005_scanned.pdf",
+      "total_annotations": 70,
+      "asbestos_positive_count": 11,
+      "non_asbestos_count": 10,
+      "applied_skew": -3.2
+    }
+  ]
+}

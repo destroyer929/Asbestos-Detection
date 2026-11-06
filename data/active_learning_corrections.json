@@ -1,0 +1,137 @@
+[
+  {
+    "item_id": "ITEM-TEST-001",
+    "drawing_id": "DWG-001",
+    "corrected_status": "POSITIVE",
+    "corrected_hazard_level": "LEVEL_1",
+    "corrected_material_name": "吹付け石綿",
+    "reviewer_notes": "Verified in Hamamatsu lab",
+    "timestamp": "2026-11-04T01:19:25.352302"
+  },
+  {
+    "item_id": "ITEM-TEST-UNIT-99",
+    "drawing_id": "DWG-1982-001",
+    "corrected_status": "POSITIVE",
+    "corrected_hazard_level": "LEVEL_1",
+    "corrected_material_name": "吹付け石綿",
+    "reviewer_notes": "Verified by certified inspector",
+    "timestamp": "2026-11-04T01:20:52.728871"
+  },
+  {
+    "item_id": "ITEM-TEST-UNIT-99",
+    "drawing_id": "DWG-1982-001",
+    "corrected_status": "POSITIVE",
+    "corrected_hazard_level": "LEVEL_1",
+    "corrected_material_name": "吹付け石綿",
+    "reviewer_notes": "Verified by certified inspector",
+    "timestamp": "2026-11-04T01:21:47.532039"
+  },
+  {
+    "item_id": "ITEM-TEST-UNIT-99",
+    "drawing_id": "DWG-1982-001",
+    "corrected_status": "POSITIVE",
+    "corrected_hazard_level": "LEVEL_1",
+    "corrected_material_name": "吹付け石綿",
+    "reviewer_notes": "Verified by certified inspector",
+    "timestamp": "2026-11-04T02:00:36.104733"
+  },
+  {
+    "item_id": "ITEM-TEST-UNIT-99",
+    "drawing_id": "DWG-1982-001",
+    "corrected_status": "POSITIVE",
+    "corrected_hazard_level": "LEVEL_1",
+    "corrected_material_name": "吹付け石綿",
+    "reviewer_notes": "Verified by certified inspector",
+    "timestamp": "2026-11-04T17:13:36.236234"
+  },
+  {
+    "item_id": "ITEM-TEST-UNIT-99",
+    "drawing_id": "DWG-1982-001",
+    "corrected_status": "POSITIVE",
+    "corrected_hazard_level": "LEVEL_1",
+    "corrected_material_name": "吹付け石綿",
+    "reviewer_notes": "Verified by certified inspector",
+    "timestamp": "2026-11-04T17:13:52.370621"
+  },
+  {
+    "item_id": "ITEM-TEST-UNIT-99",
+    "drawing_id": "DWG-1982-001",
+    "corrected_status": "POSITIVE",
+    "corrected_hazard_level": "LEVEL_1",
+    "corrected_material_name": "吹付け石綿",
+    "reviewer_notes": "Verified by certified inspector",
+    "timestamp": "2026-11-04T18:28:38.916932"
+  },
+  {
+    "item_id": "ITEM-TEST-UNIT-99",
+    "drawing_id": "DWG-1982-001",
+    "corrected_status": "POSITIVE",
+    "corrected_hazard_level": "LEVEL_1",
+    "corrected_material_name": "吹付け石綿",
+    "reviewer_notes": "Verified by certified inspector",
+    "timestamp": "2026-11-04T18:57:08.306577"
+  },
+  {
+    "item_id": "ITEM-TEST-UNIT-99",
+    "drawing_id": "DWG-1982-001",
+    "corrected_status": "POSITIVE",
+    "corrected_hazard_level": "LEVEL_1",
+    "corrected_material_name": "吹付け石綿",
+    "reviewer_notes": "Verified by certified inspector",
+    "timestamp": "2026-11-05T17:25:02.591207"
+  },
+  {
+    "item_id": "ITEM-TEST-UNIT-99",
+    "drawing_id": "DWG-1982-001",
+    "corrected_status": "POSITIVE",
+    "corrected_hazard_level": "LEVEL_1",
+    "corrected_material_name": "吹付け石綿",
+    "reviewer_notes": "Verified by certified inspector",
+    "timestamp": "2026-11-05T20:48:04.974543"
+  },
+  {
+    "item_id": "ITEM-TEST-UNIT-99",
+    "drawing_id": "DWG-1982-001",
+    "corrected_status": "POSITIVE",
+    "corrected_hazard_level": "LEVEL_1",
+    "corrected_material_name": "吹付け石綿",
+    "reviewer_notes": "Verified by certified inspector",
+    "timestamp": "2026-11-05T21:10:28.477620"
+  },
+  {
+    "item_id": "ITEM-TEST-UNIT-99",
+    "drawing_id": "DWG-1982-001",
+    "corrected_status": "POSITIVE",
+    "corrected_hazard_level": "LEVEL_1",
+    "corrected_material_name": "吹付け石綿",
+    "reviewer_notes": "Verified by certified inspector",
+    "timestamp": "2026-11-06T01:10:28.430468"
+  },
+  {
+    "item_id": "ITEM-TEST-UNIT-99",
+    "drawing_id": "DWG-1982-001",
+    "corrected_status": "POSITIVE",
+    "corrected_hazard_level": "LEVEL_1",
+    "corrected_material_name": "吹付け石綿",
+    "reviewer_notes": "Verified by certified inspector",
+    "timestamp": "2026-11-06T01:24:33.918898"
+  },
+  {
+    "item_id": "ITEM-TEST-UNIT-99",
+    "drawing_id": "DWG-1982-001",
+    "corrected_status": "POSITIVE",
+    "corrected_hazard_level": "LEVEL_1",
+    "corrected_material_name": "吹付け石綿",
+    "reviewer_notes": "Verified by certified inspector",
+    "timestamp": "2026-11-06T01:53:53.701146"
+  },
+  {
+    "item_id": "ITEM-820F0A1B",
+    "drawing_id": "UPLOAD-caca4a71",
+    "corrected_status": "POSITIVE",
+    "corrected_hazard_level": "LEVEL_1",
+    "corrected_material_name": "吹付け石綿",
+    "reviewer_notes": "",
+    "timestamp": "2026-11-06T02:06:23.094287"
+  }
+]

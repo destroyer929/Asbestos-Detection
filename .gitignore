@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.env
+.venv/
+env/
+venv/
+ENV/
+build/
+dist/
+*.egg-info/
+
+# Deep learning models cache
+.paddlex/
+official_models/
+
+# Uploads & Temp processing files
+data/uploads/
+data/output/large_sets/
+data/real_blueprints/
+*.jpg
+!testing/*.jpg
+!data/**/*.jpg
+test_*.pdf
+*_crop.jpg
+
+# Node / Next.js
+node_modules/
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/.vercel/
+frontend/*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

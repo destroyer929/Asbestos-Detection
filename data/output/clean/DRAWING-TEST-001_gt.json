@@ -1,0 +1,2254 @@
+{
+  "drawing_id": "DRAWING-TEST-001",
+  "image_path": "DRAWING-TEST-001.png",
+  "dxf_path": "DRAWING-TEST-001.dxf",
+  "dimensions": {
+    "width": 2400,
+    "height": 1600
+  },
+  "annotation_count": 70,
+  "asbestos_positive_count": 11,
+  "non_asbestos_count": 10,
+  "annotations": [
+    {
+      "text": "工事名称: アルフレッド浜松事業所 耐震改修設計",
+      "bbox": [
+        1782,
+        1364,
+        2232,
+        1384
+      ],
+      "polygon": [
+        [
+          1782,
+          1364
+        ],
+        [
+          2232,
+          1364
+        ],
+        [
+          2232,
+          1384
+        ],
+        [
+          1782,
+          1384
+        ]
+      ],
+      "angle": 0,
+      "region_type": "title_block",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "図面名称: 平面詳細図・特記仕上表",
+      "bbox": [
+        1782,
+        1407,
+        2102,
+        1427
+      ],
+      "polygon": [
+        [
+          1782,
+          1407
+        ],
+        [
+          2102,
+          1407
+        ],
+        [
+          2102,
+          1427
+        ],
+        [
+          1782,
+          1427
+        ]
+      ],
+      "angle": 0,
+      "region_type": "title_block",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "設計: Alfred R&D Architectural Labs",
+      "bbox": [
+        1782,
+        1457,
+        2062,
+        1473
+      ],
+      "polygon": [
+        [
+          1782,
+          1457
+        ],
+        [
+          2062,
+          1457
+        ],
+        [
+          2062,
+          1473
+        ],
+        [
+          1782,
+          1473
+        ]
+      ],
+      "angle": 0,
+      "region_type": "title_block",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "作成年月: 1982年 (昭和57年) 8月",
+      "bbox": [
+        1782,
+        1512,
+        2030,
+        1528
+      ],
+      "polygon": [
+        [
+          1782,
+          1512
+        ],
+        [
+          2030,
+          1512
+        ],
+        [
+          2030,
+          1528
+        ],
+        [
+          1782,
+          1528
+        ]
+      ],
+      "angle": 0,
+      "region_type": "title_block",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "図面番号: DRAWING-TEST-001",
+      "bbox": [
+        1972,
+        1457,
+        2180,
+        1473
+      ],
+      "polygon": [
+        [
+          1972,
+          1457
+        ],
+        [
+          2180,
+          1457
+        ],
+        [
+          2180,
+          1473
+        ],
+        [
+          1972,
+          1473
+        ]
+      ],
+      "angle": 0,
+      "region_type": "title_block",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "縮尺: 1/100 (A1) 1/200 (A3)",
+      "bbox": [
+        1972,
+        1512,
+        2188,
+        1528
+      ],
+      "polygon": [
+        [
+          1972,
+          1512
+        ],
+        [
+          2188,
+          1512
+        ],
+        [
+          2188,
+          1528
+        ],
+        [
+          1972,
+          1528
+        ]
+      ],
+      "angle": 0,
+      "region_type": "title_block",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "機械室",
+      "bbox": [
+        315,
+        415,
+        375,
+        435
+      ],
+      "polygon": [
+        [
+          315,
+          415
+        ],
+        [
+          375,
+          415
+        ],
+        [
+          375,
+          435
+        ],
+        [
+          315,
+          435
+        ]
+      ],
+      "angle": 0,
+      "region_type": "room_label",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "FL ±0",
+      "bbox": [
+        327,
+        447,
+        363,
+        459
+      ],
+      "polygon": [
+        [
+          327,
+          447
+        ],
+        [
+          363,
+          447
+        ],
+        [
+          363,
+          459
+        ],
+        [
+          327,
+          459
+        ]
+      ],
+      "angle": 0,
+      "region_type": "dimension",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "ボイラー室",
+      "bbox": [
+        745,
+        415,
+        845,
+        435
+      ],
+      "polygon": [
+        [
+          745,
+          415
+        ],
+        [
+          845,
+          415
+        ],
+        [
+          845,
+          435
+        ],
+        [
+          745,
+          435
+        ]
+      ],
+      "angle": 0,
+      "region_type": "room_label",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "FL ±0",
+      "bbox": [
+        777,
+        447,
+        813,
+        459
+      ],
+      "polygon": [
+        [
+          777,
+          447
+        ],
+        [
+          813,
+          447
+        ],
+        [
+          813,
+          459
+        ],
+        [
+          777,
+          459
+        ]
+      ],
+      "angle": 0,
+      "region_type": "dimension",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "倉庫 (1)",
+      "bbox": [
+        1205,
+        415,
+        1285,
+        435
+      ],
+      "polygon": [
+        [
+          1205,
+          415
+        ],
+        [
+          1285,
+          415
+        ],
+        [
+          1285,
+          435
+        ],
+        [
+          1205,
+          435
+        ]
+      ],
+      "angle": 0,
+      "region_type": "room_label",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "FL ±0",
+      "bbox": [
+        1227,
+        447,
+        1263,
+        459
+      ],
+      "polygon": [
+        [
+          1227,
+          447
+        ],
+        [
+          1263,
+          447
+        ],
+        [
+          1263,
+          459
+        ],
+        [
+          1227,
+          459
+        ]
+      ],
+      "angle": 0,
+      "region_type": "dimension",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "事務室 (A)",
+      "bbox": [
+        420,
+        990,
+        520,
+        1010
+      ],
+      "polygon": [
+        [
+          420,
+          990
+        ],
+        [
+          520,
+          990
+        ],
+        [
+          520,
+          1010
+        ],
+        [
+          420,
+          1010
+        ]
+      ],
+      "angle": 0,
+      "region_type": "room_label",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "FL ±0",
+      "bbox": [
+        452,
+        1022,
+        488,
+        1034
+      ],
+      "polygon": [
+        [
+          452,
+          1022
+        ],
+        [
+          488,
+          1022
+        ],
+        [
+          488,
+          1034
+        ],
+        [
+          452,
+          1034
+        ]
+      ],
+      "angle": 0,
+      "region_type": "dimension",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "給湯室",
+      "bbox": [
+        915,
+        990,
+        975,
+        1010
+      ],
+      "polygon": [
+        [
+          915,
+          990
+        ],
+        [
+          975,
+          990
+        ],
+        [
+          975,
+          1010
+        ],
+        [
+          915,
+          1010
+        ]
+      ],
+      "angle": 0,
+      "region_type": "room_label",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "FL ±0",
+      "bbox": [
+        927,
+        1022,
+        963,
+        1034
+      ],
+      "polygon": [
+        [
+          927,
+          1022
+        ],
+        [
+          963,
+          1022
+        ],
+        [
+          963,
+          1034
+        ],
+        [
+          927,
+          1034
+        ]
+      ],
+      "angle": 0,
+      "region_type": "dimension",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "廊下・ホール",
+      "bbox": [
+        1210,
+        990,
+        1330,
+        1010
+      ],
+      "polygon": [
+        [
+          1210,
+          990
+        ],
+        [
+          1330,
+          990
+        ],
+        [
+          1330,
+          1010
+        ],
+        [
+          1210,
+          1010
+        ]
+      ],
+      "angle": 0,
+      "region_type": "room_label",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "FL ±0",
+      "bbox": [
+        1252,
+        1022,
+        1288,
+        1034
+      ],
+      "polygon": [
+        [
+          1252,
+          1022
+        ],
+        [
+          1288,
+          1022
+        ],
+        [
+          1288,
+          1034
+        ],
+        [
+          1252,
+          1034
+        ]
+      ],
+      "angle": 0,
+      "region_type": "dimension",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "4,500",
+      "bbox": [
+        328,
+        92,
+        362,
+        105
+      ],
+      "polygon": [
+        [
+          328,
+          92
+        ],
+        [
+          362,
+          92
+        ],
+        [
+          362,
+          105
+        ],
+        [
+          328,
+          105
+        ]
+      ],
+      "angle": 0,
+      "region_type": "dimension",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "4,500",
+      "bbox": [
+        778,
+        92,
+        812,
+        105
+      ],
+      "polygon": [
+        [
+          778,
+          92
+        ],
+        [
+          812,
+          92
+        ],
+        [
+          812,
+          105
+        ],
+        [
+          778,
+          105
+        ]
+      ],
+      "angle": 0,
+      "region_type": "dimension",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "4,500",
+      "bbox": [
+        1228,
+        92,
+        1262,
+        105
+      ],
+      "polygon": [
+        [
+          1228,
+          92
+        ],
+        [
+          1262,
+          92
+        ],
+        [
+          1262,
+          105
+        ],
+        [
+          1228,
+          105
+        ]
+      ],
+      "angle": 0,
+      "region_type": "dimension",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "13,500",
+      "bbox": [
+        774,
+        65,
+        816,
+        78
+      ],
+      "polygon": [
+        [
+          774,
+          65
+        ],
+        [
+          816,
+          65
+        ],
+        [
+          816,
+          78
+        ],
+        [
+          774,
+          78
+        ]
+      ],
+      "angle": 0,
+      "region_type": "dimension",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "特記仕上表 (FINISH SCHEDULE)",
+      "bbox": [
+        1550,
+        68,
+        1830,
+        88
+      ],
+      "polygon": [
+        [
+          1550,
+          68
+        ],
+        [
+          1830,
+          68
+        ],
+        [
+          1830,
+          88
+        ],
+        [
+          1550,
+          88
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "室名",
+      "bbox": [
+        1548,
+        112,
+        1580,
+        128
+      ],
+      "polygon": [
+        [
+          1548,
+          112
+        ],
+        [
+          1580,
+          112
+        ],
+        [
+          1580,
+          128
+        ],
+        [
+          1548,
+          128
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "床 (FL)",
+      "bbox": [
+        1688,
+        112,
+        1744,
+        128
+      ],
+      "polygon": [
+        [
+          1688,
+          112
+        ],
+        [
+          1744,
+          112
+        ],
+        [
+          1744,
+          128
+        ],
+        [
+          1688,
+          128
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "巾木",
+      "bbox": [
+        1838,
+        112,
+        1870,
+        128
+      ],
+      "polygon": [
+        [
+          1838,
+          112
+        ],
+        [
+          1870,
+          112
+        ],
+        [
+          1870,
+          128
+        ],
+        [
+          1838,
+          128
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "壁 (WALL)",
+      "bbox": [
+        1958,
+        112,
+        2030,
+        128
+      ],
+      "polygon": [
+        [
+          1958,
+          112
+        ],
+        [
+          2030,
+          112
+        ],
+        [
+          2030,
+          128
+        ],
+        [
+          1958,
+          128
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "天井 (CEILING)",
+      "bbox": [
+        2118,
+        112,
+        2230,
+        128
+      ],
+      "polygon": [
+        [
+          2118,
+          112
+        ],
+        [
+          2230,
+          112
+        ],
+        [
+          2230,
+          128
+        ],
+        [
+          2118,
+          128
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "備考",
+      "bbox": [
+        2298,
+        112,
+        2330,
+        128
+      ],
+      "polygon": [
+        [
+          2298,
+          112
+        ],
+        [
+          2330,
+          112
+        ],
+        [
+          2330,
+          128
+        ],
+        [
+          2298,
+          128
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "機械室",
+      "bbox": [
+        1546,
+        153,
+        1591,
+        167
+      ],
+      "polygon": [
+        [
+          1546,
+          153
+        ],
+        [
+          1591,
+          153
+        ],
+        [
+          1591,
+          167
+        ],
+        [
+          1546,
+          167
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "モルタル金ゴテ",
+      "bbox": [
+        1686,
+        153,
+        1791,
+        167
+      ],
+      "polygon": [
+        [
+          1686,
+          153
+        ],
+        [
+          1791,
+          153
+        ],
+        [
+          1791,
+          167
+        ],
+        [
+          1686,
+          167
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NEGATIVE",
+      "hazard_level": "NON_ASBESTOS",
+      "matched_material_id": "MAT-SAFE-005"
+    },
+    {
+      "text": "モルタル H=100",
+      "bbox": [
+        1836,
+        153,
+        1944,
+        167
+      ],
+      "polygon": [
+        [
+          1836,
+          153
+        ],
+        [
+          1944,
+          153
+        ],
+        [
+          1944,
+          167
+        ],
+        [
+          1836,
+          167
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "けい酸カルシウム板第1種 t=8",
+      "bbox": [
+        1956,
+        153,
+        2161,
+        167
+      ],
+      "polygon": [
+        [
+          1956,
+          153
+        ],
+        [
+          2161,
+          153
+        ],
+        [
+          2161,
+          167
+        ],
+        [
+          1956,
+          167
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "POSITIVE",
+      "hazard_level": "LEVEL_3",
+      "matched_material_id": "MAT-L3-002"
+    },
+    {
+      "text": "吹付けロックウール t=25",
+      "bbox": [
+        2116,
+        153,
+        2291,
+        167
+      ],
+      "polygon": [
+        [
+          2116,
+          153
+        ],
+        [
+          2291,
+          153
+        ],
+        [
+          2291,
+          167
+        ],
+        [
+          2116,
+          167
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "POSITIVE",
+      "hazard_level": "LEVEL_1",
+      "matched_material_id": "MAT-L1-002"
+    },
+    {
+      "text": "耐火被覆",
+      "bbox": [
+        2296,
+        153,
+        2356,
+        167
+      ],
+      "polygon": [
+        [
+          2296,
+          153
+        ],
+        [
+          2356,
+          153
+        ],
+        [
+          2356,
+          167
+        ],
+        [
+          2296,
+          167
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "ボイラー室",
+      "bbox": [
+        1546,
+        195,
+        1621,
+        209
+      ],
+      "polygon": [
+        [
+          1546,
+          195
+        ],
+        [
+          1621,
+          195
+        ],
+        [
+          1621,
+          209
+        ],
+        [
+          1546,
+          209
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "コンクリート直押え",
+      "bbox": [
+        1686,
+        195,
+        1821,
+        209
+      ],
+      "polygon": [
+        [
+          1686,
+          195
+        ],
+        [
+          1821,
+          195
+        ],
+        [
+          1821,
+          209
+        ],
+        [
+          1686,
+          209
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "木製巾木 H=60",
+      "bbox": [
+        1836,
+        195,
+        1936,
+        209
+      ],
+      "polygon": [
+        [
+          1836,
+          195
+        ],
+        [
+          1936,
+          195
+        ],
+        [
+          1936,
+          209
+        ],
+        [
+          1836,
+          209
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "石膏ボード t=12.5",
+      "bbox": [
+        1956,
+        195,
+        2087,
+        209
+      ],
+      "polygon": [
+        [
+          1956,
+          195
+        ],
+        [
+          2087,
+          195
+        ],
+        [
+          2087,
+          209
+        ],
+        [
+          1956,
+          209
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NEGATIVE",
+      "hazard_level": "NON_ASBESTOS",
+      "matched_material_id": "MAT-SAFE-002"
+    },
+    {
+      "text": "石綿保温材 (配管部)",
+      "bbox": [
+        2116,
+        195,
+        2260,
+        209
+      ],
+      "polygon": [
+        [
+          2116,
+          195
+        ],
+        [
+          2260,
+          195
+        ],
+        [
+          2260,
+          209
+        ],
+        [
+          2116,
+          209
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "POSITIVE",
+      "hazard_level": "LEVEL_2",
+      "matched_material_id": "MAT-L2-001"
+    },
+    {
+      "text": "保温要",
+      "bbox": [
+        2296,
+        195,
+        2341,
+        209
+      ],
+      "polygon": [
+        [
+          2296,
+          195
+        ],
+        [
+          2341,
+          195
+        ],
+        [
+          2341,
+          209
+        ],
+        [
+          2296,
+          209
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "倉庫 (1)",
+      "bbox": [
+        1546,
+        237,
+        1608,
+        251
+      ],
+      "polygon": [
+        [
+          1546,
+          237
+        ],
+        [
+          1608,
+          237
+        ],
+        [
+          1608,
+          251
+        ],
+        [
+          1546,
+          251
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "防塵塗料仕上げ",
+      "bbox": [
+        1686,
+        237,
+        1791,
+        251
+      ],
+      "polygon": [
+        [
+          1686,
+          237
+        ],
+        [
+          1791,
+          237
+        ],
+        [
+          1791,
+          251
+        ],
+        [
+          1686,
+          251
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "なし",
+      "bbox": [
+        1836,
+        237,
+        1866,
+        251
+      ],
+      "polygon": [
+        [
+          1836,
+          237
+        ],
+        [
+          1866,
+          237
+        ],
+        [
+          1866,
+          251
+        ],
+        [
+          1836,
+          251
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "スレート波板 t=6.3",
+      "bbox": [
+        1956,
+        237,
+        2094,
+        251
+      ],
+      "polygon": [
+        [
+          1956,
+          237
+        ],
+        [
+          2094,
+          237
+        ],
+        [
+          2094,
+          251
+        ],
+        [
+          1956,
+          251
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "POSITIVE",
+      "hazard_level": "LEVEL_3",
+      "matched_material_id": "MAT-L3-001"
+    },
+    {
+      "text": "グラスウール保温材 t=50",
+      "bbox": [
+        2116,
+        237,
+        2291,
+        251
+      ],
+      "polygon": [
+        [
+          2116,
+          237
+        ],
+        [
+          2291,
+          237
+        ],
+        [
+          2291,
+          251
+        ],
+        [
+          2116,
+          251
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NEGATIVE",
+      "hazard_level": "NON_ASBESTOS",
+      "matched_material_id": "MAT-SAFE-001"
+    },
+    {
+      "text": "外壁側",
+      "bbox": [
+        2296,
+        237,
+        2341,
+        251
+      ],
+      "polygon": [
+        [
+          2296,
+          237
+        ],
+        [
+          2341,
+          237
+        ],
+        [
+          2341,
+          251
+        ],
+        [
+          2296,
+          251
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "事務室 (A)",
+      "bbox": [
+        1546,
+        279,
+        1623,
+        293
+      ],
+      "polygon": [
+        [
+          1546,
+          279
+        ],
+        [
+          1623,
+          279
+        ],
+        [
+          1623,
+          293
+        ],
+        [
+          1546,
+          293
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "ビニル床タイル 300x300",
+      "bbox": [
+        1686,
+        279,
+        1855,
+        293
+      ],
+      "polygon": [
+        [
+          1686,
+          279
+        ],
+        [
+          1855,
+          279
+        ],
+        [
+          1855,
+          293
+        ],
+        [
+          1686,
+          293
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "POSITIVE",
+      "hazard_level": "LEVEL_3",
+      "matched_material_id": "MAT-L3-003"
+    },
+    {
+      "text": "ビニル巾木 H=60",
+      "bbox": [
+        1836,
+        279,
+        1951,
+        293
+      ],
+      "polygon": [
+        [
+          1836,
+          279
+        ],
+        [
+          1951,
+          279
+        ],
+        [
+          1951,
+          293
+        ],
+        [
+          1836,
+          293
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "プラスターボード t=9.5",
+      "bbox": [
+        1956,
+        279,
+        2124,
+        293
+      ],
+      "polygon": [
+        [
+          1956,
+          279
+        ],
+        [
+          2124,
+          279
+        ],
+        [
+          2124,
+          293
+        ],
+        [
+          1956,
+          293
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NEGATIVE",
+      "hazard_level": "NON_ASBESTOS",
+      "matched_material_id": "MAT-SAFE-002"
+    },
+    {
+      "text": "岩綿吸音板 t=12",
+      "bbox": [
+        2116,
+        279,
+        2231,
+        293
+      ],
+      "polygon": [
+        [
+          2116,
+          279
+        ],
+        [
+          2231,
+          279
+        ],
+        [
+          2231,
+          293
+        ],
+        [
+          2116,
+          293
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "POSITIVE",
+      "hazard_level": "LEVEL_3",
+      "matched_material_id": "MAT-L3-005"
+    },
+    {
+      "text": "一般部",
+      "bbox": [
+        2296,
+        279,
+        2341,
+        293
+      ],
+      "polygon": [
+        [
+          2296,
+          279
+        ],
+        [
+          2341,
+          279
+        ],
+        [
+          2341,
+          293
+        ],
+        [
+          2296,
+          293
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "給湯室",
+      "bbox": [
+        1546,
+        321,
+        1591,
+        335
+      ],
+      "polygon": [
+        [
+          1546,
+          321
+        ],
+        [
+          1591,
+          321
+        ],
+        [
+          1591,
+          335
+        ],
+        [
+          1546,
+          335
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "磁器質タイル 150角",
+      "bbox": [
+        1686,
+        321,
+        1823,
+        335
+      ],
+      "polygon": [
+        [
+          1686,
+          321
+        ],
+        [
+          1823,
+          321
+        ],
+        [
+          1823,
+          335
+        ],
+        [
+          1686,
+          335
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NEGATIVE",
+      "hazard_level": "NON_ASBESTOS",
+      "matched_material_id": "MAT-SAFE-005"
+    },
+    {
+      "text": "タイル巾木",
+      "bbox": [
+        1836,
+        321,
+        1911,
+        335
+      ],
+      "polygon": [
+        [
+          1836,
+          321
+        ],
+        [
+          1911,
+          321
+        ],
+        [
+          1911,
+          335
+        ],
+        [
+          1836,
+          335
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "けい酸カルシウム板第2種 t=6",
+      "bbox": [
+        1956,
+        321,
+        2161,
+        335
+      ],
+      "polygon": [
+        [
+          1956,
+          321
+        ],
+        [
+          2161,
+          321
+        ],
+        [
+          2161,
+          335
+        ],
+        [
+          1956,
+          335
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NEGATIVE",
+      "hazard_level": "NON_ASBESTOS",
+      "matched_material_id": "MAT-SAFE-003"
+    },
+    {
+      "text": "石膏ボード t=9.5 VP",
+      "bbox": [
+        2116,
+        321,
+        2263,
+        335
+      ],
+      "polygon": [
+        [
+          2116,
+          321
+        ],
+        [
+          2263,
+          321
+        ],
+        [
+          2263,
+          335
+        ],
+        [
+          2116,
+          335
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NEGATIVE",
+      "hazard_level": "NON_ASBESTOS",
+      "matched_material_id": "MAT-SAFE-002"
+    },
+    {
+      "text": "耐水",
+      "bbox": [
+        2296,
+        321,
+        2326,
+        335
+      ],
+      "polygon": [
+        [
+          2296,
+          321
+        ],
+        [
+          2326,
+          321
+        ],
+        [
+          2326,
+          335
+        ],
+        [
+          2296,
+          335
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "廊下・ホール",
+      "bbox": [
+        1546,
+        363,
+        1636,
+        377
+      ],
+      "polygon": [
+        [
+          1546,
+          363
+        ],
+        [
+          1636,
+          363
+        ],
+        [
+          1636,
+          377
+        ],
+        [
+          1546,
+          377
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "Pタイル t=2.0",
+      "bbox": [
+        1686,
+        363,
+        1787,
+        377
+      ],
+      "polygon": [
+        [
+          1686,
+          363
+        ],
+        [
+          1787,
+          363
+        ],
+        [
+          1787,
+          377
+        ],
+        [
+          1686,
+          377
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "POSITIVE",
+      "hazard_level": "LEVEL_3",
+      "matched_material_id": "MAT-L3-003"
+    },
+    {
+      "text": "木製巾木 H=60",
+      "bbox": [
+        1836,
+        363,
+        1936,
+        377
+      ],
+      "polygon": [
+        [
+          1836,
+          363
+        ],
+        [
+          1936,
+          363
+        ],
+        [
+          1936,
+          377
+        ],
+        [
+          1836,
+          377
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "せっこうボード t=12.5",
+      "bbox": [
+        1956,
+        363,
+        2117,
+        377
+      ],
+      "polygon": [
+        [
+          1956,
+          363
+        ],
+        [
+          2117,
+          363
+        ],
+        [
+          2117,
+          377
+        ],
+        [
+          1956,
+          377
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NEGATIVE",
+      "hazard_level": "NON_ASBESTOS",
+      "matched_material_id": "MAT-SAFE-002"
+    },
+    {
+      "text": "ロックウール吸音板 t=15",
+      "bbox": [
+        2116,
+        363,
+        2291,
+        377
+      ],
+      "polygon": [
+        [
+          2116,
+          363
+        ],
+        [
+          2291,
+          363
+        ],
+        [
+          2291,
+          377
+        ],
+        [
+          2116,
+          377
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "POSITIVE",
+      "hazard_level": "LEVEL_3",
+      "matched_material_id": "MAT-L3-005"
+    },
+    {
+      "text": "防音仕様",
+      "bbox": [
+        2296,
+        363,
+        2356,
+        377
+      ],
+      "polygon": [
+        [
+          2296,
+          363
+        ],
+        [
+          2356,
+          363
+        ],
+        [
+          2356,
+          377
+        ],
+        [
+          2296,
+          377
+        ]
+      ],
+      "angle": 0,
+      "region_type": "table_cell",
+      "asbestos_status": "NONE",
+      "hazard_level": "NONE",
+      "matched_material_id": null
+    },
+    {
+      "text": "鉄骨梁: 吹付けロックウール t=25 (耐火被覆)",
+      "bbox": [
+        60,
+        274,
+        380,
+        288
+      ],
+      "polygon": [
+        [
+          60,
+          274
+        ],
+        [
+          380,
+          274
+        ],
+        [
+          380,
+          288
+        ],
+        [
+          60,
+          288
+        ]
+      ],
+      "angle": 0,
+      "region_type": "material_callout",
+      "asbestos_status": "POSITIVE",
+      "hazard_level": "LEVEL_1",
+      "matched_material_id": "MAT-L1-002"
+    },
+    {
+      "text": "蒸気配管: 石綿保温材 100A",
+      "bbox": [
+        490,
+        304,
+        681,
+        318
+      ],
+      "polygon": [
+        [
+          490,
+          304
+        ],
+        [
+          681,
+          304
+        ],
+        [
+          681,
+          318
+        ],
+        [
+          490,
+          318
+        ]
+      ],
+      "angle": 0,
+      "region_type": "material_callout",
+      "asbestos_status": "POSITIVE",
+      "hazard_level": "LEVEL_2",
+      "matched_material_id": "MAT-L2-001"
+    },
+    {
+      "text": "外壁: スレート波板 t=6.3",
+      "bbox": [
+        1400,
+        410,
+        1424,
+        604
+      ],
+      "polygon": [
+        [
+          1400,
+          410
+        ],
+        [
+          1424,
+          410
+        ],
+        [
+          1424,
+          604
+        ],
+        [
+          1400,
+          604
+        ]
+      ],
+      "angle": 90,
+      "region_type": "material_callout",
+      "asbestos_status": "POSITIVE",
+      "hazard_level": "LEVEL_3",
+      "matched_material_id": "MAT-L3-001"
+    },
+    {
+      "text": "間仕切壁: グラスウール保温材 t=50 充填",
+      "bbox": [
+        680,
+        914,
+        969,
+        928
+      ],
+      "polygon": [
+        [
+          680,
+          914
+        ],
+        [
+          969,
+          914
+        ],
+        [
+          969,
+          928
+        ],
+        [
+          680,
+          928
+        ]
+      ],
+      "angle": 0,
+      "region_type": "material_callout",
+      "asbestos_status": "NEGATIVE",
+      "hazard_level": "NON_ASBESTOS",
+      "matched_material_id": "MAT-SAFE-001"
+    },
+    {
+      "text": "壁: 石膏ボード t=12.5 EP塗装",
+      "bbox": [
+        120,
+        944,
+        336,
+        958
+      ],
+      "polygon": [
+        [
+          120,
+          944
+        ],
+        [
+          336,
+          944
+        ],
+        [
+          336,
+          958
+        ],
+        [
+          120,
+          958
+        ]
+      ],
+      "angle": 0,
+      "region_type": "material_callout",
+      "asbestos_status": "NEGATIVE",
+      "hazard_level": "NON_ASBESTOS",
+      "matched_material_id": "MAT-SAFE-002"
+    }
+  ]
+}

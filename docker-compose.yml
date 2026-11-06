@@ -1,0 +1,37 @@
+services:
+  drawingscan-api:
+    build: .
+    container_name: drawingscan-api
+    command: uvicorn api.server:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+
+  drawingscan-web:
+    build: ./frontend
+    container_name: drawingscan-web
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    depends_on:
+      - drawingscan-api
+    restart: unless-stopped
+
+  drawingscan-streamlit:
+    build: .
+    container_name: drawingscan-streamlit
+    command: streamlit run ui/app.py --server.port 8501 --server.address 0.0.0.0
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - drawingscan-api
+    restart: unless-stopped
