@@ -24,8 +24,9 @@ import {
   analyzeBenchmarkSample,
   submitHumanOverride,
   fetchDrawingPage,
+  fetchJobStatus,
 } from "@/lib/api";
-import { Loader2, AlertCircle } from "lucide-react";
+import { Loader2, AlertCircle, Layers } from "lucide-react";
 
 export default function HomePage() {
   // Backend status & samples
@@ -45,6 +46,13 @@ export default function HomePage() {
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [jobStatus, setJobStatus] = useState<{
+    status: string;
+    completed_count: number;
+    total_pages: number;
+    progress_percent: number;
+    current_status: string;
+  } | null>(null);
 
   // Modals
   const [isUploadOpen, setIsUploadOpen] = useState<boolean>(false);
@@ -102,6 +110,17 @@ export default function HomePage() {
     setAnalysis(data);
     setSelectedSampleId(data.drawing_id);
     setCurrentPage(data.current_page || 1);
+    if (data.status === "processing" && (data.page_count || 1) > 1) {
+      setJobStatus({
+        status: "processing",
+        completed_count: 1,
+        total_pages: data.page_count || 1,
+        progress_percent: Math.round((1 / (data.page_count || 1)) * 100),
+        current_status: `Page 1 ready. Analyzing remaining ${(data.page_count || 1) - 1} pages in background...`,
+      });
+    } else {
+      setJobStatus(null);
+    }
     if (data.diagnoses && data.diagnoses.length > 0) {
       const priorityItem =
         data.diagnoses.find((d) => d.status === "POSITIVE") ||
@@ -113,6 +132,24 @@ export default function HomePage() {
     }
   };
 
+  // Poll background job status for multi-page blueprints
+  useEffect(() => {
+    if (!analysis || analysis.status !== "processing" || (analysis.page_count || 1) <= 1) {
+      return;
+    }
+    const interval = setInterval(async () => {
+      const status = await fetchJobStatus(analysis.drawing_id);
+      if (status) {
+        setJobStatus(status);
+        if (status.status === "completed") {
+          setAnalysis((prev) => (prev ? { ...prev, status: "completed" } : prev));
+          clearInterval(interval);
+        }
+      }
+    }, 2500);
+    return () => clearInterval(interval);
+  }, [analysis?.drawing_id, analysis?.status, analysis?.page_count]);
+
   // Change active page in multi-page document
   const handlePageChange = async (newPage: number) => {
     if (!analysis || newPage === currentPage) return;
@@ -120,19 +157,36 @@ export default function HomePage() {
     try {
       const pageData = await fetchDrawingPage(analysis.drawing_id, newPage);
       setCurrentPage(newPage);
+
+      // Merge new page diagnoses into all diagnoses
+      let updatedDiagnoses = analysis.diagnoses;
+      if (pageData.diagnoses && pageData.diagnoses.length > 0) {
+        const otherPages = analysis.diagnoses.filter((d) => (d.page_number || 1) !== newPage);
+        updatedDiagnoses = [...otherPages, ...pageData.diagnoses];
+      }
+
       setAnalysis({
         ...analysis,
         current_page: newPage,
-        image_base64: pageData.image_base64,
-        image_width: pageData.image_width,
-        image_height: pageData.image_height,
-        table_bbox: pageData.table_bbox,
+        image_base64: pageData.image_base64 || analysis.image_base64,
+        image_width: pageData.image_width || analysis.image_width,
+        image_height: pageData.image_height || analysis.image_height,
+        table_bbox: pageData.table_bbox !== undefined ? pageData.table_bbox : analysis.table_bbox,
+        finish_schedule: (pageData.finish_schedule && pageData.finish_schedule.length > 0)
+          ? pageData.finish_schedule
+          : analysis.finish_schedule,
+        room_assessments: pageData.room_assessments || analysis.room_assessments,
+        diagnoses: updatedDiagnoses,
       });
 
-      // Select first item on the newly viewed page if available
-      const pageItems = analysis.diagnoses.filter((d) => (d.page_number || 1) === newPage);
+      // Select first item on the newly viewed page
+      const pageItems = updatedDiagnoses.filter((d) => (d.page_number || 1) === newPage);
       if (pageItems.length > 0) {
-        setSelectedItem(pageItems[0]);
+        const priorityItem =
+          pageItems.find((d) => d.status === "POSITIVE") ||
+          pageItems.find((d) => d.status === "UNCERTAIN") ||
+          pageItems[0];
+        setSelectedItem(priorityItem);
       }
     } catch (err: any) {
       console.error("Failed to load page:", err);
@@ -222,6 +276,28 @@ export default function HomePage() {
 
         {analysis && (
           <>
+            {/* Background Multi-Page Processing Banner */}
+            {jobStatus && jobStatus.status === "processing" && (
+              <div className="mb-4 p-3.5 rounded-xl bg-blue-950/70 border border-blue-800 text-blue-200 text-xs flex items-center justify-between shadow-lg animate-fadeIn">
+                <div className="flex items-center gap-3">
+                  <Loader2 className="w-4 h-4 animate-spin text-blue-400 flex-shrink-0" />
+                  <div>
+                    <span className="font-semibold text-white">Hierarchical Pipeline Active:</span>{" "}
+                    <span>Page 1 is ready for inspection. Analyzing remaining pages in the background...</span>
+                    <span className="ml-2 font-mono text-blue-300 font-bold">
+                      [{jobStatus.completed_count}/{jobStatus.total_pages} pages • {jobStatus.progress_percent}%]
+                    </span>
+                  </div>
+                </div>
+                <div className="w-32 bg-slate-800 rounded-full h-2 overflow-hidden border border-slate-700 hidden sm:block">
+                  <div
+                    className="bg-blue-500 h-full transition-all duration-300 rounded-full"
+                    style={{ width: `${jobStatus.progress_percent}%` }}
+                  />
+                </div>
+              </div>
+            )}
+
             {/* KPI Dashboard */}
             <KPIDashboard
               summary={analysis.summary}

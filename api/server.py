@@ -20,7 +20,7 @@ from pathlib import Path
 from typing import List, Dict, Any, Optional
 import numpy as np
 import cv2
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
 from pydantic import BaseModel
@@ -28,6 +28,7 @@ from pydantic import BaseModel
 from data.database.db_manager import MaterialsDatabase
 from core.ingest.router import DocumentIngestionRouter, IngestionResult
 from core.preprocess.pipeline import PreprocessingPipeline
+from core.preprocess.geometry import GeometryNormalizer
 from models.ocr.engine import BilingualOCREngine
 from models.layout.table_parser import FinishScheduleTableParser
 from models.layout.room_assessor import SpatialRoomAssessor, RoomAssessment
@@ -60,6 +61,120 @@ room_assessor = SpatialRoomAssessor()
 UPLOAD_DIR = Path("data/uploads")
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 CORRECTIONS_FILE = Path("data/active_learning_corrections.json")
+
+JOB_REGISTRY: Dict[str, Dict[str, Any]] = {}
+
+
+def process_pages_background(drawing_id: str, file_path_str: str, total_pages: int, is_vector: bool = False):
+    """
+    Asynchronous multi-page worker:
+    Hierarchically segments & analyzes remaining pages (2..N) in the background.
+    Caches JPEG and JSON for each page so navigation is instantaneous.
+    """
+    file_path = Path(file_path_str)
+    try:
+        import fitz
+        doc = fitz.open(file_path_str)
+        normalizer = GeometryNormalizer()
+
+        for page_idx in range(1, total_pages):
+            page_num = page_idx + 1
+            if drawing_id in JOB_REGISTRY:
+                JOB_REGISTRY[drawing_id]["current_status"] = f"Analyzing page {page_num} of {total_pages}..."
+
+            page = doc[page_idx]
+            rect = page.rect
+            zoom = 1.0 if rect.width >= 1600 else min(2400.0 / max(rect.width, 1.0), 300.0 / 72.0)
+            matrix = fitz.Matrix(zoom, zoom)
+            pix = page.get_pixmap(matrix=matrix)
+            img = np.frombuffer(pix.samples, dtype=np.uint8).reshape((pix.h, pix.w, pix.n))
+            if pix.n == 4:
+                img = cv2.cvtColor(img, cv2.COLOR_RGBA2BGR)
+            elif pix.n == 3:
+                img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+
+            norm_img, geom_meta = normalizer.process(img)
+            disp_img = geom_meta.get("display_image", img)
+            p_h, p_w = disp_img.shape[:2]
+
+            # Cache authentic page image to disk
+            page_cache_path = UPLOAD_DIR / f"{drawing_id}_page_{page_num}.jpg"
+            cv2.imwrite(str(page_cache_path), disp_img, [int(cv2.IMWRITE_JPEG_QUALITY), 92])
+
+            # Detect finish schedule table
+            t_box = table_parser.detect_table_boundary(disp_img)
+
+            # Hierarchical ROI OCR (Fast & Targeted)
+            ocr_items = ocr_engine.recognize_hierarchical(norm_img, table_bbox=t_box)
+            raw_items = [
+                {"text": it.text, "bbox": it.bbox, "confidence": it.confidence}
+                for it in ocr_items
+            ]
+
+            # Parse schedule
+            parsed_schedule = []
+            if t_box:
+                records = table_parser.parse_schedule_cells(t_box, raw_items)
+                parsed_schedule = [
+                    {
+                        "room": r.room_name,
+                        "floor": r.floor_finish,
+                        "wall": r.wall_finish,
+                        "ceiling": r.ceiling_finish,
+                        "remarks": r.remarks
+                    }
+                    for r in records
+                ]
+
+            diagnoses = classifier.diagnose_drawing(raw_items, table_bbox=t_box, page_number=page_num)
+
+            # Room assessments
+            room_evals = room_assessor.assess_rooms(
+                diagnoses=diagnoses,
+                finish_schedule=parsed_schedule,
+                image_width=p_w,
+                image_height=p_h,
+                table_bbox=t_box
+            )
+
+            # Save page JSON cache
+            page_data = {
+                "drawing_id": drawing_id,
+                "page_number": page_num,
+                "image_width": p_w,
+                "image_height": p_h,
+                "table_bbox": t_box,
+                "diagnoses": [d.to_dict() for d in diagnoses],
+                "finish_schedule": parsed_schedule,
+                "room_assessments": [r.to_dict() for r in room_evals]
+            }
+            page_json_path = UPLOAD_DIR / f"{drawing_id}_page_{page_num}.json"
+            with open(page_json_path, "w", encoding="utf-8") as f:
+                json.dump(page_data, f, ensure_ascii=False)
+
+            if drawing_id in JOB_REGISTRY:
+                JOB_REGISTRY[drawing_id]["completed_pages"].append(page_num)
+                JOB_REGISTRY[drawing_id]["all_diagnoses"].extend(diagnoses)
+                JOB_REGISTRY[drawing_id]["progress_percent"] = int(
+                    (len(JOB_REGISTRY[drawing_id]["completed_pages"]) / total_pages) * 100
+                )
+
+        doc.close()
+        if drawing_id in JOB_REGISTRY:
+            JOB_REGISTRY[drawing_id]["status"] = "completed"
+            JOB_REGISTRY[drawing_id]["current_status"] = f"Complete: all {total_pages} pages analyzed."
+
+    except Exception as e:
+        print(f"Background worker error for {drawing_id}: {e}")
+        if drawing_id in JOB_REGISTRY:
+            JOB_REGISTRY[drawing_id]["status"] = "error"
+            JOB_REGISTRY[drawing_id]["error"] = str(e)
+    finally:
+        if file_path.exists():
+            try:
+                file_path.unlink()
+            except Exception:
+                pass
 
 
 def encode_image_to_base64(img_np: np.ndarray, quality: int = 85) -> str:
@@ -502,11 +617,18 @@ def analyze_sample(sample_id: str):
 
 
 @app.post("/api/v1/analyze")
-async def analyze_drawing(file: UploadFile = File(...)):
+async def analyze_drawing(file: UploadFile = File(...), background_tasks: BackgroundTasks = None):
     """
-    Full end-to-end blueprint analysis:
-    Ingestion -> Deskew/Tiling -> OCR/Table Parsing -> 4-Tier MLIT Matching.
-    Supports multi-page documents (e.g. 30-page packages) with per-page caching & pagination.
+    Hierarchical Multi-Model Blueprint Analysis Engine:
+    1. Fast-track Page 1 (< 2.5s response):
+       - Renders & deskews Page 1
+       - Slices into targeted Finish Schedule & Callout ROIs (< 150ms)
+       - Hierarchical deep GPU OCR on ROIs
+       - 4-Tier MLIT asbestos diagnostic classification
+       - Returns Page 1 immediately for instant UI display
+    2. Background multi-page worker:
+       - Queues Pages 2..N to execute asynchronously in the background
+       - Caches per-page high-res JPG and JSON diagnostics for instantaneous pagination
     """
     file_id = f"UPLOAD-{uuid.uuid4().hex[:8]}"
     ext = Path(file.filename).suffix.lower()
@@ -516,150 +638,181 @@ async def analyze_drawing(file: UploadFile = File(...)):
         with open(temp_path, "wb") as f:
             shutil.copyfileobj(file.file, f)
 
-        # 1. Ingestion & Preprocessing
-        prep_res = pipeline.process(temp_path)
-        is_vector = prep_res["is_vector"]
+        # 1. Inspect format & page count
+        is_pdf = ext == ".pdf"
+        total_pages = 1
+        is_vector = False
+        vector_entities_page1 = []
 
-        all_diagnoses: List[DrawingItemDiagnosis] = []
+        if is_pdf:
+            import fitz
+            doc = fitz.open(str(temp_path))
+            total_pages = len(doc)
+            # Check vector text density on page 1
+            p1 = doc[0]
+            blocks = p1.get_text("blocks")
+            p1_chars = sum(len(b[4].strip()) for b in blocks if len(b) >= 7 and b[6] == 0 and b[4].strip())
+            is_vector = p1_chars >= 50
+            if is_vector:
+                # Validate readable glyphs
+                qmarks = sum(b[4].count("?") for b in blocks if len(b) >= 7 and b[6] == 0)
+                if qmarks > 15:
+                    is_vector = False
+
+            # Render Page 1
+            rect = p1.rect
+            zoom = 1.0 if rect.width >= 1600 else min(2400.0 / max(rect.width, 1.0), 300.0 / 72.0)
+            matrix = fitz.Matrix(zoom, zoom)
+            pix = p1.get_pixmap(matrix=matrix)
+            p1_img = np.frombuffer(pix.samples, dtype=np.uint8).reshape((pix.h, pix.w, pix.n))
+            if pix.n == 4:
+                p1_img = cv2.cvtColor(p1_img, cv2.COLOR_RGBA2BGR)
+            elif pix.n == 3:
+                p1_img = cv2.cvtColor(p1_img, cv2.COLOR_RGB2BGR)
+
+            if is_vector:
+                scale_x = float(pix.w) / float(rect.width) if rect.width > 0 else 1.0
+                scale_y = float(pix.h) / float(rect.height) if rect.height > 0 else 1.0
+                for b in blocks:
+                    if len(b) >= 7 and b[6] == 0 and b[4].strip():
+                        vector_entities_page1.append({
+                            "text": b[4].strip(),
+                            "bbox": [float(b[0]) * scale_x, float(b[1]) * scale_y, float(b[2]) * scale_x, float(b[3]) * scale_y],
+                            "confidence": 1.0,
+                            "page_num": 1
+                        })
+            doc.close()
+        else:
+            p1_img = cv2.imread(str(temp_path))
+            if p1_img is None:
+                raise HTTPException(status_code=400, detail="Could not decode uploaded image")
+
+        # 2. Geometric Deskew & Illumination Normalization for Page 1
+        normalizer = GeometryNormalizer()
+        norm_img, geom_meta = normalizer.process(p1_img)
+        disp_img = geom_meta.get("display_image", p1_img)
+        p_h, p_w = disp_img.shape[:2]
+
+        # Cache Page 1 original image
+        p1_img_path = UPLOAD_DIR / f"{file_id}_page_1.jpg"
+        cv2.imwrite(str(p1_img_path), disp_img, [int(cv2.IMWRITE_JPEG_QUALITY), 95])
+
+        # 3. Detect Finish Schedule Table on Page 1
+        t_box = table_parser.detect_table_boundary(disp_img)
+
+        # 4. Hierarchical OCR or Vector extraction on Page 1
+        if is_vector and vector_entities_page1:
+            raw_items = vector_entities_page1
+        else:
+            ocr_items = ocr_engine.recognize_hierarchical(norm_img, table_bbox=t_box)
+            raw_items = [
+                {"text": it.text, "bbox": it.bbox, "confidence": it.confidence}
+                for it in ocr_items
+            ]
+
+        # 5. Parse Schedule Cells for Page 1
         parsed_schedule_records = []
-        preview_img = None
-        img_w = 2000
-        img_h = 1400
-        table_box = None
-        pages_meta = []
+        if t_box:
+            records = table_parser.parse_schedule_cells(t_box, raw_items)
+            parsed_schedule_records = [
+                {
+                    "room": r.room_name,
+                    "floor": r.floor_finish,
+                    "wall": r.wall_finish,
+                    "ceiling": r.ceiling_finish,
+                    "remarks": r.remarks
+                }
+                for r in records
+            ]
 
-        # Check for matched GT annotations if benchmark / sample
-        stem = Path(file.filename).stem
-        matched_gt_items = None
-        for cand in [
-            Path("data/output/degraded") / f"{stem}_gt.json",
-            Path("data/output/degraded") / f"{stem}_scanned_gt.json",
-            Path("data/output/degraded") / f"{stem.replace('_scanned', '')}_scanned_gt.json",
-            Path("data/output/clean") / f"{stem.replace('_scanned', '').replace('_vector', '')}_gt.json",
-        ]:
-            if cand.exists():
+        # 6. MLIT Asbestos Diagnostic Classifier for Page 1
+        page1_diagnoses = classifier.diagnose_drawing(raw_items, table_bbox=t_box, page_number=1)
+
+        # 7. Spatial Room Assessments for Page 1
+        room_evals = room_assessor.assess_rooms(
+            diagnoses=page1_diagnoses,
+            finish_schedule=parsed_schedule_records,
+            image_width=p_w,
+            image_height=p_h,
+            table_bbox=t_box
+        )
+
+        # Cache Page 1 JSON
+        p1_json_path = UPLOAD_DIR / f"{file_id}_page_1.json"
+        p1_data = {
+            "drawing_id": file_id,
+            "page_number": 1,
+            "image_width": p_w,
+            "image_height": p_h,
+            "table_bbox": t_box,
+            "diagnoses": [d.to_dict() for d in page1_diagnoses],
+            "finish_schedule": parsed_schedule_records,
+            "room_assessments": [r.to_dict() for r in room_evals]
+        }
+        with open(p1_json_path, "w", encoding="utf-8") as f:
+            json.dump(p1_data, f, ensure_ascii=False)
+
+        # 8. Setup Metadata & Multi-Page Background Task
+        pages_meta = [{
+            "page_number": p + 1,
+            "width": p_w,
+            "height": p_h,
+            "table_bbox": t_box if p == 0 else None
+        } for p in range(total_pages)]
+
+        img_b64 = encode_image_to_base64(disp_img)
+
+        # Register Job Status
+        JOB_REGISTRY[file_id] = {
+            "drawing_id": file_id,
+            "status": "processing" if total_pages > 1 else "completed",
+            "total_pages": total_pages,
+            "completed_pages": [1],
+            "all_diagnoses": list(page1_diagnoses),
+            "progress_percent": int((1 / total_pages) * 100),
+            "current_status": f"Page 1 ready. Processing remaining {total_pages - 1} pages in background..." if total_pages > 1 else "Complete"
+        }
+
+        # If multi-page, spawn background worker to process Pages 2..N
+        if total_pages > 1 and background_tasks is not None:
+            background_tasks.add_task(
+                process_pages_background,
+                file_id,
+                str(temp_path),
+                total_pages,
+                is_vector
+            )
+        else:
+            # Single page: cleanup temp
+            if temp_path.exists():
                 try:
-                    with open(cand, "r", encoding="utf-8") as f:
-                        gt_data = json.load(f)
-                    matched_gt_items = gt_data.get("annotations", [])
-                    break
+                    temp_path.unlink()
                 except Exception:
                     pass
 
-        page_results = prep_res.get("page_results", [])
-        total_pages = max(1, len(page_results))
+        pos_count = sum(1 for d in page1_diagnoses if d.status == "POSITIVE")
+        neg_count = sum(1 for d in page1_diagnoses if d.status == "NEGATIVE")
+        unc_count = sum(1 for d in page1_diagnoses if d.status == "UNCERTAIN")
+        review_count = sum(1 for d in page1_diagnoses if d.requires_human_review)
 
-        if is_vector:
-            # Vector Path: Direct text entities
-            candidates = [
-                {"text": v.text, "bbox": v.bbox, "confidence": v.confidence, "page_num": getattr(v, "page_num", 0) + 1}
-                for v in prep_res["vector_entities"]
-            ]
-            all_diagnoses = classifier.diagnose_drawing(candidates, table_bbox=table_box)
-            
-            # Save crisp authentic original blueprint preview for each page
-            for p_idx, p_info in enumerate(page_results):
-                disp_img = p_info.get("display_image", p_info["normalized_image"])
-                p_h, p_w = disp_img.shape[:2]
-                t_box = table_parser.detect_table_boundary(disp_img)
-                # Cache authentic page image to disk
-                page_cache_path = UPLOAD_DIR / f"{file_id}_page_{p_idx + 1}.jpg"
-                cv2.imwrite(str(page_cache_path), disp_img, [int(cv2.IMWRITE_JPEG_QUALITY), 95])
-                pages_meta.append({
-                    "page_number": p_idx + 1,
-                    "width": p_w,
-                    "height": p_h,
-                    "table_bbox": t_box
-                })
-                if p_idx == 0:
-                    preview_img = disp_img
-                    img_w, img_h = p_w, p_h
-                    table_box = t_box
-        else:
-            # Scanned Path: Preprocess & OCR for each sheet
-            for p_idx, p_info in enumerate(page_results):
-                page_num = p_idx + 1
-                norm_img = p_info["normalized_image"]
-                disp_img = p_info.get("display_image", norm_img)
-                p_h, p_w = disp_img.shape[:2]
-                t_box = table_parser.detect_table_boundary(disp_img)
-
-                # Cache authentic original blueprint image to disk for fast pagination & crisp viewer
-                page_cache_path = UPLOAD_DIR / f"{file_id}_page_{page_num}.jpg"
-                cv2.imwrite(str(page_cache_path), disp_img, [int(cv2.IMWRITE_JPEG_QUALITY), 95])
-
-                pages_meta.append({
-                    "page_number": page_num,
-                    "width": p_w,
-                    "height": p_h,
-                    "table_bbox": t_box
-                })
-
-                if p_idx == 0:
-                    preview_img = disp_img
-                    img_w, img_h = p_w, p_h
-                    table_box = t_box
-
-                if matched_gt_items:
-                    raw_items = matched_gt_items
-                else:
-                    # Run OCR across sheet using line-separated image for maximum character clarity
-                    ocr_items = ocr_engine.recognize(norm_img)
-                    raw_items = [
-                        {"text": item.text, "bbox": item.bbox, "confidence": item.confidence}
-                        for item in ocr_items
-                    ]
-
-                # Parse schedule table if detected
-                if t_box:
-                    records = table_parser.parse_schedule_cells(t_box, raw_items)
-                    parsed_schedule_records.extend([
-                        {
-                            "room": r.room_name,
-                            "floor": r.floor_finish,
-                            "wall": r.wall_finish,
-                            "ceiling": r.ceiling_finish,
-                            "remarks": r.remarks
-                        }
-                        for r in records
-                    ])
-
-                diagnoses = classifier.diagnose_drawing(raw_items, table_bbox=t_box, page_number=page_num)
-                all_diagnoses.extend(diagnoses)
-
-        pos_count = sum(1 for d in all_diagnoses if d.status == "POSITIVE")
-        neg_count = sum(1 for d in all_diagnoses if d.status == "NEGATIVE")
-        unc_count = sum(1 for d in all_diagnoses if d.status == "UNCERTAIN")
-        review_count = sum(1 for d in all_diagnoses if d.requires_human_review)
-
-        l1_count = sum(1 for d in all_diagnoses if d.hazard_level == "LEVEL_1")
-        l2_count = sum(1 for d in all_diagnoses if d.hazard_level == "LEVEL_2")
-        l3_count = sum(1 for d in all_diagnoses if d.hazard_level == "LEVEL_3")
-
-        # Generate Spatial Room Assessments for Page 1 preview
-        room_evals = room_assessor.assess_rooms(
-            diagnoses=all_diagnoses,
-            finish_schedule=parsed_schedule_records,
-            image_width=img_w,
-            image_height=img_h,
-            table_bbox=table_box
-        )
-
-        img_b64 = encode_image_to_base64(preview_img) if preview_img is not None else ""
+        l1_count = sum(1 for d in page1_diagnoses if d.hazard_level == "LEVEL_1")
+        l2_count = sum(1 for d in page1_diagnoses if d.hazard_level == "LEVEL_2")
+        l3_count = sum(1 for d in page1_diagnoses if d.hazard_level == "LEVEL_3")
 
         return {
             "drawing_id": file_id,
             "filename": file.filename,
-            "document_type": prep_res["doc_type"],
+            "document_type": "VECTOR_PDF" if is_vector else ("SCANNED_PDF" if is_pdf else "RASTER_IMAGE"),
             "is_vector_pdf": is_vector,
             "page_count": total_pages,
             "current_page": 1,
+            "status": "processing" if total_pages > 1 else "completed",
             "pages": pages_meta,
-            "image_width": img_w,
-            "image_height": img_h,
+            "image_width": p_w,
+            "image_height": p_h,
             "image_base64": img_b64,
-            "table_bbox": table_box,
-            "total_material_annotations": len(all_diagnoses),
+            "table_bbox": t_box,
+            "total_material_annotations": len(page1_diagnoses),
             "summary": {
                 "asbestos_positive": pos_count,
                 "non_asbestos": neg_count,
@@ -673,23 +826,29 @@ async def analyze_drawing(file: UploadFile = File(...)):
             },
             "room_assessments": [r.to_dict() for r in room_evals],
             "finish_schedule": parsed_schedule_records,
-            "diagnoses": [d.to_dict() for d in all_diagnoses]
+            "diagnoses": [d.to_dict() for d in page1_diagnoses]
         }
 
     except Exception as e:
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
-    finally:
-        if temp_path.exists():
-            temp_path.unlink()
 
 
 @app.get("/api/v1/drawings/{drawing_id}/pages/{page_num}")
 def get_drawing_page(drawing_id: str, page_num: int):
-    """Fetches base64 preview and dimension metadata for a specific page of an analyzed drawing."""
+    """Fetches base64 preview, diagnoses, and table metadata for a specific page."""
     page_img_path = UPLOAD_DIR / f"{drawing_id}_page_{page_num}.jpg"
+    page_json_path = UPLOAD_DIR / f"{drawing_id}_page_{page_num}.json"
+
     if not page_img_path.exists():
+        if drawing_id in JOB_REGISTRY and page_num <= JOB_REGISTRY[drawing_id].get("total_pages", 1):
+            return {
+                "drawing_id": drawing_id,
+                "page_number": page_num,
+                "status": "processing",
+                "message": f"Page {page_num} is currently being processed in background..."
+            }
         raise HTTPException(status_code=404, detail=f"Page {page_num} for drawing {drawing_id} not found.")
 
     img_cv = cv2.imread(str(page_img_path))
@@ -697,16 +856,70 @@ def get_drawing_page(drawing_id: str, page_num: int):
         raise HTTPException(status_code=500, detail=f"Could not load image for page {page_num}")
 
     h, w = img_cv.shape[:2]
-    table_box = table_parser.detect_table_boundary(img_cv)
     img_b64 = encode_image_to_base64(img_cv)
+
+    page_diagnoses = []
+    finish_schedule = []
+    room_evals = []
+    table_box = None
+
+    if page_json_path.exists():
+        try:
+            with open(page_json_path, "r", encoding="utf-8") as f:
+                p_data = json.load(f)
+            page_diagnoses = p_data.get("diagnoses", [])
+            finish_schedule = p_data.get("finish_schedule", [])
+            room_evals = p_data.get("room_assessments", [])
+            table_box = p_data.get("table_bbox")
+        except Exception:
+            pass
+
+    if table_box is None:
+        table_box = table_parser.detect_table_boundary(img_cv)
 
     return {
         "drawing_id": drawing_id,
         "page_number": page_num,
+        "status": "completed",
         "image_width": w,
         "image_height": h,
         "table_bbox": table_box,
-        "image_base64": img_b64
+        "image_base64": img_b64,
+        "diagnoses": page_diagnoses,
+        "finish_schedule": finish_schedule,
+        "room_assessments": room_evals
+    }
+
+
+@app.get("/api/v1/jobs/{drawing_id}")
+def get_job_status(drawing_id: str):
+    """Returns background multi-page analysis status and progress percentage."""
+    if drawing_id not in JOB_REGISTRY:
+        p1 = UPLOAD_DIR / f"{drawing_id}_page_1.json"
+        if p1.exists():
+            return {
+                "drawing_id": drawing_id,
+                "status": "completed",
+                "completed_pages": [1],
+                "total_pages": 1,
+                "progress_percent": 100,
+                "current_status": "Complete"
+            }
+        raise HTTPException(status_code=404, detail=f"Job {drawing_id} not found")
+
+    job = JOB_REGISTRY[drawing_id]
+    total = max(1, job.get("total_pages", 1))
+    completed = len(job.get("completed_pages", []))
+    percent = int((completed / total) * 100)
+
+    return {
+        "drawing_id": drawing_id,
+        "status": job.get("status", "processing"),
+        "total_pages": total,
+        "completed_pages": job.get("completed_pages", []),
+        "completed_count": completed,
+        "progress_percent": percent,
+        "current_status": job.get("current_status", "")
     }
 
 

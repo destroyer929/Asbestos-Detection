@@ -81,6 +81,8 @@ export interface DrawingAnalysisResponse {
   filename: string;
   document_type: string;
   is_vector_pdf: boolean;
+  status?: string;
+  progress_percent?: number;
   page_count?: number;
   current_page?: number;
   pages?: PageInfo[];

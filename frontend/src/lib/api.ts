@@ -93,10 +93,15 @@ export async function fetchDrawingPage(
 ): Promise<{
   drawing_id: string;
   page_number: number;
+  status: string;
   image_width: number;
   image_height: number;
   table_bbox?: [number, number, number, number] | null;
   image_base64: string;
+  diagnoses?: any[];
+  finish_schedule?: any[];
+  room_assessments?: any[];
+  message?: string;
 }> {
   const res = await fetch(`${API_BASE_URL}/api/v1/drawings/${drawingId}/pages/${pageNum}`, {
     cache: "no-store",
@@ -106,6 +111,26 @@ export async function fetchDrawingPage(
     throw new Error(err.detail || `Server returned ${res.status}`);
   }
   return await res.json();
+}
+
+export async function fetchJobStatus(drawingId: string): Promise<{
+  drawing_id: string;
+  status: string;
+  total_pages: number;
+  completed_pages: number[];
+  completed_count: number;
+  progress_percent: number;
+  current_status: string;
+} | null> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/v1/jobs/${drawingId}`, {
+      cache: "no-store",
+    });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
 }
 
 export async function submitHumanOverride(
