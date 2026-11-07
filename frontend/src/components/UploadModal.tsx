@@ -16,7 +16,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { DrawingAnalysisResponse } from "@/types/drawing";
-import { analyzeUploadedFile } from "@/lib/api";
+import { analyzeUploadedFile, getApiBaseUrl } from "@/lib/api";
 
 interface UploadModalProps {
   isOpen: boolean;
@@ -231,7 +231,7 @@ export const UploadModal: React.FC<UploadModalProps> = ({
     setErrorMessage(null);
     setGenSuccessMessage(null);
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/v1/samples/generate", {
+      const res = await fetch(`${getApiBaseUrl()}/api/v1/samples/generate`, {
         method: "POST",
       });
       if (!res.ok) throw new Error("Failed to generate blueprint");

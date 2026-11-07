@@ -4,10 +4,21 @@ import {
   HumanOverridePayload,
   ReviewHistoryItem,
   DatabaseSummary,
+  DrawingHistorySummary,
+  DrawingHistoryDetail,
 } from "@/types/drawing";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+export function getApiBaseUrl(): string {
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL;
+  }
+  if (typeof window !== "undefined") {
+    const protocol = window.location.protocol;
+    const hostname = window.location.hostname;
+    return `${protocol}//${hostname}:8000`;
+  }
+  return "http://127.0.0.1:8000";
+}
 
 export async function checkApiHealth(): Promise<{
   status: string;
@@ -15,7 +26,7 @@ export async function checkApiHealth(): Promise<{
   database_entries: number;
 } | null> {
   try {
-    const res = await fetch(`${API_BASE_URL}/api/v1/health`, {
+    const res = await fetch(`${getApiBaseUrl()}/api/v1/health`, {
       method: "GET",
       cache: "no-store",
     });
@@ -28,7 +39,7 @@ export async function checkApiHealth(): Promise<{
 
 export async function fetchDatabaseSummary(): Promise<DatabaseSummary | null> {
   try {
-    const res = await fetch(`${API_BASE_URL}/api/v1/database/summary`, {
+    const res = await fetch(`${getApiBaseUrl()}/api/v1/database/summary`, {
       cache: "no-store",
     });
     if (!res.ok) return null;
@@ -40,7 +51,7 @@ export async function fetchDatabaseSummary(): Promise<DatabaseSummary | null> {
 
 export async function fetchBenchmarkSamples(): Promise<BenchmarkSample[]> {
   try {
-    const res = await fetch(`${API_BASE_URL}/api/v1/samples`, {
+    const res = await fetch(`${getApiBaseUrl()}/api/v1/samples`, {
       cache: "no-store",
     });
     if (!res.ok) return [];
@@ -53,7 +64,7 @@ export async function fetchBenchmarkSamples(): Promise<BenchmarkSample[]> {
 export async function analyzeBenchmarkSample(
   sampleId: string
 ): Promise<DrawingAnalysisResponse> {
-  const res = await fetch(`${API_BASE_URL}/api/v1/samples/${sampleId}/analyze`, {
+  const res = await fetch(`${getApiBaseUrl()}/api/v1/samples/${sampleId}/analyze`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -74,7 +85,7 @@ export async function analyzeUploadedFile(
   const formData = new FormData();
   formData.append("file", file);
 
-  const res = await fetch(`${API_BASE_URL}/api/v1/analyze`, {
+  const res = await fetch(`${getApiBaseUrl()}/api/v1/analyze`, {
     method: "POST",
     body: formData,
   });
@@ -98,7 +109,7 @@ export async function fetchDrawingPage(
   table_bbox?: [number, number, number, number] | null;
   image_base64: string;
 }> {
-  const res = await fetch(`${API_BASE_URL}/api/v1/drawings/${drawingId}/pages/${pageNum}`, {
+  const res = await fetch(`${getApiBaseUrl()}/api/v1/drawings/${drawingId}/pages/${pageNum}`, {
     cache: "no-store",
   });
   if (!res.ok) {
@@ -111,7 +122,7 @@ export async function fetchDrawingPage(
 export async function submitHumanOverride(
   payload: HumanOverridePayload
 ): Promise<{ status: string; message: string; total_active_learning_samples: number }> {
-  const res = await fetch(`${API_BASE_URL}/api/v1/review/override`, {
+  const res = await fetch(`${getApiBaseUrl()}/api/v1/review/override`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -129,7 +140,7 @@ export async function submitHumanOverride(
 
 export async function fetchReviewHistory(): Promise<ReviewHistoryItem[]> {
   try {
-    const res = await fetch(`${API_BASE_URL}/api/v1/review/history`, {
+    const res = await fetch(`${getApiBaseUrl()}/api/v1/review/history`, {
       cache: "no-store",
     });
     if (!res.ok) return [];
@@ -140,3 +151,41 @@ export async function fetchReviewHistory(): Promise<ReviewHistoryItem[]> {
   }
 }
 
+export async function fetchDrawingHistory(): Promise<DrawingHistorySummary[]> {
+  try {
+    const res = await fetch(`${getApiBaseUrl()}/api/v1/history/drawings`, {
+      cache: "no-store",
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.drawings || [];
+  } catch {
+    return [];
+  }
+}
+
+export async function fetchDrawingHistoryDetail(
+  drawingId: string
+): Promise<DrawingHistoryDetail> {
+  const res = await fetch(`${getApiBaseUrl()}/api/v1/history/drawings/${drawingId}`, {
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: "Failed to fetch drawing history detail" }));
+    throw new Error(err.detail || `Server returned ${res.status}`);
+  }
+  return await res.json();
+}
+
+export async function deleteDrawingHistory(
+  drawingId: string
+): Promise<{ status: string; message: string }> {
+  const res = await fetch(`${getApiBaseUrl()}/api/v1/history/drawings/${drawingId}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: "Failed to delete record" }));
+    throw new Error(err.detail || `Server returned ${res.status}`);
+  }
+  return await res.json();
+}

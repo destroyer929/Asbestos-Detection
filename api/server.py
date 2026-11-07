@@ -28,6 +28,7 @@ from pydantic import BaseModel
 from data.database.db_manager import MaterialsDatabase
 from core.ingest.router import DocumentIngestionRouter, IngestionResult
 from core.preprocess.pipeline import PreprocessingPipeline
+from core.database.history_manager import BlueprintHistoryManager
 from models.ocr.engine import BilingualOCREngine
 from models.layout.table_parser import FinishScheduleTableParser
 from models.layout.room_assessor import SpatialRoomAssessor, RoomAssessment
@@ -47,7 +48,15 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def add_cors_and_private_network_headers(request, call_next):
+    response = await call_next(request)
+    response.headers["Access-Control-Allow-Private-Network"] = "true"
+    return response
 
 # Initialize core singletons
 db = MaterialsDatabase()
@@ -56,6 +65,7 @@ ocr_engine = BilingualOCREngine(gpu=True)
 table_parser = FinishScheduleTableParser()
 classifier = AsbestosDiagnosticClassifier(db=db)
 room_assessor = SpatialRoomAssessor()
+history_mgr = BlueprintHistoryManager()
 
 UPLOAD_DIR = Path("data/uploads")
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
@@ -414,7 +424,7 @@ def analyze_sample(sample_id: str):
 
     # Load GT or run OCR
     input_items = []
-    if gt_path.exists():
+    if sample_meta.get("gt_path") and gt_path.exists() and gt_path.is_file():
         with open(gt_path, "r", encoding="utf-8") as f:
             gt_data = json.load(f)
         input_items = gt_data.get("annotations", [])
@@ -464,7 +474,7 @@ def analyze_sample(sample_id: str):
 
     img_b64 = encode_image_to_base64(img_cv)
 
-    return {
+    result_payload = {
         "drawing_id": sample_id,
         "filename": img_path.name,
         "document_type": sample_meta["doc_type"],
@@ -499,6 +509,27 @@ def analyze_sample(sample_id: str):
         "finish_schedule": parsed_schedule_records,
         "diagnoses": [d.to_dict() for d in diagnoses]
     }
+
+    try:
+        history_mgr.record_analysis(
+            drawing_id=sample_id,
+            filename=img_path.name,
+            document_type=sample_meta["doc_type"],
+            is_vector_pdf=False,
+            page_count=1,
+            summary=result_payload["summary"],
+            diagnoses=result_payload["diagnoses"],
+            finish_schedule=result_payload["finish_schedule"],
+            room_assessments=result_payload["room_assessments"],
+            image_base64=img_b64,
+            image_width=w,
+            image_height=h,
+            table_bbox=table_box
+        )
+    except Exception as e:
+        print(f"Warning: Failed to record sample to history: {e}")
+
+    return result_payload
 
 
 @app.post("/api/v1/analyze")
@@ -647,7 +678,7 @@ async def analyze_drawing(file: UploadFile = File(...)):
 
         img_b64 = encode_image_to_base64(preview_img) if preview_img is not None else ""
 
-        return {
+        result_payload = {
             "drawing_id": file_id,
             "filename": file.filename,
             "document_type": prep_res["doc_type"],
@@ -675,6 +706,27 @@ async def analyze_drawing(file: UploadFile = File(...)):
             "finish_schedule": parsed_schedule_records,
             "diagnoses": [d.to_dict() for d in all_diagnoses]
         }
+
+        try:
+            history_mgr.record_analysis(
+                drawing_id=file_id,
+                filename=file.filename,
+                document_type=prep_res["doc_type"],
+                is_vector_pdf=is_vector,
+                page_count=total_pages,
+                summary=result_payload["summary"],
+                diagnoses=result_payload["diagnoses"],
+                finish_schedule=result_payload["finish_schedule"],
+                room_assessments=result_payload["room_assessments"],
+                image_base64=img_b64,
+                image_width=img_w,
+                image_height=img_h,
+                table_bbox=table_box
+            )
+        except Exception as e:
+            print(f"Warning: Failed to record drawing to history: {e}")
+
+        return result_payload
 
     except Exception as e:
         import traceback
@@ -747,6 +799,33 @@ def get_review_history():
         return {"total": len(corrections), "corrections": corrections}
     except Exception:
         return {"total": 0, "corrections": []}
+
+
+
+
+@app.get("/api/v1/history/drawings")
+def get_drawing_history():
+    """Returns chronological list of all previously analyzed blueprints with verdict summaries."""
+    drawings = history_mgr.get_all(include_full=False)
+    return {"total": len(drawings), "drawings": drawings}
+
+
+@app.get("/api/v1/history/drawings/{drawing_id}")
+def get_drawing_history_detail(drawing_id: str):
+    """Retrieves full interactive analysis and diagnosis report for a previously analyzed blueprint."""
+    record = history_mgr.get_by_id(drawing_id)
+    if not record:
+        raise HTTPException(status_code=404, detail=f"Drawing '{drawing_id}' not found in database history")
+    return record
+
+
+@app.delete("/api/v1/history/drawings/{drawing_id}")
+def delete_drawing_history(drawing_id: str):
+    """Deletes an analysis history record from the database."""
+    success = history_mgr.delete(drawing_id)
+    if not success:
+        raise HTTPException(status_code=404, detail=f"Drawing '{drawing_id}' not found in database history")
+    return {"status": "success", "message": f"Successfully deleted record '{drawing_id}'"}
 
 
 if __name__ == "__main__":

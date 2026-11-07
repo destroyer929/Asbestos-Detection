@@ -24,8 +24,9 @@ import {
   analyzeBenchmarkSample,
   submitHumanOverride,
   fetchDrawingPage,
+  fetchDrawingHistory,
 } from "@/lib/api";
-import { Loader2, AlertCircle } from "lucide-react";
+import { Loader2, AlertCircle, X } from "lucide-react";
 
 export default function HomePage() {
   // Backend status & samples
@@ -36,6 +37,7 @@ export default function HomePage() {
   } | null>(null);
   const [samples, setSamples] = useState<BenchmarkSample[]>([]);
   const [selectedSampleId, setSelectedSampleId] = useState<string>("ALFRED-DWG-1982-001");
+  const [databaseCount, setDatabaseCount] = useState<number>(0);
 
   // Analysis result
   const [analysis, setAnalysis] = useState<DrawingAnalysisResponse | null>(null);
@@ -52,6 +54,16 @@ export default function HomePage() {
   const [isDatabaseOpen, setIsDatabaseOpen] = useState<boolean>(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState<boolean>(false);
 
+  // Refresh database history count
+  const refreshHistoryCount = useCallback(async () => {
+    try {
+      const historyItems = await fetchDrawingHistory();
+      setDatabaseCount(historyItems.length);
+    } catch {
+      // ignore
+    }
+  }, []);
+
   // Load a sample blueprint
   const loadSample = useCallback(async (sampleId: string) => {
     setIsLoading(true);
@@ -61,6 +73,7 @@ export default function HomePage() {
       setAnalysis(data);
       setSelectedSampleId(sampleId);
       setCurrentPage(data.current_page || 1);
+      setErrorMessage(null);
 
       // Select first positive or uncertain item by default, or first item
       if (data.diagnoses && data.diagnoses.length > 0) {
@@ -72,30 +85,43 @@ export default function HomePage() {
       } else {
         setSelectedItem(null);
       }
+      refreshHistoryCount();
     } catch (err: any) {
       setErrorMessage(err.message || "Failed to load sample blueprint.");
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [refreshHistoryCount]);
 
   // Initial load
   useEffect(() => {
+    let mounted = true;
     async function init() {
-      const [h, sList] = await Promise.all([
-        checkApiHealth(),
-        fetchBenchmarkSamples(),
-      ]);
-      setHealth(h);
-      setSamples(sList);
+      try {
+        const [h, sList] = await Promise.all([
+          checkApiHealth(),
+          fetchBenchmarkSamples(),
+        ]);
+        if (!mounted) return;
+        setHealth(h);
+        setSamples(sList);
+        refreshHistoryCount();
 
-      const defaultId = sList.length > 0 ? sList[0].id : "ALFRED-DWG-1982-001";
-      setSelectedSampleId(defaultId);
-      loadSample(defaultId);
+        const defaultId = sList.find(s => s.id === "ALFRED-DWG-1982-001")?.id || (sList.length > 0 ? sList[0].id : "ALFRED-DWG-1982-001");
+        setSelectedSampleId(defaultId);
+        await loadSample(defaultId);
+      } catch (err: any) {
+        if (mounted) {
+          setErrorMessage(err.message || "Failed to initialize blueprint analysis.");
+        }
+      }
     }
 
     init();
-  }, [loadSample]);
+    return () => {
+      mounted = false;
+    };
+  }, [loadSample, refreshHistoryCount]);
 
   // Handle uploaded drawing
   const handleUploadSuccess = (data: DrawingAnalysisResponse) => {
@@ -111,6 +137,24 @@ export default function HomePage() {
     } else {
       setSelectedItem(null);
     }
+    refreshHistoryCount();
+  };
+
+  // Handle loading drawing from historical database
+  const handleLoadFromHistory = (drawingData: DrawingAnalysisResponse) => {
+    setAnalysis(drawingData);
+    setSelectedSampleId(drawingData.drawing_id);
+    setCurrentPage(drawingData.current_page || 1);
+    if (drawingData.diagnoses && drawingData.diagnoses.length > 0) {
+      const priorityItem =
+        drawingData.diagnoses.find((d) => d.status === "POSITIVE") ||
+        drawingData.diagnoses.find((d) => d.status === "UNCERTAIN") ||
+        drawingData.diagnoses[0];
+      setSelectedItem(priorityItem);
+    } else {
+      setSelectedItem(null);
+    }
+    setIsDatabaseOpen(false);
   };
 
   // Change active page in multi-page document
@@ -187,23 +231,33 @@ export default function HomePage() {
         onOpenDatabase={() => setIsDatabaseOpen(true)}
         onOpenHistory={() => setIsHistoryOpen(true)}
         isLoading={isLoading}
+        databaseCount={databaseCount}
       />
 
       {/* Main Workspace Content */}
       <main className="flex-1 max-w-[1920px] w-full mx-auto p-4 sm:p-6 lg:p-8">
         {/* Error Alert */}
         {errorMessage && (
-          <div className="mb-4 p-4 rounded-xl bg-rose-950/70 border border-rose-800 text-rose-200 text-sm flex items-center justify-between">
+          <div className="mb-4 p-4 rounded-xl bg-rose-950/70 border border-rose-800 text-rose-200 text-sm flex items-center justify-between shadow-lg">
             <div className="flex items-center gap-2.5">
               <AlertCircle className="w-5 h-5 text-rose-400 flex-shrink-0" />
               <span>{errorMessage}</span>
             </div>
-            <button
-              onClick={() => loadSample(selectedSampleId)}
-              className="px-3 py-1 rounded-lg bg-rose-900 hover:bg-rose-800 text-xs font-semibold"
-            >
-              Retry
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => loadSample(selectedSampleId)}
+                className="px-3 py-1 rounded-lg bg-rose-900 hover:bg-rose-800 text-xs font-semibold transition"
+              >
+                Retry
+              </button>
+              <button
+                onClick={() => setErrorMessage(null)}
+                className="p-1 rounded-lg hover:bg-rose-900/60 text-rose-400 hover:text-rose-200 transition"
+                title="Dismiss alert"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         )}
 
@@ -294,6 +348,7 @@ export default function HomePage() {
       <DatabaseModal
         isOpen={isDatabaseOpen}
         onClose={() => setIsDatabaseOpen(false)}
+        onLoadDrawing={handleLoadFromHistory}
       />
 
       <ReviewHistoryModal

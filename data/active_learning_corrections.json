@@ -133,5 +133,23 @@
     "corrected_material_name": "吹付け石綿",
     "reviewer_notes": "",
     "timestamp": "2026-11-06T02:06:23.094287"
+  },
+  {
+    "item_id": "ITEM-0913B5BE",
+    "drawing_id": "UPLOAD-edc6f139",
+    "corrected_status": "POSITIVE",
+    "corrected_hazard_level": "LEVEL_3",
+    "corrected_material_name": "パルプセメント板",
+    "reviewer_notes": "",
+    "timestamp": "2026-11-07T11:08:01.941809"
+  },
+  {
+    "item_id": "ITEM-0913B5BE",
+    "drawing_id": "UPLOAD-edc6f139",
+    "corrected_status": "POSITIVE",
+    "corrected_hazard_level": "LEVEL_3",
+    "corrected_material_name": "パルプセメント板",
+    "reviewer_notes": "",
+    "timestamp": "2026-11-07T11:08:04.852816"
   }
 ]

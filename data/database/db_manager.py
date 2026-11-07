@@ -25,6 +25,8 @@ class MaterialEntry(BaseModel):
     status: AsbestosStatus
     friability: str
     component_category: str
+    manufacturer: Optional[str] = None
+    production_period: Optional[str] = None
     application_locations: List[str] = Field(default_factory=list)
     typical_specifications: List[str] = Field(default_factory=list)
     regulatory_note: str

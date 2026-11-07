@@ -7,6 +7,7 @@ import {
   Table as TableIcon,
   Database,
   History,
+  FolderArchive,
 } from "lucide-react";
 
 interface NavbarProps {
@@ -16,6 +17,7 @@ interface NavbarProps {
   onOpenDatabase: () => void;
   onOpenHistory: () => void;
   isLoading: boolean;
+  databaseCount?: number;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -24,6 +26,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenSchedule,
   onOpenDatabase,
   onOpenHistory,
+  databaseCount,
 }) => {
   return (
     <header className="bg-slate-900 border-b border-slate-800 text-white sticky top-0 z-50 shadow-md">
@@ -59,6 +62,21 @@ export const Navbar: React.FC<NavbarProps> = ({
             <span>Upload Blueprint</span>
           </button>
 
+          {/* Database Button — stores all previously checked files & diagnosis reports */}
+          <button
+            onClick={onOpenDatabase}
+            className="flex items-center gap-1.5 bg-cyan-950/70 hover:bg-cyan-900/80 text-cyan-200 text-xs font-semibold px-3 py-2 rounded-md border border-cyan-800/80 hover:border-cyan-600 transition shadow shadow-cyan-950/50"
+            title="Open Database: History of all checked blueprints & diagnosis reports"
+          >
+            <Database className="w-4 h-4 text-cyan-400" />
+            <span>Database</span>
+            {databaseCount !== undefined && databaseCount > 0 && (
+              <span className="ml-1 px-1.5 py-0.2 text-[10px] bg-cyan-900 text-cyan-300 rounded-full border border-cyan-700 font-mono">
+                {databaseCount}
+              </span>
+            )}
+          </button>
+
           {/* Finish Schedule Modal */}
           <button
             onClick={onOpenSchedule}
@@ -66,15 +84,6 @@ export const Navbar: React.FC<NavbarProps> = ({
           >
             <TableIcon className="w-4 h-4 text-emerald-400" />
             <span className="hidden sm:inline">特記仕上表 (Schedule)</span>
-          </button>
-
-          {/* MLIT Database Modal */}
-          <button
-            onClick={onOpenDatabase}
-            className="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium px-3 py-2 rounded-md border border-slate-700 transition"
-          >
-            <Database className="w-4 h-4 text-blue-400" />
-            <span className="hidden lg:inline">MLIT DB</span>
           </button>
 
           {/* Active Learning Audit */}
@@ -114,4 +123,3 @@ export const Navbar: React.FC<NavbarProps> = ({
     </header>
   );
 };
-

@@ -124,3 +124,25 @@ export interface DatabaseSummary {
   indexed_lookup_keys: number;
 }
 
+
+export interface DrawingHistorySummary {
+  drawing_id: string;
+  filename: string;
+  timestamp: string;
+  document_type: string;
+  is_vector_pdf: boolean;
+  page_count: number;
+  overall_verdict: string;
+  verdict_label: string;
+  total_material_annotations: number;
+  summary: SummaryMetrics;
+  positive_materials: string[];
+  has_preview: boolean;
+}
+
+export interface DrawingHistoryDetail extends DrawingAnalysisResponse {
+  timestamp: string;
+  overall_verdict: string;
+  verdict_label: string;
+  positive_materials: string[];
+}
