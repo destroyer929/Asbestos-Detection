@@ -43,3 +43,12 @@ yarn-error.log*
 Thumbs.db
 .vscode/
 .idea/
+
+# Scratch & LaTeX build artifacts
+scratch/
+scratch_*
+alfred.*
+*.aux
+*.log
+*.out
+

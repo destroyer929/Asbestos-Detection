@@ -323,7 +323,7 @@ export const BlueprintCanvas: React.FC<BlueprintCanvasProps> = ({
               src={imageBase64}
               alt="Architectural Blueprint"
               className="absolute inset-0 w-full h-full block pointer-events-none rounded shadow-2xl"
-              style={{ imageRendering: "auto", filter: "contrast(1.18) brightness(1.06)" }}
+              style={{ imageRendering: "crisp-edges" }}
             />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center border-2 border-dashed border-slate-800 rounded bg-slate-900/40 text-slate-500">

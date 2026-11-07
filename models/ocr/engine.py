@@ -36,7 +36,7 @@ class BilingualOCREngine:
         languages: List[str] = ["ja", "en"],
         gpu: bool = True,
         min_confidence: float = 0.25,
-        use_paddle: bool = True
+        use_paddle: bool = False
     ):
         self.languages = languages
         self.gpu = gpu
@@ -83,7 +83,15 @@ class BilingualOCREngine:
         # 1. Primary Engine: PaddleOCR v4 CJK (High-accuracy Japanese architectural text)
         if self.use_paddle and self.paddle_ocr is not None:
             try:
-                preds = self.paddle_ocr.predict(image)
+                orig_h, orig_w = image.shape[:2]
+                max_dim = max(orig_h, orig_w)
+                if max_dim > 2400:
+                    scale = 2400.0 / float(max_dim)
+                    paddle_img = cv2.resize(image, (0, 0), fx=scale, fy=scale, interpolation=cv2.INTER_AREA)
+                else:
+                    scale = 1.0
+                    paddle_img = image
+                preds = self.paddle_ocr.predict(paddle_img)
                 if preds and len(preds) > 0:
                     res = preds[0]
                     texts = res.get("rec_texts", [])
@@ -96,7 +104,8 @@ class BilingualOCREngine:
                         if float(conf) < self.min_confidence or not str(text).strip():
                             continue
 
-                        x_min, y_min, x_max, y_max = [float(b) for b in box]
+                        x_min, y_min, x_max, y_max = [float(b) / scale for b in box]
+                        scaled_poly = [[float(pt[0]) / scale, float(pt[1]) / scale] for pt in poly] if poly is not None else []
                         w = x_max - x_min
                         h = y_max - y_min
                         orientation = 90 if h > w * 1.5 else 0
@@ -106,7 +115,7 @@ class BilingualOCREngine:
                                 text=str(text).strip(),
                                 confidence=float(conf),
                                 bbox=[x_min, y_min, x_max, y_max],
-                                polygon=poly.tolist() if hasattr(poly, "tolist") else list(poly),
+                                polygon=scaled_poly,
                                 orientation=orientation
                             )
                         )

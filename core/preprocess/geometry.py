@@ -19,11 +19,13 @@ class GeometryNormalizer:
         self,
         max_skew_angle: float = 10.0,
         min_line_length: int = 120,
-        max_line_gap: int = 15
+        max_line_gap: int = 15,
+        min_deskew_angle: float = 0.20
     ):
         self.max_skew_angle = max_skew_angle
         self.min_line_length = min_line_length
         self.max_line_gap = max_line_gap
+        self.min_deskew_angle = min_deskew_angle
 
     def process(
         self,
@@ -77,6 +79,100 @@ class GeometryNormalizer:
         }
 
         return clean_text_img, metadata
+
+    def gentle_contrast_enhancement(self, image: np.ndarray) -> np.ndarray:
+        """
+        Enhances faded or low-contrast text using CLAHE (Contrast Limited Adaptive Histogram Equalization)
+        without aggressive morphological erosion or stroke thinning.
+        """
+        if len(image.shape) == 3:
+            lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
+            l, a, b = cv2.split(lab)
+            clahe = cv2.createCLAHE(clipLimit=1.5, tileGridSize=(8, 8))
+            cl = clahe.apply(l)
+            enhanced_lab = cv2.merge((cl, a, b))
+            return cv2.cvtColor(enhanced_lab, cv2.COLOR_LAB2BGR)
+        else:
+            clahe = cv2.createCLAHE(clipLimit=1.5, tileGridSize=(8, 8))
+            return clahe.apply(image)
+
+    def adaptive_process(
+        self,
+        image: np.ndarray,
+        assessment: Any
+    ) -> Tuple[np.ndarray, Dict[str, Any]]:
+        """
+        Executes calibrated, non-destructive preprocessing tailored to the document's
+        measured quality metrics. Prevents over-processing clean drawings while restoring
+        severely degraded ones.
+        """
+        h, w = image.shape[:2]
+        intensity = getattr(assessment, "intensity", "GENTLE_ENHANCEMENT")
+        intensity_val = intensity.value if hasattr(intensity, "value") else str(intensity)
+        skew_angle = float(getattr(assessment, "skew_angle", 0.0))
+
+        # --- Case 0: CLEAN_PASSTHROUGH (Level 0) ---
+        # Document is pristine CAD / clean scan. Zero filter tampering.
+        if intensity_val == "CLEAN_PASSTHROUGH":
+            metadata = {
+                "detected_skew_angle": skew_angle,
+                "deskew_applied": False,
+                "rotation_matrix": np.eye(2, 3, dtype=np.float32).tolist(),
+                "original_shape": image.shape,
+                "processed_shape": image.shape,
+                "display_image": image,
+                "processing_mode": "CLEAN_PASSTHROUGH",
+                "reason": "Preserved raw image without modification; zero stroke erosion."
+            }
+            return image.copy(), metadata
+
+        # --- Case 1: GENTLE_ENHANCEMENT (Level 1) ---
+        # Mild tilt or fading. Deskew if tilted, gentle CLAHE contrast, NO stroke-eating morphology.
+        elif intensity_val == "GENTLE_ENHANCEMENT":
+            deskew_applied = abs(skew_angle) >= self.min_deskew_angle
+            if deskew_applied:
+                deskewed, rot_matrix = self.deskew(image, skew_angle)
+            else:
+                deskewed = image.copy()
+                rot_matrix = np.eye(2, 3, dtype=np.float32)
+
+            enhanced = self.gentle_contrast_enhancement(deskewed)
+
+            metadata = {
+                "detected_skew_angle": skew_angle,
+                "deskew_applied": deskew_applied,
+                "rotation_matrix": rot_matrix.tolist(),
+                "original_shape": image.shape,
+                "processed_shape": enhanced.shape,
+                "display_image": deskewed,
+                "processing_mode": "GENTLE_ENHANCEMENT",
+                "reason": "Gentle deskew and contrast boost; stroke connectivity fully preserved."
+            }
+            return enhanced, metadata
+
+        # --- Case 2: AGGRESSIVE_RESTORATION (Level 2) ---
+        # Severe degradation, heavy noise, photocopy smudge, severe tilt.
+        else:
+            deskew_applied = abs(skew_angle) >= self.min_deskew_angle
+            if deskew_applied:
+                deskewed, rot_matrix = self.deskew(image, skew_angle)
+            else:
+                deskewed = image.copy()
+                rot_matrix = np.eye(2, 3, dtype=np.float32)
+
+            normalized = self.normalize_illumination(deskewed)
+
+            metadata = {
+                "detected_skew_angle": skew_angle,
+                "deskew_applied": deskew_applied,
+                "rotation_matrix": rot_matrix.tolist(),
+                "original_shape": image.shape,
+                "processed_shape": normalized.shape,
+                "display_image": deskewed,
+                "processing_mode": "AGGRESSIVE_RESTORATION",
+                "reason": "Full background approximation and illumination division applied."
+            }
+            return normalized, metadata
 
     def separate_lines_and_text(self, image: np.ndarray) -> np.ndarray:
         """

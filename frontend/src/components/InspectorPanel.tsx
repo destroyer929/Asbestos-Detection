@@ -13,12 +13,14 @@ import {
   Check,
   Copy,
   BookOpen,
+  Cpu,
 } from "lucide-react";
 import {
   DiagnosisItem,
   AsbestosStatus,
   HazardLevel,
   HumanOverridePayload,
+  QualityAssessment,
 } from "@/types/drawing";
 
 interface InspectorPanelProps {
@@ -28,6 +30,7 @@ interface InspectorPanelProps {
   onSelectItem: (item: DiagnosisItem) => void;
   onOverrideSuccess: (updatedItem: DiagnosisItem) => void;
   onSubmitOverride: (payload: HumanOverridePayload) => Promise<any>;
+  qualityAssessment?: QualityAssessment | null;
 }
 
 export const InspectorPanel: React.FC<InspectorPanelProps> = ({
@@ -37,6 +40,7 @@ export const InspectorPanel: React.FC<InspectorPanelProps> = ({
   onSelectItem,
   onOverrideSuccess,
   onSubmitOverride,
+  qualityAssessment,
 }) => {
   // Override form state
   const [overrideStatus, setOverrideStatus] = useState<AsbestosStatus>("POSITIVE");
@@ -260,6 +264,44 @@ export const InspectorPanel: React.FC<InspectorPanelProps> = ({
             </p>
           </div>
         </div>
+
+        {/* Adaptive Preprocessing Brain Details */}
+        {qualityAssessment && (
+          <div className="bg-slate-950/60 rounded-xl p-3 border border-slate-800 space-y-2 text-xs">
+            <div className="flex items-center justify-between pb-1.5 border-b border-slate-800">
+              <span className="font-semibold text-slate-300 flex items-center gap-1.5">
+                <Cpu className="w-3.5 h-3.5 text-blue-400" />
+                Adaptive Vision Decision
+              </span>
+              <span
+                className={`font-mono text-[10px] font-bold px-2 py-0.5 rounded ${
+                  qualityAssessment.intensity_level === 0
+                    ? "bg-emerald-950 text-emerald-300 border border-emerald-700"
+                    : qualityAssessment.intensity_level === 1
+                    ? "bg-cyan-950 text-cyan-300 border border-cyan-700"
+                    : "bg-amber-950 text-amber-300 border border-amber-700"
+                }`}
+              >
+                {qualityAssessment.intensity_level === 0
+                  ? "Level 0 • Pass-Through"
+                  : qualityAssessment.intensity_level === 1
+                  ? "Level 1 • Gentle Deskew"
+                  : "Level 2 • Deep Restoration"}
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-400 leading-tight">
+              {qualityAssessment.recommendation_reason}
+            </p>
+            <div className="grid grid-cols-2 gap-1.5 pt-1 text-[10px] font-mono text-slate-400">
+              <div className="p-1.5 rounded bg-slate-900 border border-slate-800/80">
+                Noise Sigma: <span className="text-white font-bold">{qualityAssessment.noise_sigma}</span>
+              </div>
+              <div className="p-1.5 rounded bg-slate-900 border border-slate-800/80">
+                Skew Angle: <span className="text-white font-bold">{qualityAssessment.skew_angle}°</span>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Human-in-the-Loop Active Learning Form */}
         <div className="bg-slate-950/80 rounded-xl p-3.5 border border-slate-800">

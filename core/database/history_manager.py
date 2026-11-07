@@ -89,6 +89,7 @@ class BlueprintHistoryManager:
                 "total_material_annotations": r.get("total_material_annotations", 0),
                 "summary": r.get("summary", {}),
                 "positive_materials": r.get("positive_materials", []),
+                "quality_assessment": r.get("quality_assessment"),
                 "has_preview": bool(r.get("image_base64") or r.get("thumbnail_base64"))
             })
         return summaries
@@ -115,7 +116,8 @@ class BlueprintHistoryManager:
         image_base64: Optional[str] = None,
         image_width: int = 2400,
         image_height: int = 1600,
-        table_bbox: Optional[List[float]] = None
+        table_bbox: Optional[List[float]] = None,
+        quality_assessment: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
         """Saves or updates an analyzed blueprint into the persistent database."""
         records = self._load_records()
@@ -152,6 +154,7 @@ class BlueprintHistoryManager:
             "image_width": image_width,
             "image_height": image_height,
             "table_bbox": table_bbox,
+            "quality_assessment": quality_assessment,
             "overall_verdict": overall_verdict,
             "verdict_label": verdict_label,
             "total_material_annotations": len(diagnoses),
@@ -160,8 +163,8 @@ class BlueprintHistoryManager:
             "diagnoses": diagnoses,
             "finish_schedule": finish_schedule,
             "room_assessments": room_assessments or [],
-            "thumbnail_base64": image_base64 if image_base64 else "",
-            "image_base64": image_base64 if image_base64 else ""
+            "thumbnail_base64": "",
+            "image_base64": ""
         }
 
         # Upsert: Replace if existing, or prepend

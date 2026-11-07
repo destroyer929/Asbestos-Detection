@@ -92,9 +92,34 @@ def test_tiler_and_nms():
     assert stitched[0].bbox == [850, 100, 950, 140]
 
 
+def test_adaptive_quality_assessor():
+    from core.preprocess.quality_assessor import DocumentQualityAssessor, ProcessingIntensity
+
+    assessor = DocumentQualityAssessor()
+
+    # 1. Clean Canvas (Pristine CAD)
+    clean_canvas = np.full((800, 1200), 255, dtype=np.uint8)
+    # Add crisp sharp black CAD lines
+    cv2.rectangle(clean_canvas, (100, 100), (1100, 700), 0, 2)
+    cv2.putText(clean_canvas, "SECTION A-A FINISH SCHEDULE", (150, 200), cv2.FONT_HERSHEY_SIMPLEX, 1.0, 0, 2)
+    q_clean = assessor.assess(clean_canvas, detected_skew_angle=0.0)
+    assert q_clean.intensity == ProcessingIntensity.CLEAN_PASSTHROUGH
+    assert q_clean.intensity_level == 0
+    assert "RAW_IMAGE_PASSTHROUGH" in q_clean.applied_actions
+
+    # 2. Noisy / Degraded Canvas (Simulated Photocopy Smudge)
+    noisy_canvas = clean_canvas.copy().astype(np.float32)
+    noise = np.random.normal(0, 20.0, noisy_canvas.shape).astype(np.float32)
+    noisy_canvas = np.clip(noisy_canvas + noise, 0, 255).astype(np.uint8)
+    q_noisy = assessor.assess(noisy_canvas, detected_skew_angle=0.0)
+    assert q_noisy.intensity == ProcessingIntensity.AGGRESSIVE_RESTORATION
+    assert q_noisy.intensity_level == 2
+
+
 if __name__ == "__main__":
     test_document_ingestion_routing()
     test_deskew_precision()
     test_tiler_and_nms()
+    test_adaptive_quality_assessor()
     print("All Stage 2 preprocessing tests passed successfully!")
 

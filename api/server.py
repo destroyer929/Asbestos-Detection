@@ -72,7 +72,7 @@ UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 CORRECTIONS_FILE = Path("data/active_learning_corrections.json")
 
 
-def encode_image_to_base64(img_np: np.ndarray, quality: int = 85) -> str:
+def encode_image_to_base64(img_np: np.ndarray, quality: int = 95) -> str:
     """Converts a numpy RGB/BGR image array into a base64 JPEG data URI."""
     try:
         if len(img_np.shape) == 2:
@@ -474,6 +474,10 @@ def analyze_sample(sample_id: str):
 
     img_b64 = encode_image_to_base64(img_cv)
 
+    # Pre-Flight Adaptive Quality Assessment (Adaptive Preprocessing Brain)
+    quality_assessment = pipeline.quality_assessor.assess(img_cv)
+    quality_dict = quality_assessment.to_dict()
+
     result_payload = {
         "drawing_id": sample_id,
         "filename": img_path.name,
@@ -493,6 +497,7 @@ def analyze_sample(sample_id: str):
         "image_height": h,
         "image_base64": img_b64,
         "table_bbox": table_box,
+        "quality_assessment": quality_dict,
         "total_material_annotations": len(diagnoses),
         "summary": {
             "asbestos_positive": pos_count,
@@ -524,7 +529,8 @@ def analyze_sample(sample_id: str):
             image_base64=img_b64,
             image_width=w,
             image_height=h,
-            table_bbox=table_box
+            table_bbox=table_box,
+            quality_assessment=quality_dict
         )
     except Exception as e:
         print(f"Warning: Failed to record sample to history: {e}")
@@ -580,83 +586,68 @@ async def analyze_drawing(file: UploadFile = File(...)):
         page_results = prep_res.get("page_results", [])
         total_pages = max(1, len(page_results))
 
-        if is_vector:
-            # Vector Path: Direct text entities
-            candidates = [
-                {"text": v.text, "bbox": v.bbox, "confidence": v.confidence, "page_num": getattr(v, "page_num", 0) + 1}
-                for v in prep_res["vector_entities"]
+        for p_idx, p_info in enumerate(page_results):
+            page_num = p_idx + 1
+            disp_img = p_info.get("display_image", p_info["normalized_image"])
+            norm_img = p_info["normalized_image"]
+            p_h, p_w = disp_img.shape[:2]
+            t_box = table_parser.detect_table_boundary(disp_img)
+
+            # Cache authentic original blueprint image to disk for fast pagination & crisp viewer
+            page_cache_path = UPLOAD_DIR / f"{file_id}_page_{page_num}.jpg"
+            cv2.imwrite(str(page_cache_path), disp_img, [int(cv2.IMWRITE_JPEG_QUALITY), 95])
+
+            pages_meta.append({
+                "page_number": page_num,
+                "width": p_w,
+                "height": p_h,
+                "table_bbox": t_box
+            })
+
+            if p_idx == 0:
+                preview_img = disp_img
+                img_w, img_h = p_w, p_h
+                table_box = t_box
+
+            # Per-page hybrid text extraction:
+            # Check if this specific page has native extracted vector text
+            page_vec = [
+                {"text": v.text, "bbox": v.bbox, "confidence": v.confidence, "page_num": page_num}
+                for v in prep_res.get("vector_entities", [])
+                if getattr(v, "page_num", 0) == p_idx
             ]
-            all_diagnoses = classifier.diagnose_drawing(candidates, table_bbox=table_box)
-            
-            # Save crisp authentic original blueprint preview for each page
-            for p_idx, p_info in enumerate(page_results):
-                disp_img = p_info.get("display_image", p_info["normalized_image"])
-                p_h, p_w = disp_img.shape[:2]
-                t_box = table_parser.detect_table_boundary(disp_img)
-                # Cache authentic page image to disk
-                page_cache_path = UPLOAD_DIR / f"{file_id}_page_{p_idx + 1}.jpg"
-                cv2.imwrite(str(page_cache_path), disp_img, [int(cv2.IMWRITE_JPEG_QUALITY), 95])
-                pages_meta.append({
-                    "page_number": p_idx + 1,
-                    "width": p_w,
-                    "height": p_h,
-                    "table_bbox": t_box
-                })
-                if p_idx == 0:
-                    preview_img = disp_img
-                    img_w, img_h = p_w, p_h
-                    table_box = t_box
-        else:
-            # Scanned Path: Preprocess & OCR for each sheet
-            for p_idx, p_info in enumerate(page_results):
-                page_num = p_idx + 1
-                norm_img = p_info["normalized_image"]
-                disp_img = p_info.get("display_image", norm_img)
-                p_h, p_w = disp_img.shape[:2]
-                t_box = table_parser.detect_table_boundary(disp_img)
 
-                # Cache authentic original blueprint image to disk for fast pagination & crisp viewer
-                page_cache_path = UPLOAD_DIR / f"{file_id}_page_{page_num}.jpg"
-                cv2.imwrite(str(page_cache_path), disp_img, [int(cv2.IMWRITE_JPEG_QUALITY), 95])
+            if len(page_vec) >= 5:
+                # Use high-fidelity native CAD vector text for this page
+                raw_items = page_vec
+            elif matched_gt_items:
+                # Ground truth benchmark matching
+                raw_items = matched_gt_items
+            else:
+                # Scanned or non-vector page (e.g. CAD curves / scanned detail sheet):
+                # Run OCR across sheet using line-separated or normalized image
+                ocr_items = ocr_engine.recognize(norm_img)
+                raw_items = [
+                    {"text": item.text, "bbox": item.bbox, "confidence": item.confidence, "page_num": page_num}
+                    for item in ocr_items
+                ]
 
-                pages_meta.append({
-                    "page_number": page_num,
-                    "width": p_w,
-                    "height": p_h,
-                    "table_bbox": t_box
-                })
+            # Parse schedule table if detected on this page
+            if t_box:
+                records = table_parser.parse_schedule_cells(t_box, raw_items)
+                parsed_schedule_records.extend([
+                    {
+                        "room": r.room_name,
+                        "floor": r.floor_finish,
+                        "wall": r.wall_finish,
+                        "ceiling": r.ceiling_finish,
+                        "remarks": r.remarks
+                    }
+                    for r in records
+                ])
 
-                if p_idx == 0:
-                    preview_img = disp_img
-                    img_w, img_h = p_w, p_h
-                    table_box = t_box
-
-                if matched_gt_items:
-                    raw_items = matched_gt_items
-                else:
-                    # Run OCR across sheet using line-separated image for maximum character clarity
-                    ocr_items = ocr_engine.recognize(norm_img)
-                    raw_items = [
-                        {"text": item.text, "bbox": item.bbox, "confidence": item.confidence}
-                        for item in ocr_items
-                    ]
-
-                # Parse schedule table if detected
-                if t_box:
-                    records = table_parser.parse_schedule_cells(t_box, raw_items)
-                    parsed_schedule_records.extend([
-                        {
-                            "room": r.room_name,
-                            "floor": r.floor_finish,
-                            "wall": r.wall_finish,
-                            "ceiling": r.ceiling_finish,
-                            "remarks": r.remarks
-                        }
-                        for r in records
-                    ])
-
-                diagnoses = classifier.diagnose_drawing(raw_items, table_bbox=t_box, page_number=page_num)
-                all_diagnoses.extend(diagnoses)
+            page_diagnoses = classifier.diagnose_drawing(raw_items, table_bbox=t_box, page_number=page_num)
+            all_diagnoses.extend(page_diagnoses)
 
         pos_count = sum(1 for d in all_diagnoses if d.status == "POSITIVE")
         neg_count = sum(1 for d in all_diagnoses if d.status == "NEGATIVE")
@@ -690,6 +681,7 @@ async def analyze_drawing(file: UploadFile = File(...)):
             "image_height": img_h,
             "image_base64": img_b64,
             "table_bbox": table_box,
+            "quality_assessment": prep_res.get("quality_assessment"),
             "total_material_annotations": len(all_diagnoses),
             "summary": {
                 "asbestos_positive": pos_count,
@@ -721,7 +713,8 @@ async def analyze_drawing(file: UploadFile = File(...)):
                 image_base64=img_b64,
                 image_width=img_w,
                 image_height=img_h,
-                table_bbox=table_box
+                table_bbox=table_box,
+                quality_assessment=result_payload.get("quality_assessment")
             )
         except Exception as e:
             print(f"Warning: Failed to record drawing to history: {e}")
@@ -816,6 +809,14 @@ def get_drawing_history_detail(drawing_id: str):
     record = history_mgr.get_by_id(drawing_id)
     if not record:
         raise HTTPException(status_code=404, detail=f"Drawing '{drawing_id}' not found in database history")
+
+    # If image_base64 is not present, load and encode from cached disk upload
+    if not record.get("image_base64"):
+        page_img_path = UPLOAD_DIR / f"{drawing_id}_page_1.jpg"
+        if page_img_path.exists():
+            img_cv = cv2.imread(str(page_img_path))
+            if img_cv is not None:
+                record["image_base64"] = encode_image_to_base64(img_cv)
     return record
 
 

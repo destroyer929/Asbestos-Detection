@@ -284,6 +284,7 @@ export default function HomePage() {
               onFilterChange={(f) => setActiveFilter(f)}
               documentType={analysis.document_type}
               isVector={analysis.is_vector_pdf}
+              qualityAssessment={analysis.quality_assessment}
             />
 
             {/* Split Grid: Canvas (Left) + Inspector (Right) */}
@@ -316,6 +317,7 @@ export default function HomePage() {
                   onSelectItem={(item) => setSelectedItem(item)}
                   onOverrideSuccess={handleOverrideSuccess}
                   onSubmitOverride={submitHumanOverride}
+                  qualityAssessment={analysis.quality_assessment}
                 />
               </div>
             </div>

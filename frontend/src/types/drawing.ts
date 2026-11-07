@@ -76,6 +76,22 @@ export interface RoomAssessment {
   callout_box?: [number, number, number, number];
 }
 
+export type ProcessingIntensity = "CLEAN_PASSTHROUGH" | "GENTLE_ENHANCEMENT" | "AGGRESSIVE_RESTORATION";
+
+export interface QualityAssessment {
+  intensity: ProcessingIntensity;
+  intensity_level: number;
+  sharpness: number;
+  noise_sigma: number;
+  contrast_range: number;
+  skew_angle: number;
+  bimodal_clarity: number;
+  background_brightness: number;
+  recommendation_reason: string;
+  applied_actions: string[];
+  metrics_summary?: Record<string, number>;
+}
+
 export interface DrawingAnalysisResponse {
   drawing_id: string;
   filename: string;
@@ -88,6 +104,7 @@ export interface DrawingAnalysisResponse {
   image_height: number;
   image_base64?: string;
   table_bbox?: [number, number, number, number] | null;
+  quality_assessment?: QualityAssessment | null;
   total_material_annotations: number;
   summary: SummaryMetrics;
   finish_schedule: FinishScheduleItem[];
@@ -137,6 +154,7 @@ export interface DrawingHistorySummary {
   total_material_annotations: number;
   summary: SummaryMetrics;
   positive_materials: string[];
+  quality_assessment?: QualityAssessment | null;
   has_preview: boolean;
 }
 

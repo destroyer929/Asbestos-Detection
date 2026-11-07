@@ -128,12 +128,15 @@ class DocumentIngestionRouter:
                 page = doc[page_idx]
                 rect = page.rect
 
-                # If page is already native high-res (e.g. >= 1600 pt), 1.0 zoom is ideal (2400x1600).
-                # Otherwise scale to ~2400px wide for optimal CAD readability.
-                if rect.width >= 1600:
-                    zoom = 1.0
+                # High-fidelity architectural rasterization:
+                # Target at least 250-300 DPI for fine CAD line integrity and small Japanese Kanji legibility.
+                # Cap the maximum pixel dimension to 4800px to maintain razor-sharp clarity with fast memory throughput.
+                target_dpi_zoom = float(self.target_dpi) / 72.0
+                max_dim = max(float(rect.width), float(rect.height), 1.0)
+                if max_dim * target_dpi_zoom > 4800.0:
+                    zoom = 4800.0 / max_dim
                 else:
-                    zoom = min(2400.0 / max(rect.width, 1.0), 300.0 / 72.0)
+                    zoom = max(target_dpi_zoom, 2.0)
 
                 matrix = fitz.Matrix(zoom, zoom)
                 pix = page.get_pixmap(matrix=matrix)
@@ -176,10 +179,12 @@ class DocumentIngestionRouter:
             # Scanned / Rasterized PDF: Render crisp images for CV pipeline & UI preview
             for page in doc:
                 rect = page.rect
-                if rect.width >= 1600:
-                    zoom = 1.0
+                target_dpi_zoom = float(self.target_dpi) / 72.0
+                max_dim = max(float(rect.width), float(rect.height), 1.0)
+                if max_dim * target_dpi_zoom > 4800.0:
+                    zoom = 4800.0 / max_dim
                 else:
-                    zoom = min(2400.0 / max(rect.width, 1.0), self.target_dpi / 72.0)
+                    zoom = max(target_dpi_zoom, 2.0)
 
                 matrix = fitz.Matrix(zoom, zoom)
                 pix = page.get_pixmap(matrix=matrix)

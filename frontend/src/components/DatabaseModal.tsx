@@ -748,6 +748,24 @@ export const DatabaseModal: React.FC<DatabaseModalProps> = ({
                               <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700 font-mono">
                                 {item.page_count || 1} page{(item.page_count || 1) > 1 ? "s" : ""}
                               </span>
+                              {item.quality_assessment && (
+                                <span
+                                  className={`text-[10px] px-2 py-0.5 rounded border font-mono font-semibold ${
+                                    item.quality_assessment.intensity_level === 0
+                                      ? "bg-emerald-950/80 text-emerald-300 border-emerald-700"
+                                      : item.quality_assessment.intensity_level === 1
+                                      ? "bg-cyan-950/80 text-cyan-300 border-cyan-700"
+                                      : "bg-amber-950/80 text-amber-300 border-amber-700"
+                                  }`}
+                                  title={item.quality_assessment.recommendation_reason}
+                                >
+                                  {item.quality_assessment.intensity_level === 0
+                                    ? "Level 0 • Pass-through"
+                                    : item.quality_assessment.intensity_level === 1
+                                    ? "Level 1 • Gentle"
+                                    : "Level 2 • Restored"}
+                                </span>
+                              )}
                             </div>
 
                             <div className="flex items-center gap-3">
