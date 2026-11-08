@@ -212779,7 +212779,7 @@
   {
     "drawing_id": "ALFRED-DWG-1982-001",
     "filename": "ALFRED-DWG-1982-001_scanned.jpg",
-    "timestamp": "2026-11-07 18:33:24",
+    "timestamp": "2026-11-08 00:18:58",
     "document_type": "SCANNED_BLUEPRINT",
     "is_vector_pdf": false,
     "page_count": 1,
@@ -212839,7 +212839,7 @@
     ],
     "diagnoses": [
       {
-        "item_id": "ITEM-DB1859CA",
+        "item_id": "ITEM-E206996B",
         "raw_text": "特記仕上表 (FINISH SCHEDULE)",
         "normalized_text": "特記仕上表 (FINISH SCHEDULE",
         "bbox": [
@@ -212861,7 +212861,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-648B38A5",
+        "item_id": "ITEM-73777B4B",
         "raw_text": "機械室",
         "normalized_text": "機械室",
         "bbox": [
@@ -212883,7 +212883,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-B7E3D983",
+        "item_id": "ITEM-DA3EE031",
         "raw_text": "モルタル金ゴテ",
         "normalized_text": "モルタル金ゴテ",
         "bbox": [
@@ -212905,7 +212905,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-099870FB",
+        "item_id": "ITEM-9088F972",
         "raw_text": "モルタル H=100",
         "normalized_text": "モルタル H=100",
         "bbox": [
@@ -212927,7 +212927,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-618E5514",
+        "item_id": "ITEM-FBE11C12",
         "raw_text": "けい酸カルシウム板第1種 t=8",
         "normalized_text": "けい酸カルシウム板第1種 t=8",
         "bbox": [
@@ -212949,7 +212949,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-F54DCB30",
+        "item_id": "ITEM-EB5529D1",
         "raw_text": "吹付けロックウール t=25",
         "normalized_text": "吹付けロックウール t=25",
         "bbox": [
@@ -212971,7 +212971,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-5A72BC70",
+        "item_id": "ITEM-EC010D63",
         "raw_text": "耐火被覆",
         "normalized_text": "耐火被覆",
         "bbox": [
@@ -212993,7 +212993,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-7B8A5027",
+        "item_id": "ITEM-D5748F58",
         "raw_text": "ボイラー室",
         "normalized_text": "ボイラー室",
         "bbox": [
@@ -213015,7 +213015,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-56B5C636",
+        "item_id": "ITEM-A0576685",
         "raw_text": "コンクリート直押え",
         "normalized_text": "コンクリート直押え",
         "bbox": [
@@ -213037,7 +213037,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-D9B3C37E",
+        "item_id": "ITEM-045958E3",
         "raw_text": "石膏ボード t=12.5",
         "normalized_text": "石膏ボード t=12.5",
         "bbox": [
@@ -213059,7 +213059,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-F976E631",
+        "item_id": "ITEM-8D18209C",
         "raw_text": "石綿保温材 (配管部)",
         "normalized_text": "石綿保温材 (配管部",
         "bbox": [
@@ -213081,7 +213081,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-B0AA1CCE",
+        "item_id": "ITEM-278E112C",
         "raw_text": "保温要",
         "normalized_text": "保温要",
         "bbox": [
@@ -213103,7 +213103,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-CB8CA9D2",
+        "item_id": "ITEM-82D89C64",
         "raw_text": "倉庫 (1)",
         "normalized_text": "倉庫 (1",
         "bbox": [
@@ -213125,7 +213125,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-57D78118",
+        "item_id": "ITEM-4FB68F9C",
         "raw_text": "防塵塗料仕上げ",
         "normalized_text": "防塵塗料仕上げ",
         "bbox": [
@@ -213147,7 +213147,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-E050236B",
+        "item_id": "ITEM-725E6975",
         "raw_text": "なし",
         "normalized_text": "なし",
         "bbox": [
@@ -213169,7 +213169,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-5D3F0505",
+        "item_id": "ITEM-AB54681A",
         "raw_text": "スレート波板 t=6.3",
         "normalized_text": "スレート波板 t=6.3",
         "bbox": [
@@ -213191,7 +213191,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-8E12F8FF",
+        "item_id": "ITEM-AFDDD2AA",
         "raw_text": "グラスウール保温材 t=50",
         "normalized_text": "グラスウール保温材 t=50",
         "bbox": [
@@ -213213,7 +213213,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-E81D53FD",
+        "item_id": "ITEM-0C39D5BB",
         "raw_text": "事務室 (A)",
         "normalized_text": "事務室 (A",
         "bbox": [
@@ -213235,7 +213235,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-FE582EAA",
+        "item_id": "ITEM-BFFBADA0",
         "raw_text": "ビニル床タイル 300x300",
         "normalized_text": "ビニル床タイル 300x300",
         "bbox": [
@@ -213257,7 +213257,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-23AEE63F",
+        "item_id": "ITEM-3CD82C02",
         "raw_text": "プラスターボード t=9.5",
         "normalized_text": "プラスターボード t=9.5",
         "bbox": [
@@ -213279,7 +213279,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-164B99C3",
+        "item_id": "ITEM-D156A729",
         "raw_text": "岩綿吸音板 t=12",
         "normalized_text": "岩綿吸音板 t=12",
         "bbox": [
@@ -213301,7 +213301,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-B2403581",
+        "item_id": "ITEM-E3F750FA",
         "raw_text": "一般部",
         "normalized_text": "一般部",
         "bbox": [
@@ -213323,7 +213323,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-8EA36847",
+        "item_id": "ITEM-8D88AB77",
         "raw_text": "給湯室",
         "normalized_text": "給湯室",
         "bbox": [
@@ -213345,7 +213345,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-EDE79855",
+        "item_id": "ITEM-09413BEE",
         "raw_text": "磁器質タイル 150角",
         "normalized_text": "磁器質タイル 150角",
         "bbox": [
@@ -213367,7 +213367,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-872E9543",
+        "item_id": "ITEM-046493E6",
         "raw_text": "タイル巾木",
         "normalized_text": "タイル巾木",
         "bbox": [
@@ -213389,7 +213389,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-4EEE1533",
+        "item_id": "ITEM-74546FFA",
         "raw_text": "けい酸カルシウム板第2種 t=6",
         "normalized_text": "けい酸カルシウム板第2種 t=6",
         "bbox": [
@@ -213411,7 +213411,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-5730C669",
+        "item_id": "ITEM-967BC7AB",
         "raw_text": "石膏ボード t=9.5 VP",
         "normalized_text": "石膏ボード t=9.5 VP",
         "bbox": [
@@ -213433,7 +213433,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-9B8E83FE",
+        "item_id": "ITEM-0C055CF7",
         "raw_text": "耐水",
         "normalized_text": "耐水",
         "bbox": [
@@ -213455,7 +213455,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-9493DC44",
+        "item_id": "ITEM-06AEC1AA",
         "raw_text": "廊下・ホール",
         "normalized_text": "廊下・ホール",
         "bbox": [
@@ -213477,7 +213477,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-C9923DE5",
+        "item_id": "ITEM-F28F633D",
         "raw_text": "Pタイル t=2.0",
         "normalized_text": "Pタイル t=2.0",
         "bbox": [
@@ -213499,7 +213499,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-DD7C2D89",
+        "item_id": "ITEM-58C4B90F",
         "raw_text": "せっこうボード t=12.5",
         "normalized_text": "せっこうボード t=12.5",
         "bbox": [
@@ -213521,7 +213521,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-C8DF36CF",
+        "item_id": "ITEM-BFA09391",
         "raw_text": "ロックウール吸音板 t=15",
         "normalized_text": "ロックウール吸音板 t=15",
         "bbox": [
@@ -213543,7 +213543,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-F264DFF8",
+        "item_id": "ITEM-DAAB329A",
         "raw_text": "防音仕様",
         "normalized_text": "防音仕様",
         "bbox": [
@@ -213565,7 +213565,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-63EE8C7E",
+        "item_id": "ITEM-442A328A",
         "raw_text": "鉄骨梁: 吹付けロックウール t=25 (耐火被覆)",
         "normalized_text": "鉄骨梁: 吹付けロックウール t=25 (耐火被覆",
         "bbox": [
@@ -213587,7 +213587,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-DEE35629",
+        "item_id": "ITEM-021A24FF",
         "raw_text": "蒸気配管: 石綿保温材 100A",
         "normalized_text": "蒸気配管: 石綿保温材 100A",
         "bbox": [
@@ -213609,7 +213609,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-251A8CC1",
+        "item_id": "ITEM-F69B842A",
         "raw_text": "外壁: スレート波板 t=6.3",
         "normalized_text": "外壁: スレート波板 t=6.3",
         "bbox": [
@@ -213631,7 +213631,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-6B536DD0",
+        "item_id": "ITEM-4EB37D97",
         "raw_text": "間仕切壁: グラスウール保温材 t=50 充填",
         "normalized_text": "間仕切壁: グラスウール保温材 t=50 充填",
         "bbox": [
@@ -213653,7 +213653,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-4AE7F5AE",
+        "item_id": "ITEM-95C083B2",
         "raw_text": "壁: 石膏ボード t=12.5 EP塗装",
         "normalized_text": "壁: 石膏ボード t=12.5 EP塗装",
         "bbox": [
