@@ -1,10 +1,10 @@
 """
-Unit and Integration Tests for Tier-5 Local LLM Arbitrator (Qwen2.5-VL-3B).
+Unit and Integration Tests for Tier-5 Local LLM Arbitrator (Qwen2.5:0.5B).
 Tests:
 1. Health check & model detection (both online & offline modes)
 2. Robust JSON parsing and fallback validation
 3. Offline graceful fallback (leaves diagnoses intact without exceptions)
-4. Live end-to-end arbitration with local Ollama qwen2.5vl:3b (if running)
+4. Live end-to-end arbitration with local Ollama qwen2.5:0.5b (if running)
 """
 
 from nlp.llm_arbitrator import LocalLLMArbitrator
@@ -79,13 +79,13 @@ def test_llm_offline_graceful_fallback():
 
 
 def test_live_llm_arbitration_if_available():
-    live_arbitrator = LocalLLMArbitrator(model_name="qwen2.5vl:3b")
+    live_arbitrator = LocalLLMArbitrator(model_name="qwen2.5:0.5b")
 
     if not live_arbitrator.is_available():
-        print("Local Ollama or qwen2.5vl:3b not currently available, skipping live test.")
+        print("Local Ollama or qwen2.5:0.5b not currently available, skipping live test.")
         return
 
-    print("Ollama qwen2.5vl:3b detected. Running live arbitration test...")
+    print("Ollama qwen2.5:0.5b detected. Running live arbitration test...")
     classifier = AsbestosDiagnosticClassifier(llm_arbitrator=live_arbitrator)
 
     # Shorthand or colloquial items that might be UNCERTAIN in classical regex/fuzzy matching

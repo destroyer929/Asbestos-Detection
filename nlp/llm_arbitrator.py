@@ -1,5 +1,5 @@
 """
-Tier-5 Local LLM Material Arbitrator (Ollama / Qwen2.5-VL-3B).
+Tier-5 Local LLM Material Arbitrator (Ollama / Qwen2.5-0.5B).
 Resolves UNCERTAIN or low-confidence architectural material annotations
 using localized regulatory reasoning under Japanese MLIT (国土交通省)
 and Air Pollution Control Act (大気汚染防止法) standards.
@@ -58,7 +58,7 @@ VALID_HAZARD_LEVELS = {"LEVEL_1", "LEVEL_2", "LEVEL_3", "NON_ASBESTOS", "UNCERTA
 
 class LocalLLMArbitrator:
     """
-    Tier-5 Arbitrator communicating with a local Ollama instance (default: qwen2.5vl:3b).
+    Tier-5 Arbitrator communicating with a local Ollama instance (default: qwen2.5:0.5b).
     Operates resiliently with timeout protection and non-blocking offline fallbacks.
     """
 
@@ -66,12 +66,12 @@ class LocalLLMArbitrator:
         self,
         ollama_url: Optional[str] = None,
         model_name: Optional[str] = None,
-        timeout: float = 45.0,
+        timeout: float = 30.0,
         temperature: float = 0.1,
         enabled: bool = True
     ):
         self.ollama_url = (ollama_url or os.getenv("OLLAMA_HOST", "http://localhost:11434")).rstrip("/")
-        self.model_name = model_name or os.getenv("OLLAMA_MODEL", "qwen2.5vl:3b")
+        self.model_name = model_name or os.getenv("OLLAMA_MODEL", "qwen2.5:0.5b")
         self.timeout = timeout
         self.temperature = temperature
         self.enabled = enabled
