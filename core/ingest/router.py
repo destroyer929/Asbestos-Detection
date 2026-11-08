@@ -8,12 +8,16 @@ or Raster Images.
 
 from __future__ import annotations
 import os
+import re
+import logging
 from pathlib import Path
 from typing import List, Dict, Any, Optional, Literal, Tuple
 from dataclasses import dataclass, field
 import numpy as np
 import cv2
 import fitz  # PyMuPDF
+
+logger = logging.getLogger("drawing_scan.router")
 
 
 DocType = Literal["VECTOR_PDF", "SCANNED_PDF", "RASTER_IMAGE"]
@@ -111,13 +115,23 @@ class DocumentIngestionRouter:
         is_vector = total_chars >= self.min_vector_chars_threshold
 
         # Quality Validation: Verify that extracted text consists of readable characters,
-        # not missing font glyphs or broken CID mappings that produce '????' strings.
+        # not missing font glyphs, '????' replacement chars, or corrupted CMap mojibake (control codes).
         if is_vector:
-            qmark_count = sum(ent.text.count("?") for ent in vector_entities)
-            qmark_ratio = (qmark_count / max(1, total_chars))
-            if qmark_ratio > 0.10 or qmark_count > 15:
-                # PDF has corrupted font stream (e.g. '????: ???????????').
-                # Automatically fall back to OCR pipeline to visually read genuine text!
+            all_text = "".join(ent.text for ent in vector_entities)
+            total_extracted = max(1, len(all_text))
+
+            # 1. '?' placeholder overflow (font missing)
+            qmark_count = all_text.count("?")
+            if (qmark_count / total_extracted) > 0.10 or qmark_count > 15:
+                logger.info(f"PDF font stream missing glyphs ({qmark_count} '?' characters). Falling back to OCR.")
+                is_vector = False
+
+            # 2. Control characters & unmapped 2-byte mojibake blocks (e.g. CAD custom CID fonts without ToUnicode CMap)
+            mojibake_count = len(re.findall(r'[\x00-\x08\x0b-\x1f\x7f-\x9f\u0250-\u02af\u1c80-\u1cbf\u1cd0-\u1cff]', all_text))
+            if (mojibake_count / total_extracted) > 0.03 or mojibake_count > 25:
+                logger.info(
+                    f"PDF has corrupted CMap font encoding ({mojibake_count} mojibake/control bytes). Automatically falling back to visual OCR."
+                )
                 is_vector = False
 
         raster_pages = []

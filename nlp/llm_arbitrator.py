@@ -1,5 +1,5 @@
 """
-Tier-5 Local LLM Material Arbitrator (Ollama / Qwen2.5-0.5B).
+Tier-5 Local LLM Material Arbitrator (Ollama / Qwen3:1.7B).
 Resolves UNCERTAIN or low-confidence architectural material annotations
 using localized regulatory reasoning under Japanese MLIT (国土交通省)
 and Air Pollution Control Act (大気汚染防止法) standards.
@@ -24,14 +24,27 @@ MLIT_SYSTEM_PROMPT = """You are an expert Japanese architectural asbestos diagno
 
 Your task is to analyze candidate architectural finishing materials from Japanese blueprints (仕上表, 詳細図, 平面図) that could not be confidently identified by classical keyword matching.
 
-For each candidate item:
-1. Determine whether the material is POSITIVE for asbestos, NEGATIVE (confirmed non-asbestos), or UNCERTAIN.
-2. If POSITIVE, classify its statutory hazard level according to Japanese law:
-   - "LEVEL_1": Friable spray materials (吹付けアスベスト, 吹付けロックウール, 吹付けバーミキュライト, スプレーベスト, etc.)
-   - "LEVEL_2": Pipe covers, thermal insulation, refractory jackets, lagging (石綿保温材, けい藻土保温材, 耐火被覆板, 配管エルボ, パッキング, etc.)
-   - "LEVEL_3": Non-friable molded products / boards (石綿含有成形板, スレート波板, けい酸カルシウム板第1種 / 石綿ケイカル, ビニル床タイル / Pタイル, 押出成形セメント板, 繊維強化セメント板, etc.)
-3. If NEGATIVE, classify hazard_level as "NON_ASBESTOS":
-   - e.g. グラスウール (GW), ロックウール保温材 (RW - non-asbestos post-2004), せっこうボード / GB-R, けい酸カルシウム板第2種 (無石綿ケイカル), モルタル, 合板, 鋼板, アルミ, コンクリート.
+CRITICAL GROUNDING RULES:
+1. If an item is NOT a building material (e.g. city/municipality name like '流山市', project title like '工中名称', drawing title like '仕上リスト', room labels, dimension numbers, single letters/glyphs like '一' or '口', or unreadable corrupted text / mojibake), you MUST output:
+   - status: "UNCERTAIN"
+   - hazard_level: "UNCERTAIN"
+   - matched_material_ja: "該当なし (Non-Material / Noise)"
+   - matched_material_en: "None"
+   - confidence: 0.0
+   - reasoning: "Not a building material, drawing header, dimension, or corrupted noise."
+   DO NOT guess or hallucinate asbestos names for non-materials or garbage strings.
+
+2. If it is a confirmed hazardous asbestos material under MLIT statutory standards:
+   - status: "POSITIVE"
+   - hazard_level:
+     * "LEVEL_1": Friable spray materials (吹付けアスベスト, 吹付けロックウール, 吹付けバーミキュライト, スプレーベスト, etc.)
+     * "LEVEL_2": Pipe covers, thermal insulation, refractory jackets, lagging (石綿保温材, けい藻土保温材, 耐火被覆板, 配管エルボ, パッキング, etc.)
+     * "LEVEL_3": Non-friable molded products / boards (石綿含有成形板, スレート波板, けい酸カルシウム板第1種 / 石綿ケイカル, ビニル床タイル / Pタイル, 押出成形セメント板, 繊維強化セメント板, etc.)
+
+3. If it is a confirmed non-asbestos material (e.g. グラスウール / GW, ロックウール保温材 / RW, せっこうボード / GB-R, けい酸カルシウム板第2種, モルタル, 合板, 鋼板, アルミ, コンクリート):
+   - status: "NEGATIVE"
+   - hazard_level: "NON_ASBESTOS"
+
 4. If genuinely unknown or insufficient information, set status: "UNCERTAIN", hazard_level: "UNCERTAIN".
 
 Provide the canonical Japanese material name (matched_material_ja), English translation (matched_material_en), confidence (0.0 to 1.0), and a concise regulatory explanation citing MLIT standards.
@@ -56,9 +69,30 @@ VALID_STATUSES = {"POSITIVE", "NEGATIVE", "UNCERTAIN"}
 VALID_HAZARD_LEVELS = {"LEVEL_1", "LEVEL_2", "LEVEL_3", "NON_ASBESTOS", "UNCERTAIN"}
 
 
+def is_valid_material_candidate(text: str) -> bool:
+    """Filters out obvious non-material noise (control chars, dimensions, single punctuation) before LLM call."""
+    if not text or len(text.strip()) == 0:
+        return False
+    # Strip unprintable control characters and mojibake blocks
+    cleaned = re.sub(r'[\x00-\x1f\x7f-\x9f\u0250-\u02af\u1c80-\u1cbf\u1cd0-\u1cff]', '', text).strip()
+    if not cleaned or len(cleaned) == 0:
+        return False
+    # Filter out pure numbers or dimensions (e.g. "2400", "1500x300", "4,500")
+    if re.match(r'^[\d\s.,xX+\-~=]+$', cleaned):
+        return False
+    # Filter out single character punctuation or noise (except single Kanji that might be material)
+    if len(cleaned) == 1 and not re.match(r'[\u4e00-\u9fff]', cleaned):
+        return False
+    # Known drawing title / municipality keywords that are definitely not materials
+    known_metadata_exact = {"流山市", "工中名称", "仕上リスト", "特記仕上表", "図面名称", "縮尺", "設計", "施工"}
+    if cleaned in known_metadata_exact:
+        return False
+    return True
+
+
 class LocalLLMArbitrator:
     """
-    Tier-5 Arbitrator communicating with a local Ollama instance (default: qwen2.5:0.5b).
+    Tier-5 Arbitrator communicating with a local Ollama instance (default: qwen3:1.7b).
     Operates resiliently with timeout protection and non-blocking offline fallbacks.
     """
 
@@ -66,12 +100,12 @@ class LocalLLMArbitrator:
         self,
         ollama_url: Optional[str] = None,
         model_name: Optional[str] = None,
-        timeout: float = 30.0,
+        timeout: float = 35.0,
         temperature: float = 0.1,
         enabled: bool = True
     ):
         self.ollama_url = (ollama_url or os.getenv("OLLAMA_HOST", "http://localhost:11434")).rstrip("/")
-        self.model_name = model_name or os.getenv("OLLAMA_MODEL", "qwen2.5:0.5b")
+        self.model_name = model_name or os.getenv("OLLAMA_MODEL", "qwen3:1.7b")
         self.timeout = timeout
         self.temperature = temperature
         self.enabled = enabled
@@ -277,7 +311,18 @@ class LocalLLMArbitrator:
         if not uncertain_items:
             return diagnoses
 
-        logger.info(f"Routing {len(uncertain_items)} UNCERTAIN item(s) to Tier-5 LLM Arbitrator...")
+        # Pre-filtering: identify genuine candidate annotations vs obvious non-material noise
+        valid_candidates = []
+        for d in uncertain_items:
+            if is_valid_material_candidate(d.raw_text):
+                valid_candidates.append(d)
+            else:
+                d.regulatory_citation = "UNCERTAIN: Non-material noise, numerical dimension, or unreadable symbol filtered."
+
+        if not valid_candidates:
+            return diagnoses
+
+        logger.info(f"Routing {len(valid_candidates)} valid UNCERTAIN item(s) to Tier-5 LLM Arbitrator ({self.model_name})...")
 
         items_payload = [
             {
@@ -287,17 +332,27 @@ class LocalLLMArbitrator:
                 "room_context": d.room_context,
                 "region_type": d.region_type
             }
-            for d in uncertain_items
+            for d in valid_candidates
         ]
 
         llm_results = self.arbitrate_batch(items_payload)
 
-        for d in uncertain_items:
+        for d in valid_candidates:
             res = llm_results.get(d.item_id)
             if not res:
                 continue
 
-            # Only accept high-confidence resolutions
+            mat_ja = res.get("matched_material_ja", "")
+            # If LLM identified entity as Non-Material or Noise, do NOT assign asbestos!
+            if "該当なし" in mat_ja or "Non-Material" in mat_ja or "Noise" in mat_ja or res["status"] == "UNCERTAIN":
+                d.status = "UNCERTAIN"
+                d.hazard_level = "UNCERTAIN"
+                d.confidence = 0.0
+                d.regulatory_citation = f"[Tier-5 LLM: {self.model_name}] {res['reasoning']}"
+                d.requires_human_review = True
+                continue
+
+            # Only accept confident positive or negative material determinations
             if res["confidence"] >= confidence_threshold and res["status"] in ("POSITIVE", "NEGATIVE"):
                 d.status = res["status"]
                 d.hazard_level = res["hazard_level"]
