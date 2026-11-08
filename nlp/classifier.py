@@ -17,6 +17,7 @@ from nlp.normalizer import TextNormalizer, NormalizedText
 from nlp.tokenizer import JapaneseMorphologicalTokenizer
 from nlp.matcher import AsbestosMatchingEngine, MatchResult, MatchTier
 from models.layout.region_classifier import ArchitecturalRegionClassifier, ClassifiedRegion, RegionType
+from nlp.llm_arbitrator import LocalLLMArbitrator
 
 
 @dataclass
@@ -45,11 +46,18 @@ class DrawingItemDiagnosis:
 class AsbestosDiagnosticClassifier:
     """End-to-end classifier transforming detected text boxes into safety diagnoses."""
 
-    def __init__(self, db: Optional[MaterialsDatabase] = None):
+    def __init__(
+        self,
+        db: Optional[MaterialsDatabase] = None,
+        llm_arbitrator: Optional[LocalLLMArbitrator] = None,
+        enable_llm: bool = True
+    ):
         self.db = db or MaterialsDatabase()
         self.normalizer = TextNormalizer()
         self.matcher = AsbestosMatchingEngine(db=self.db)
         self.region_classifier = ArchitecturalRegionClassifier()
+        self.enable_llm = enable_llm
+        self.llm_arbitrator = llm_arbitrator or LocalLLMArbitrator(enabled=enable_llm)
 
     def diagnose_item(
         self,
@@ -124,7 +132,8 @@ class AsbestosDiagnosticClassifier:
         self,
         detected_items: List[Dict[str, Any]],
         table_bbox: Optional[List[float]] = None,
-        page_number: int = 1
+        page_number: int = 1,
+        enable_llm: Optional[bool] = None
     ) -> List[DrawingItemDiagnosis]:
         """Processes an entire sheet of detected text boxes into structured diagnoses."""
         diagnoses: List[DrawingItemDiagnosis] = []
@@ -145,6 +154,11 @@ class AsbestosDiagnosticClassifier:
             )
             if diag is not None:
                 diagnoses.append(diag)
+
+        # Tier-5: Local LLM Arbitration for UNCERTAIN items
+        run_llm = self.enable_llm if enable_llm is None else enable_llm
+        if run_llm and self.llm_arbitrator:
+            diagnoses = self.llm_arbitrator.arbitrate_diagnoses(diagnoses)
 
         return diagnoses
 

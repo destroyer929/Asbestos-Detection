@@ -233,9 +233,15 @@ export const InspectorPanel: React.FC<InspectorPanelProps> = ({
         <div className="bg-slate-950/60 rounded-xl p-3 border border-slate-800 space-y-2 text-xs">
           <div className="flex items-center justify-between pb-2 border-b border-slate-800">
             <span className="text-slate-400">Matching Tier:</span>
-            <span className="font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-200 font-semibold text-[11px]">
-              {selectedItem.match_tier}
-            </span>
+            {selectedItem.match_tier === "TIER_5_LLM" ? (
+              <span className="font-mono px-2 py-0.5 rounded bg-purple-900/60 border border-purple-500/50 text-purple-200 font-semibold text-[11px] inline-flex items-center gap-1">
+                <span>🤖</span> T5_LLM (Qwen2.5)
+              </span>
+            ) : (
+              <span className="font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-200 font-semibold text-[11px]">
+                {selectedItem.match_tier}
+              </span>
+            )}
           </div>
 
           <div className="flex items-center justify-between pb-2 border-b border-slate-800">

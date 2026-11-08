@@ -27,6 +27,7 @@ class MatchTier(str, Enum):
     TIER_2_RULE = "TIER_2_RULE"
     TIER_3_FUZZY = "TIER_3_FUZZY"
     TIER_4_SEMANTIC = "TIER_4_SEMANTIC"
+    TIER_5_LLM = "TIER_5_LLM"
     NO_MATCH = "NO_MATCH"
 
 
@@ -242,6 +243,9 @@ class AsbestosMatchingEngine:
         best_fuzzy_entry: Optional[MaterialEntry] = None
         best_fuzzy_key = ""
 
+        has_positive_marker = any(m in cleaned for m in ("石綿", "アスベスト"))
+        has_negative_marker = any(m in cleaned for m in ("無石綿", "ノンアスベスト", "不使用", "ゼロ", "なし", "非石綿", "0%"))
+
         # RapidFuzz extractOne on precomputed reference texts with score_cutoff (C++ SIMD)
         f_match = process.extractOne(
             cleaned,
@@ -250,9 +254,17 @@ class AsbestosMatchingEngine:
             score_cutoff=self.fuzzy_threshold * 100.0
         )
         if f_match:
-            best_fuzzy_key, score_val, _ = f_match
-            best_fuzzy_score = score_val / 100.0
-            best_fuzzy_entry = self._reference_text_to_entry.get(best_fuzzy_key)
+            candidate_key, score_val, _ = f_match
+            candidate_entry = self._reference_text_to_entry.get(candidate_key)
+            if candidate_entry:
+                # Safety cross-check against negation/positive confusion
+                if (has_positive_marker and not has_negative_marker and candidate_entry.status == "NEGATIVE") or \
+                   (has_negative_marker and candidate_entry.status == "POSITIVE"):
+                    pass
+                else:
+                    best_fuzzy_key = candidate_key
+                    best_fuzzy_score = score_val / 100.0
+                    best_fuzzy_entry = candidate_entry
 
         if not best_fuzzy_entry:
             # Fallback check with standard ratio
@@ -263,9 +275,16 @@ class AsbestosMatchingEngine:
                 score_cutoff=self.fuzzy_threshold * 100.0
             )
             if f_ratio:
-                best_fuzzy_key, score_val, _ = f_ratio
-                best_fuzzy_score = score_val / 100.0
-                best_fuzzy_entry = self._reference_text_to_entry.get(best_fuzzy_key)
+                candidate_key, score_val, _ = f_ratio
+                candidate_entry = self._reference_text_to_entry.get(candidate_key)
+                if candidate_entry:
+                    if (has_positive_marker and not has_negative_marker and candidate_entry.status == "NEGATIVE") or \
+                       (has_negative_marker and candidate_entry.status == "POSITIVE"):
+                        pass
+                    else:
+                        best_fuzzy_key = candidate_key
+                        best_fuzzy_score = score_val / 100.0
+                        best_fuzzy_entry = candidate_entry
 
         if best_fuzzy_score >= self.fuzzy_threshold and best_fuzzy_entry:
             return MatchResult(
@@ -324,7 +343,17 @@ class AsbestosMatchingEngine:
         best_key = ""
         len_query = len(query)
 
+        has_positive_marker = any(m in query for m in ("石綿", "アスベスト"))
+        has_negative_marker = any(m in query for m in ("無石綿", "ノンアスベスト", "不使用", "ゼロ", "なし", "非石綿", "0%"))
+
         for ref_text, entry, ref_ngrams, len_ref in self._reference_ngrams:
+            # SAFETY FILTER: If query mentions positive markers without negation, do NOT allow matching NEGATIVE control entries
+            if has_positive_marker and not has_negative_marker and entry.status == "NEGATIVE":
+                continue
+            # And if query explicitly states non-asbestos, do not match POSITIVE entries
+            if has_negative_marker and entry.status == "POSITIVE":
+                continue
+
             intersection = len(q_ngrams & ref_ngrams)
             if not intersection:
                 continue

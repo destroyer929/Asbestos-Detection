@@ -227,11 +227,22 @@ class HumanOverrideRequest(BaseModel):
 
 @app.get("/api/v1/health")
 def health_check():
+    llm_info = {
+        "enabled": False,
+        "model": None,
+        "available": False
+    }
+    if classifier.llm_arbitrator:
+        llm_info["enabled"] = classifier.llm_arbitrator.enabled
+        llm_info["model"] = classifier.llm_arbitrator.model_name
+        llm_info["available"] = classifier.llm_arbitrator.is_available()
+
     return {
         "status": "healthy",
         "service": "DrawingScan AI Engine",
         "gpu_available": ocr_engine.gpu,
-        "database_entries": len(db.entries)
+        "database_entries": len(db.entries),
+        "llm_arbitrator": llm_info
     }
 
 

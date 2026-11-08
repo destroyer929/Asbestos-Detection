@@ -245,7 +245,13 @@ export const MaterialTable: React.FC<MaterialTableProps> = ({
                     {(item.confidence * 100).toFixed(1)}%
                   </td>
                   <td className="py-2.5 px-3 text-slate-400 text-[11px]">
-                    {item.match_tier.replace("TIER_", "T")}
+                    {item.match_tier === "TIER_5_LLM" ? (
+                      <span className="px-1.5 py-0.5 rounded bg-purple-900/50 border border-purple-500/40 text-purple-300 font-bold inline-flex items-center gap-1">
+                        <span>🤖</span> T5_LLM
+                      </span>
+                    ) : (
+                      item.match_tier.replace("TIER_", "T")
+                    )}
                   </td>
                   <td className="py-2.5 px-3">
                     {item.requires_human_review ? (
