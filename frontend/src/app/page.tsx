@@ -26,7 +26,7 @@ import {
   fetchDrawingPage,
   fetchDrawingHistory,
 } from "@/lib/api";
-import { Loader2, AlertCircle, X } from "lucide-react";
+import { Loader2, AlertCircle, X, Upload, FileUp, Sparkles, Database, ArrowLeft, RefreshCw } from "lucide-react";
 
 export default function HomePage() {
   // Backend status & samples
@@ -36,7 +36,7 @@ export default function HomePage() {
     database_entries: number;
   } | null>(null);
   const [samples, setSamples] = useState<BenchmarkSample[]>([]);
-  const [selectedSampleId, setSelectedSampleId] = useState<string>("ALFRED-DWG-1982-001");
+  const [selectedSampleId, setSelectedSampleId] = useState<string>("");
   const [databaseCount, setDatabaseCount] = useState<number>(0);
 
   // Analysis result
@@ -45,7 +45,7 @@ export default function HomePage() {
   const [activeFilter, setActiveFilter] = useState<AsbestosStatus | "ALL">("ALL");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Modals
@@ -93,7 +93,15 @@ export default function HomePage() {
     }
   }, [refreshHistoryCount]);
 
-  // Initial load
+  // Clear active analysis and return to upload prompt
+  const handleClearAnalysis = () => {
+    setAnalysis(null);
+    setSelectedItem(null);
+    setSelectedSampleId("");
+    setErrorMessage(null);
+  };
+
+  // Initial load - fetch system health and preset catalog without auto-analyzing any file
   useEffect(() => {
     let mounted = true;
     async function init() {
@@ -106,10 +114,6 @@ export default function HomePage() {
         setHealth(h);
         setSamples(sList);
         refreshHistoryCount();
-
-        const defaultId = sList.find(s => s.id === "ALFRED-DWG-1982-001")?.id || (sList.length > 0 ? sList[0].id : "ALFRED-DWG-1982-001");
-        setSelectedSampleId(defaultId);
-        await loadSample(defaultId);
       } catch (err: any) {
         if (mounted) {
           setErrorMessage(err.message || "Failed to initialize blueprint analysis.");
@@ -121,7 +125,7 @@ export default function HomePage() {
     return () => {
       mounted = false;
     };
-  }, [loadSample, refreshHistoryCount]);
+  }, [refreshHistoryCount]);
 
   // Handle uploaded drawing
   const handleUploadSuccess = (data: DrawingAnalysisResponse) => {
@@ -274,8 +278,123 @@ export default function HomePage() {
           </div>
         )}
 
+        {/* Upload Sample to Diagnosis Landing State (Initial empty screen) */}
+        {!analysis && !isLoading && (
+          <div className="max-w-4xl mx-auto my-8 sm:my-12 px-4">
+            <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-8 sm:p-12 shadow-2xl backdrop-blur-sm text-center relative overflow-hidden">
+              {/* Decorative background glow */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-36 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+
+              {/* Main Icon */}
+              <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center shadow-xl shadow-blue-500/25 ring-8 ring-blue-500/10">
+                <FileUp className="w-10 h-10 text-white" />
+              </div>
+
+              {/* Headline */}
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                Upload sample to diagnosis
+              </h1>
+              <p className="text-sm font-semibold text-blue-400 mt-1.5">
+                図面・サンプルをアップロードして石綿診断を開始
+              </p>
+
+              <p className="max-w-xl mx-auto text-sm text-slate-400 mt-3 leading-relaxed">
+                Upload an architectural blueprint (PDF, Scanned JPG/PNG, CAD DXF) to run automated MLIT-compliant asbestos detection, OCR text extraction, 4-Tier matching, and Tier-5 LLM arbitration.
+              </p>
+
+              {/* Primary Action Buttons */}
+              <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+                <button
+                  onClick={() => setIsUploadOpen(true)}
+                  className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-600/30 transition transform hover:-translate-y-0.5 active:translate-y-0"
+                >
+                  <Upload className="w-4 h-4" />
+                  <span>Upload Blueprint / 図面アップロード</span>
+                </button>
+
+                <button
+                  onClick={() => setIsDatabaseOpen(true)}
+                  className="w-full sm:w-auto px-5 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm border border-slate-700 flex items-center justify-center gap-2 transition"
+                >
+                  <Database className="w-4 h-4 text-cyan-400" />
+                  <span>Open Database ({databaseCount} saved)</span>
+                </button>
+              </div>
+
+              {/* Preset benchmark samples section */}
+              {samples.length > 0 && (
+                <div className="mt-12 pt-8 border-t border-slate-800/80 text-left">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                      Or choose a preset benchmark sample:
+                    </span>
+                    <span className="text-[11px] text-slate-500 font-mono">
+                      {samples.length} presets available
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                    {samples.slice(0, 6).map((sample) => (
+                      <button
+                        key={sample.id}
+                        onClick={() => loadSample(sample.id)}
+                        className="p-3.5 rounded-xl bg-slate-950/60 hover:bg-slate-800/80 border border-slate-800 hover:border-blue-500/50 text-left transition group"
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-[11px] font-mono font-bold text-blue-400 group-hover:text-blue-300 truncate mr-2">
+                            {sample.id}
+                          </span>
+                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 font-mono flex-shrink-0">
+                            {sample.doc_type}
+                          </span>
+                        </div>
+                        <p className="text-xs font-semibold text-slate-200 group-hover:text-white line-clamp-1">
+                          {sample.title}
+                        </p>
+                        <p className="text-[11px] text-slate-500 line-clamp-2 mt-1">
+                          {sample.description}
+                        </p>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {analysis && (
           <>
+            {/* Active Drawing Top Bar & Reset/Upload CTA */}
+            <div className="mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 shadow">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={handleClearAnalysis}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-medium border border-slate-700 transition"
+                  title="Return to upload screen"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span>Upload Another Drawing</span>
+                </button>
+                <div className="h-4 w-[1px] bg-slate-800 hidden sm:block" />
+                <div>
+                  <span className="text-xs text-slate-400 font-mono">Current File: </span>
+                  <span className="text-xs font-bold text-white font-mono">{analysis.filename}</span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setIsUploadOpen(true)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition shadow shadow-blue-600/30"
+                >
+                  <Upload className="w-3.5 h-3.5" />
+                  <span>New Upload</span>
+                </button>
+              </div>
+            </div>
+
             {/* KPI Dashboard */}
             <KPIDashboard
               summary={analysis.summary}
