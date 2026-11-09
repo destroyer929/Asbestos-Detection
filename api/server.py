@@ -11,7 +11,14 @@ Exposes endpoints:
 """
 
 from __future__ import annotations
+import sys
+import asyncio
 import os
+
+if sys.platform == "win32":
+    # Prevent Windows Proactor event loop crashes on socket disconnects (WinError 64)
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
 import json
 import uuid
 import shutil

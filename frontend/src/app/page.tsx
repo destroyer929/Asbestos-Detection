@@ -232,7 +232,10 @@ export default function HomePage() {
         health={health}
         onOpenUpload={() => setIsUploadOpen(true)}
         onOpenSchedule={() => setIsScheduleOpen(true)}
-        onOpenDatabase={() => setIsDatabaseOpen(true)}
+        onOpenDatabase={() => {
+          refreshHistoryCount();
+          setIsDatabaseOpen(true);
+        }}
         onOpenHistory={() => setIsHistoryOpen(true)}
         isLoading={isLoading}
         databaseCount={databaseCount}
@@ -313,7 +316,10 @@ export default function HomePage() {
                 </button>
 
                 <button
-                  onClick={() => setIsDatabaseOpen(true)}
+                  onClick={() => {
+                    refreshHistoryCount();
+                    setIsDatabaseOpen(true);
+                  }}
                   className="w-full sm:w-auto px-5 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm border border-slate-700 flex items-center justify-center gap-2 transition"
                 >
                   <Database className="w-4 h-4 text-cyan-400" />
