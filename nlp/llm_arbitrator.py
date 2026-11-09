@@ -19,35 +19,40 @@ from nlp.matcher import MatchTier
 
 logger = logging.getLogger("drawing_scan.llm_arbitrator")
 
-# MLIT Asbestos Taxonomy Prompt
+# MLIT Asbestos Taxonomy & 3-Way Triage Prompt
 MLIT_SYSTEM_PROMPT = """You are an expert Japanese architectural asbestos diagnostic specialist operating under Japan's MLIT (国土交通省) and Air Pollution Control Act (大気汚染防止法) statutory standards.
 
 Your task is to analyze candidate architectural finishing materials from Japanese blueprints (仕上表, 詳細図, 平面図) that could not be confidently identified by classical keyword matching.
 
-CRITICAL GROUNDING RULES:
-1. If an item is NOT a building material (e.g. city/municipality name like '流山市', project title like '工中名称', drawing title like '仕上リスト', room labels, dimension numbers, single letters/glyphs like '一' or '口', or unreadable corrupted text / mojibake), you MUST output:
+Perform 3-way triage for each item:
+
+1. POSITIVE (Hazardous Asbestos Material):
+   - Confirmed hazardous asbestos materials, historical asbestos products, or common Japanese asbestos abbreviations/slang:
+     * LEVEL_1: Friable spray materials (吹付けアスベスト, 吹付けロックウール, 吹付けバーミキュライト, スプレーベスト, etc.)
+     * LEVEL_2: Pipe covers, thermal insulation, refractory jackets, lagging (石綿保温材, けい藻土保温材, 耐火被覆板, 配管エルボ, パッキング, etc.)
+     * LEVEL_3: Non-friable molded products / boards (石綿含有成形板, スレート波板, けい酸カルシウム板第1種 / 石綿ケイカル, ビニル床タイル / Pタイル, 押出成形セメント板, 繊維強化セメント板, etc.)
+   - status: "POSITIVE"
+   - review_required: true (for LEVEL_1 friable spray or confidence < 0.85), false (for standard LEVEL_2/3)
+
+2. NEGATIVE (Confirmed Non-Asbestos - Normal Building Elements & Everyday Words):
+   - Group 2A: Safe standard construction materials without asbestos (e.g. グラスウール / GW, ロックウール保温材 / RW post-2004, せっこうボード / GB-R, プラスターボード, けい酸カルシウム板第2種, モルタル, 木製巾木, 磁器質タイル, タイル巾木, コンクリート, 合板, 鋼板, アルミ, ガラス, 塗料仕上げ).
+   - Group 2B: Common everyday words, room/space/office names, general specifications, drawing notes, and municipal titles that are completely unrelated to asbestos:
+     * Room / place names: 機械室, 事務室, 倉庫, 給湯室, ボイラー室, 廊下, ホール, 便所, トイレ, 会議室, 更衣室, 階段室, EVホール, 湯沸室, 控室, etc.
+     * Common architectural specifications / notes: 耐水, 耐水仕様, 防音仕様, 保温要, 一般部, なし, 特記, 仕様, 標準, 特記なき限り, etc.
+     * Municipal titles / drawing headers: 流山市, 工中名称, 仕上表, 仕上リスト, 設計, 施工, etc.
+   - For ALL Group 2A and Group 2B items, you MUST output:
+     * status: "NEGATIVE"
+     * hazard_level: "NON_ASBESTOS"
+     * review_required: false
+     * confidence: 0.95 to 1.0
+
+3. UNCERTAIN (Unique Brand Names, Ambiguous Trade Products, or Genuine Unknowns):
+   - ONLY for rare proprietary trade names, unknown manufacturer product brands (e.g. obscure 1970s commercial brand names, cryptic product codes like 'ハイベストX', 'ダンパック', custom composite panels), or ambiguous strings where asbestos content cannot be safely ruled out.
+   - Or when you genuinely cannot determine the meaning or safety of the material.
    - status: "UNCERTAIN"
    - hazard_level: "UNCERTAIN"
-   - matched_material_ja: "該当なし (Non-Material / Noise)"
-   - matched_material_en: "None"
-   - confidence: 0.0
-   - reasoning: "Not a building material, drawing header, dimension, or corrupted noise."
-   DO NOT guess or hallucinate asbestos names for non-materials or garbage strings.
-
-2. If it is a confirmed hazardous asbestos material under MLIT statutory standards:
-   - status: "POSITIVE"
-   - hazard_level:
-     * "LEVEL_1": Friable spray materials (吹付けアスベスト, 吹付けロックウール, 吹付けバーミキュライト, スプレーベスト, etc.)
-     * "LEVEL_2": Pipe covers, thermal insulation, refractory jackets, lagging (石綿保温材, けい藻土保温材, 耐火被覆板, 配管エルボ, パッキング, etc.)
-     * "LEVEL_3": Non-friable molded products / boards (石綿含有成形板, スレート波板, けい酸カルシウム板第1種 / 石綿ケイカル, ビニル床タイル / Pタイル, 押出成形セメント板, 繊維強化セメント板, etc.)
-
-3. If it is a confirmed non-asbestos material (e.g. グラスウール / GW, ロックウール保温材 / RW, せっこうボード / GB-R, けい酸カルシウム板第2種, モルタル, 合板, 鋼板, アルミ, コンクリート):
-   - status: "NEGATIVE"
-   - hazard_level: "NON_ASBESTOS"
-
-4. If genuinely unknown or insufficient information, set status: "UNCERTAIN", hazard_level: "UNCERTAIN".
-
-Provide the canonical Japanese material name (matched_material_ja), English translation (matched_material_en), confidence (0.0 to 1.0), and a concise regulatory explanation citing MLIT standards.
+   - review_required: true
+   - confidence: 0.0 to 0.5
 
 Respond ONLY with valid JSON in this exact structure:
 {
@@ -56,10 +61,11 @@ Respond ONLY with valid JSON in this exact structure:
       "id": "ITEM-1",
       "status": "POSITIVE" | "NEGATIVE" | "UNCERTAIN",
       "hazard_level": "LEVEL_1" | "LEVEL_2" | "LEVEL_3" | "NON_ASBESTOS" | "UNCERTAIN",
-      "matched_material_ja": "けい酸カルシウム板第1種",
-      "matched_material_en": "Asbestos Calcium Silicate Board Type 1",
-      "confidence": 0.95,
-      "reasoning": "石綿ケイカル is common shorthand for Level 3 molded Asbestos Calcium Silicate Board Type 1 under MLIT standards."
+      "matched_material_ja": "string",
+      "matched_material_en": "string",
+      "review_required": boolean,
+      "confidence": float,
+      "reasoning": "Concise explanation in Japanese or English citing MLIT standards"
     }
   ]
 }
@@ -150,7 +156,7 @@ class LocalLLMArbitrator:
     def arbitrate_batch(
         self,
         candidate_items: List[Dict[str, Any]],
-        max_batch_size: int = 8
+        max_batch_size: int = 4
     ) -> Dict[str, Dict[str, Any]]:
         """
         Sends a batch of uncertain items to the local LLM for MLIT statutory arbitration.
@@ -161,7 +167,7 @@ class LocalLLMArbitrator:
 
         results_by_id: Dict[str, Dict[str, Any]] = {}
 
-        # Process in sub-batches if necessary to prevent context blowup
+        # Process in sub-batches of 4 items to prevent token overflow and ensure fast responses
         for i in range(0, len(candidate_items), max_batch_size):
             chunk = candidate_items[i : i + max_batch_size]
             chunk_results = self._process_chunk(chunk)
@@ -189,7 +195,8 @@ class LocalLLMArbitrator:
             "format": "json",
             "stream": False,
             "options": {
-                "temperature": self.temperature
+                "temperature": self.temperature,
+                "num_predict": 2048
             }
         }
 
@@ -284,6 +291,7 @@ class LocalLLMArbitrator:
                 "hazard_level": hazard_level,
                 "matched_material_ja": entry.get("matched_material_ja", "不明 (Uncertain)"),
                 "matched_material_en": entry.get("matched_material_en", entry.get("matched_material_ja", "")),
+                "review_required": bool(entry.get("review_required", status == "UNCERTAIN")),
                 "confidence": conf,
                 "reasoning": entry.get("reasoning", "MLIT regulatory arbitration.")
             }
@@ -311,13 +319,21 @@ class LocalLLMArbitrator:
         if not uncertain_items:
             return diagnoses
 
-        # Pre-filtering: identify genuine candidate annotations vs obvious non-material noise
+        # Pre-filtering: identify candidate annotations vs obvious non-material noise
         valid_candidates = []
         for d in uncertain_items:
             if is_valid_material_candidate(d.raw_text):
                 valid_candidates.append(d)
             else:
-                d.regulatory_citation = "UNCERTAIN: Non-material noise, numerical dimension, or unreadable symbol filtered."
+                # Obvious dimensions, punctuation or pure numbers are confirmed non-asbestos noise
+                d.status = "NEGATIVE"
+                d.hazard_level = "NON_ASBESTOS"
+                d.matched_material_ja = "寸法・数値・記号 (Dimension / Symbol Noise)"
+                d.matched_material_en = "Dimension / Symbol Noise (Non-Asbestos)"
+                d.confidence = 1.0
+                d.match_tier = MatchTier.TIER_5_LLM.value
+                d.regulatory_citation = "Non-material noise or numerical dimension filtered as non-asbestos."
+                d.requires_human_review = False
 
         if not valid_candidates:
             return diagnoses
@@ -342,44 +358,59 @@ class LocalLLMArbitrator:
             if not res:
                 continue
 
+            status = res.get("status", "UNCERTAIN")
+            hazard_level = res.get("hazard_level", "UNCERTAIN")
             mat_ja = res.get("matched_material_ja", "")
-            # If LLM identified entity as Non-Material or Noise, do NOT assign asbestos!
-            if "該当なし" in mat_ja or "Non-Material" in mat_ja or "Noise" in mat_ja or res["status"] == "UNCERTAIN":
-                d.status = "UNCERTAIN"
-                d.hazard_level = "UNCERTAIN"
-                d.confidence = 0.0
-                d.regulatory_citation = f"[Tier-5 LLM: {self.model_name}] {res['reasoning']}"
-                d.requires_human_review = True
-                continue
+            mat_en = res.get("matched_material_en", "")
+            conf = res.get("confidence", 0.0)
+            reasoning = res.get("reasoning", "")
+            review_req = res.get("review_required", False)
 
-            # Only accept confident positive or negative material determinations
-            if res["confidence"] >= confidence_threshold and res["status"] in ("POSITIVE", "NEGATIVE"):
-                d.status = res["status"]
-                d.hazard_level = res["hazard_level"]
-                d.matched_material_ja = res["matched_material_ja"]
-                d.matched_material_en = res.get("matched_material_en") or res["matched_material_ja"]
-                d.confidence = res["confidence"]
+            # Case 1: NEGATIVE - Confirmed non-asbestos materials, everyday words, room names, or general specs
+            if status == "NEGATIVE":
+                d.status = "NEGATIVE"
+                d.hazard_level = "NON_ASBESTOS"
+                d.matched_material_ja = mat_ja or d.raw_text
+                d.matched_material_en = mat_en or d.raw_text
+                d.confidence = max(0.90, conf)
                 d.match_tier = MatchTier.TIER_5_LLM.value
-                d.regulatory_citation = f"[Tier-5 LLM: {self.model_name}] {res['reasoning']}"
+                d.regulatory_citation = f"[Tier-5 LLM: {self.model_name}] {reasoning}"
+                d.requires_human_review = False  # Everyday words, room names & safe materials DO NOT need human review!
+                logger.info(
+                    f"Resolved {d.item_id} ('{d.raw_text}') -> NEGATIVE [NON_ASBESTOS] ({d.matched_material_ja}) via Tier-5 LLM"
+                )
 
-                # Safety triage rules:
-                # 1. Any Level 1 positive always requires human review
-                # 2. Confidence below 0.85 requires review
-                # 3. High-confidence Negative or Level 3 clear matches pass triage
-                if d.status == "POSITIVE" and d.hazard_level == "LEVEL_1":
-                    d.requires_human_review = True
-                elif d.confidence < 0.85:
+            # Case 2: POSITIVE - Confirmed MLIT statutory asbestos materials (or historical slang/abbreviations)
+            elif status == "POSITIVE" and hazard_level in ("LEVEL_1", "LEVEL_2", "LEVEL_3"):
+                d.status = "POSITIVE"
+                d.hazard_level = hazard_level
+                d.matched_material_ja = mat_ja
+                d.matched_material_en = mat_en or mat_ja
+                d.confidence = max(0.85, conf)
+                d.match_tier = MatchTier.TIER_5_LLM.value
+                d.regulatory_citation = f"[Tier-5 LLM: {self.model_name}] {reasoning}"
+                # Level 1 friable spray or lower confidence matches require human confirmation
+                if hazard_level == "LEVEL_1" or d.confidence < 0.85 or review_req:
                     d.requires_human_review = True
                 else:
                     d.requires_human_review = False
-
                 logger.info(
-                    f"Resolved {d.item_id} ('{d.raw_text}') -> {d.status} [{d.hazard_level}] ({d.matched_material_ja}) via Tier-5 LLM"
+                    f"Resolved {d.item_id} ('{d.raw_text}') -> POSITIVE [{d.hazard_level}] ({d.matched_material_ja}) via Tier-5 LLM"
                 )
+
+            # Case 3: UNCERTAIN - Unique brand names, ambiguous proprietary codes, or when LLM fails to classify
             else:
-                # Retain UNCERTAIN status and append LLM reasoning if available
-                if res.get("reasoning"):
-                    d.regulatory_citation = f"[Tier-5 LLM UNCERTAIN] {res['reasoning']}"
+                d.status = "UNCERTAIN"
+                d.hazard_level = "UNCERTAIN"
+                d.matched_material_ja = mat_ja if mat_ja and "None" not in mat_ja else "未特定商標・要確認"
+                d.matched_material_en = mat_en if mat_en and "None" not in mat_en else "Unidentified Brand / Review Required"
+                d.confidence = conf
+                d.match_tier = MatchTier.TIER_5_LLM.value
+                d.regulatory_citation = f"[Tier-5 LLM Review Needed: {self.model_name}] {reasoning or 'Unique brand name or ambiguous material requiring human expert verification.'}"
+                d.requires_human_review = True  # ONLY truly ambiguous trade names/products require human review!
+                logger.info(
+                    f"Flagged {d.item_id} ('{d.raw_text}') -> UNCERTAIN (Human Review Required) via Tier-5 LLM"
+                )
 
         return diagnoses
 

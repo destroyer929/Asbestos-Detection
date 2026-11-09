@@ -169,5 +169,23 @@
     "corrected_material_name": "吹付け石綿",
     "reviewer_notes": "Verified by certified inspector",
     "timestamp": "2026-11-09T02:15:59.297693"
+  },
+  {
+    "item_id": "ITEM-49980F6D",
+    "drawing_id": "UPLOAD-70cbd8d1",
+    "corrected_status": "UNCERTAIN",
+    "corrected_hazard_level": "NON_ASBESTOS",
+    "corrected_material_name": "該当なし (None)",
+    "reviewer_notes": "",
+    "timestamp": "2026-11-09T11:27:48.660322"
+  },
+  {
+    "item_id": "ITEM-TEST-UNIT-99",
+    "drawing_id": "DWG-1982-001",
+    "corrected_status": "POSITIVE",
+    "corrected_hazard_level": "LEVEL_1",
+    "corrected_material_name": "吹付け石綿",
+    "reviewer_notes": "Verified by certified inspector",
+    "timestamp": "2026-11-09T11:59:06.522639"
   }
 ]
