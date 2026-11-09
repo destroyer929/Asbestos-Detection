@@ -89,8 +89,11 @@ def is_valid_material_candidate(text: str) -> bool:
     # Filter out single character punctuation or noise (except single Kanji that might be material)
     if len(cleaned) == 1 and not re.match(r'[\u4e00-\u9fff]', cleaned):
         return False
-    # Known drawing title / municipality keywords that are definitely not materials
-    known_metadata_exact = {"流山市", "工中名称", "仕上リスト", "特記仕上表", "図面名称", "縮尺", "設計", "施工"}
+    # Known drawing title / municipality keywords / table schedule column headers that are definitely not materials
+    known_metadata_exact = {
+        "流山市", "工中名称", "仕上リスト", "特記仕上表", "図面名称", "縮尺", "設計", "施工",
+        "室", "室名", "腰", "腰壁", "壁", "柱", "型", "梁型", "天", "井", "天井", "床", "巾木", "下地", "備考"
+    }
     if cleaned in known_metadata_exact:
         return False
     return True
@@ -156,7 +159,7 @@ class LocalLLMArbitrator:
     def arbitrate_batch(
         self,
         candidate_items: List[Dict[str, Any]],
-        max_batch_size: int = 4
+        max_batch_size: int = 12
     ) -> Dict[str, Dict[str, Any]]:
         """
         Sends a batch of uncertain items to the local LLM for MLIT statutory arbitration.

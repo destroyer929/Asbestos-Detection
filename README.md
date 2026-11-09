@@ -291,7 +291,7 @@ Asbestos-Detection/
 │   └── Dockerfile
 ├── models/
 │   ├── ocr/
-│   │   └── engine.py                  # Bilingual PyTorch EasyOCR + CUDA hardware acceleration
+│   │   └── engine.py                  # Bilingual PaddleOCR v4 CJK Japanese recognition engine
 │   └── layout/
 │       ├── region_classifier.py       # Filters DIMENSION_NOISE, classifies callouts
 │       ├── table_parser.py            # Morphological Finish Schedule table parser

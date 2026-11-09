@@ -1,12 +1,13 @@
 """
 Bilingual Deep Learning OCR & Recognition Engine.
-Integrates PyTorch-powered EasyOCR (CRAFT detector + ResNet/LSTM/CTC recognizer)
-with orientation-aware inference for Japanese and English architectural annotations.
+Integrates PaddleOCR v4 CJK for high-accuracy Japanese and English architectural annotations.
 Includes Levenshtein distance CER (Character Error Rate) and WER (Word Error Rate) computation.
 """
 
 from __future__ import annotations
 import os
+import sys
+import types
 os.environ["PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK"] = "True"
 os.environ["FLAGS_use_mkldnn"] = "0"
 import math
@@ -14,8 +15,20 @@ from typing import List, Dict, Tuple, Any, Optional
 from dataclasses import dataclass
 import numpy as np
 import cv2
-import torch
-import easyocr
+
+# 1. Safe shim for langchain_text_splitters to prevent paddlex from pulling in pyarrow on Windows (prevents 0xc0000005 access violation)
+if "langchain_text_splitters" not in sys.modules:
+    _m = types.ModuleType("langchain_text_splitters")
+    class _DummySplitter:
+        def __init__(self, *args, **kwargs): pass
+    _m.RecursiveCharacterTextSplitter = _DummySplitter
+    sys.modules["langchain_text_splitters"] = _m
+
+# 2. Initialize PyTorch DLL paths for ModelScope/PaddleX dependencies on Windows
+try:
+    import torch
+except ImportError:
+    pass
 
 
 @dataclass
@@ -29,44 +42,43 @@ class OCRTextItem:
 
 
 class BilingualOCREngine:
-    """Production bilingual OCR manager optimized for Japanese architectural drawings."""
+    """Production bilingual OCR manager powered exclusively by PaddleOCR v4 CJK for Japanese architectural drawings."""
 
     def __init__(
         self,
-        languages: List[str] = ["ja", "en"],
+        languages: List[str] = ["japan"],
         gpu: bool = True,
         min_confidence: float = 0.25,
-        use_paddle: bool = False
+        **kwargs
     ):
         self.languages = languages
         self.gpu = gpu
         self.min_confidence = min_confidence
-        self.use_paddle = use_paddle
-        self._reader: Optional[easyocr.Reader] = None
         self._paddle_ocr = None
+
+    @property
+    def use_paddle(self) -> bool:
+        return True
 
     @property
     def paddle_ocr(self):
         """Lazy initializer for PaddleOCR v4 CJK Japanese recognition engine."""
         if self._paddle_ocr is None:
             try:
+                import paddle
                 from paddleocr import PaddleOCR
+                use_cuda = self.gpu and paddle.is_compiled_with_cuda()
+                device = "gpu" if use_cuda else "cpu"
                 self._paddle_ocr = PaddleOCR(
                     use_textline_orientation=False,
                     lang="japan",
                     enable_mkldnn=False,
-                    device="cpu"
+                    device=device
                 )
             except Exception as e:
-                print(f"PaddleOCR init failed ({e}), falling back to EasyOCR")
-                self._paddle_ocr = False
-        return self._paddle_ocr if self._paddle_ocr is not False else None
-
-    @property
-    def reader(self) -> easyocr.Reader:
-        if self._reader is None:
-            self._reader = easyocr.Reader(self.languages, gpu=self.gpu, verbose=False)
-        return self._reader
+                print(f"PaddleOCR initialization failed: {e}")
+                self._paddle_ocr = None
+        return self._paddle_ocr
 
     def recognize(
         self,
@@ -75,151 +87,76 @@ class BilingualOCREngine:
     ) -> List[OCRTextItem]:
         """
         Executes text detection and recognition on an image array.
-        Uses PaddleOCR v4 CJK as primary engine with EasyOCR CRAFT as robust fallback.
+        Uses PaddleOCR v4 CJK directly.
         """
         if image is None or image.size == 0:
             return []
 
-        # 1. Primary Engine: PaddleOCR v4 CJK (High-accuracy Japanese architectural text)
-        if self.use_paddle and self.paddle_ocr is not None:
-            try:
-                orig_h, orig_w = image.shape[:2]
-                max_dim = max(orig_h, orig_w)
-                if max_dim > 2400:
-                    scale = 2400.0 / float(max_dim)
-                    paddle_img = cv2.resize(image, (0, 0), fx=scale, fy=scale, interpolation=cv2.INTER_AREA)
-                else:
-                    scale = 1.0
-                    paddle_img = image
-                preds = self.paddle_ocr.predict(paddle_img)
-                if preds and len(preds) > 0:
-                    res = preds[0]
-                    texts = res.get("rec_texts", [])
-                    scores = res.get("rec_scores", [])
-                    boxes = res.get("rec_boxes", [])
-                    polys = res.get("dt_polys", [])
+        if self.paddle_ocr is None:
+            print("Warning: PaddleOCR is not initialized.")
+            return []
 
-                    items: List[OCRTextItem] = []
-                    for box, poly, text, conf in zip(boxes, polys, texts, scores):
-                        if float(conf) < self.min_confidence or not str(text).strip():
-                            continue
+        try:
+            orig_h, orig_w = image.shape[:2]
+            max_dim = max(orig_h, orig_w)
+            if max_dim > 2400:
+                scale = 2400.0 / float(max_dim)
+                paddle_img = cv2.resize(image, (0, 0), fx=scale, fy=scale, interpolation=cv2.INTER_AREA)
+            else:
+                scale = 1.0
+                paddle_img = image
 
-                        x_min, y_min, x_max, y_max = [float(b) / scale for b in box]
-                        scaled_poly = [[float(pt[0]) / scale, float(pt[1]) / scale] for pt in poly] if poly is not None else []
-                        w = x_max - x_min
-                        h = y_max - y_min
-                        orientation = 90 if h > w * 1.5 else 0
+            preds = self.paddle_ocr.predict(paddle_img)
+            items: List[OCRTextItem] = []
+            if preds and len(preds) > 0:
+                res = preds[0]
+                texts = res.get("rec_texts", [])
+                scores = res.get("rec_scores", [])
+                boxes = res.get("rec_boxes", [])
+                polys = res.get("dt_polys", [])
 
-                        items.append(
-                            OCRTextItem(
-                                text=str(text).strip(),
-                                confidence=float(conf),
-                                bbox=[x_min, y_min, x_max, y_max],
-                                polygon=scaled_poly,
-                                orientation=orientation
-                            )
+                for box, poly, text, conf in zip(boxes, polys, texts, scores):
+                    if float(conf) < self.min_confidence or not str(text).strip():
+                        continue
+
+                    x_min, y_min, x_max, y_max = [float(b) / scale for b in box]
+                    scaled_poly = [[float(pt[0]) / scale, float(pt[1]) / scale] for pt in poly] if poly is not None else []
+                    w = x_max - x_min
+                    h = y_max - y_min
+                    orientation = 90 if h > w * 1.5 else 0
+
+                    items.append(
+                        OCRTextItem(
+                            text=str(text).strip(),
+                            confidence=float(conf),
+                            bbox=[x_min, y_min, x_max, y_max],
+                            polygon=scaled_poly,
+                            orientation=orientation
                         )
-                    if len(items) >= 5:
-                        return items
-            except Exception as e:
-                print(f"PaddleOCR inference exception: {e}, falling back to EasyOCR")
-
-        # 2. Fallback Engine: EasyOCR CRAFT + ResNet/LSTM
-        orig_h, orig_w = image.shape[:2]
-        proc_img = image
-        scale_x = 1.0
-        scale_y = 1.0
-
-        # CRAFT text detector performs optimally at ~2400px width.
-        # 1. Images smaller than 2000px (e.g. uploaded screenshots like 1265x828) lack pixel density for small Kanji.
-        #    We upscale using Lanczos-4 interpolation + subtle unsharp masking so all text is recognized.
-        # 2. Oversized scans (> 3000px) exceed the CRAFT receptive field; downscale to 2400px.
-        if orig_w < 2000:
-            target_w = 2400
-            scale = target_w / float(orig_w)
-            target_h = int(orig_h * scale)
-            proc_img = cv2.resize(image, (target_w, target_h), interpolation=cv2.INTER_LANCZOS4)
-            # Restore character stroke edges
-            gaussian = cv2.GaussianBlur(proc_img, (0, 0), 1.5)
-            proc_img = cv2.addWeighted(proc_img, 1.3, gaussian, -0.3, 0)
-            scale_x = orig_w / float(target_w)
-            scale_y = orig_h / float(target_h)
-        elif orig_w > 3000:
-            target_w = 2400
-            scale = target_w / float(orig_w)
-            target_h = int(orig_h * scale)
-            proc_img = cv2.resize(image, (target_w, target_h), interpolation=cv2.INTER_AREA)
-            scale_x = orig_w / float(target_w)
-            scale_y = orig_h / float(target_h)
-
-        raw_results = self.reader.readtext(
-            proc_img,
-            detail=1,
-            paragraph=False,
-            min_size=6,
-            text_threshold=0.35,
-            low_text=0.20,
-            link_threshold=0.25,
-            canvas_size=2800,
-            mag_ratio=1.3,
-            add_margin=0.15
-        )
-
-        items: List[OCRTextItem] = []
-        for poly, text, conf in raw_results:
-            if conf < self.min_confidence or not text.strip():
-                continue
-
-            poly_arr = np.array(poly, dtype=np.float32)
-            # Map coordinates back to original high-resolution coordinate space
-            poly_arr[:, 0] *= scale_x
-            poly_arr[:, 1] *= scale_y
-
-            x_min = float(np.min(poly_arr[:, 0]))
-            y_min = float(np.min(poly_arr[:, 1]))
-            x_max = float(np.max(poly_arr[:, 0]))
-            y_max = float(np.max(poly_arr[:, 1]))
-
-            w = x_max - x_min
-            h = y_max - y_min
-            orientation = 90 if h > w * 1.5 else 0
-
-            items.append(
-                OCRTextItem(
-                    text=text.strip(),
-                    confidence=float(conf),
-                    bbox=[x_min, y_min, x_max, y_max],
-                    polygon=poly_arr.tolist(),
-                    orientation=orientation
-                )
-            )
-
-        return items
+                    )
+            return items
+        except Exception as e:
+            print(f"PaddleOCR inference exception: {e}")
+            return []
 
     def recognize_crop(self, crop: np.ndarray) -> Tuple[str, float]:
         """Recognizes text within a pre-cropped bounding box."""
-        if crop is None or crop.size == 0:
+        if crop is None or crop.size == 0 or self.paddle_ocr is None:
             return "", 0.0
 
-        if self.use_paddle and self.paddle_ocr is not None:
-            try:
-                preds = self.paddle_ocr.predict(crop)
-                if preds and len(preds) > 0:
-                    res = preds[0]
-                    texts = res.get("rec_texts", [])
-                    scores = res.get("rec_scores", [])
-                    if texts:
-                        return " ".join(str(t).strip() for t in texts), float(scores[0]) if scores else 0.8
-            except Exception:
-                pass
+        try:
+            preds = self.paddle_ocr.predict(crop)
+            if preds and len(preds) > 0:
+                res = preds[0]
+                texts = res.get("rec_texts", [])
+                scores = res.get("rec_scores", [])
+                if texts:
+                    avg_conf = float(np.mean(scores)) if scores else 0.8
+                    return " ".join(str(t).strip() for t in texts), avg_conf
+        except Exception as e:
+            print(f"PaddleOCR recognize_crop exception: {e}")
 
-        res = self.reader.readtext(crop, detail=1)
-        if not res:
-            return "", 0.0
-
-        texts = [r[1] for r in res]
-        confs = [r[2] for r in res]
-        return " ".join(texts), float(np.mean(confs))
+        return "", 0.0
 
     @staticmethod
     def compute_cer(reference: str, hypothesis: str) -> float:
@@ -275,4 +212,3 @@ if __name__ == "__main__":
     ref = "吹付けロックウール t=25"
     hyp = "吹付けロックウール t=25"
     print("Exact Match CER:", BilingualOCREngine.compute_cer(ref, hyp))
-
