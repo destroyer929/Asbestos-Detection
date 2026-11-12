@@ -9,7 +9,8 @@ Combines:
 
 from __future__ import annotations
 import uuid
-from typing import List, Dict, Any, Optional
+import re
+from typing import List, Dict, Any, Optional, Callable
 from dataclasses import dataclass, asdict
 
 from data.database.db_manager import MaterialsDatabase, HazardLevel, AsbestosStatus
@@ -54,6 +55,7 @@ class AsbestosDiagnosticClassifier:
     ):
         self.db = db or MaterialsDatabase()
         self.normalizer = TextNormalizer()
+        self.tokenizer = JapaneseMorphologicalTokenizer(split_mode="B")
         self.matcher = AsbestosMatchingEngine(db=self.db)
         self.region_classifier = ArchitecturalRegionClassifier()
         self.enable_llm = enable_llm
@@ -72,8 +74,9 @@ class AsbestosDiagnosticClassifier:
         Diagnoses a single detected text box:
         1. Classifies region (filters out dimensions / elevation noise)
         2. Normalizes text
-        3. Matches against MLIT database
-        4. Calculates safety-critical risk level
+        3. Front-Door Gatekeeper: SudachiPy POS check + Architectural Whitelist
+        4. Matches against MLIT database
+        5. Calculates safety-critical risk level
         Returns None if item is non-material noise (e.g. dimension numbers).
         """
         # 1. Classify Region
@@ -92,6 +95,49 @@ class AsbestosDiagnosticClassifier:
         # Discard if normalization results in empty string
         if not cleaned_norm:
             return None
+
+        # -------------------------------------------------------------
+        # FRONT-DOOR LINGUISTIC & ARCHITECTURAL GATEKEEPER (BEFORE TIER 1)
+        # -------------------------------------------------------------
+        # GATE 2: Architectural Whitelist Gate
+        is_shorthand = (
+            cleaned_norm.upper() in self.region_classifier.ARCHITECTURAL_SHORTHAND
+            or any(sh == cleaned_norm for sh in self.region_classifier.ARCHITECTURAL_SHORTHAND)
+        )
+
+        if not is_shorthand:
+            # Strip surrounding punctuation and brackets for pure text evaluation
+            cleaned_pure = re.sub(r"^[\s:;,\-\.\'\"（(【\[\)=~`\*\[\]{}<>]+", "", cleaned_norm)
+            cleaned_pure = re.sub(r"[\s:;,\-\.\'\"）)】\]\)=~`\*\[\]{}<>]+$", "", cleaned_pure).strip()
+            if not cleaned_pure:
+                return None
+
+            # Discard non-Japanese alphanumeric, dimension, formula, or symbol strings
+            # (e.g. '1* 790', 'X1a', '2.70g', '0L9', 'StQUL', 'L-1+L-4', 'W00,D150.H1', '(4)')
+            if re.match(r"^[\d\s.,\*\+~=\-°/%×€$¥#@&_:\(\)\[\]\{\}<>\'\"\\a-zA-Z]+$", cleaned_norm):
+                return None
+
+            # Must contain Japanese script (Kanji, Katakana, Hiragana)
+            japanese_chars = re.findall(r"[\u4e00-\u9fff\u30a0-\u30ff\u3040-\u309f]", cleaned_pure)
+            if not japanese_chars:
+                return None
+
+            # Discard isolated 1-character fragments (e.g. '什', '百', '是', '品', '国', '中', '日', '土', '号', '工')
+            if len(japanese_chars) <= 1 and "".join(japanese_chars) != "石綿":
+                return None
+
+            # GATE 3: SudachiPy Morphological POS Gate
+            tokens = self.tokenizer.tokenize(cleaned_pure)
+            content_morphemes = [
+                t for t in tokens
+                if t.is_content_word
+                and t.part_of_speech[0] in ("名詞", "動詞", "形容詞")
+                and (len(t.part_of_speech) < 2 or t.part_of_speech[1] not in ("数詞", "非自立", "接尾", "助数詞"))
+                and len(t.surface.strip()) > 0
+            ]
+            if not content_morphemes:
+                # Text consists solely of numerals, auxiliary particles, or symbols
+                return None
 
         # 3. Match against Asbestos Database
         match_res: MatchResult = self.matcher.match(cleaned_norm)
@@ -133,7 +179,8 @@ class AsbestosDiagnosticClassifier:
         detected_items: List[Dict[str, Any]],
         table_bbox: Optional[List[float]] = None,
         page_number: int = 1,
-        enable_llm: Optional[bool] = None
+        enable_llm: Optional[bool] = None,
+        progress_callback: Optional[Callable[[Dict[str, Any]], None]] = None
     ) -> List[DrawingItemDiagnosis]:
         """Processes an entire sheet of detected text boxes into structured diagnoses."""
         diagnoses: List[DrawingItemDiagnosis] = []
@@ -158,7 +205,10 @@ class AsbestosDiagnosticClassifier:
         # Tier-5: Local LLM Arbitration for UNCERTAIN items
         run_llm = self.enable_llm if enable_llm is None else enable_llm
         if run_llm and self.llm_arbitrator:
-            diagnoses = self.llm_arbitrator.arbitrate_diagnoses(diagnoses)
+            diagnoses = self.llm_arbitrator.arbitrate_diagnoses(
+                diagnoses,
+                progress_callback=progress_callback
+            )
 
         return diagnoses
 

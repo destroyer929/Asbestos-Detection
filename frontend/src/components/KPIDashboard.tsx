@@ -38,35 +38,36 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
   if (!summary) return null;
 
   return (
-    <div className="space-y-3 mb-4">
-      {/* 4 Core KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+    <div className="space-y-3.5 mb-5">
+      {/* 4 Core KPI Cards with Green + White Laboratory Polish & Bold Accent Borders */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
         {/* 1. Total Annotations */}
         <div
           onClick={() => onFilterChange("ALL")}
-          className={`cursor-pointer rounded-xl p-4 transition-all border ${
+          className={`cursor-pointer rounded-2xl p-4.5 transition-all relative overflow-hidden group ${
             activeFilter === "ALL"
-              ? "bg-slate-800 border-blue-500 shadow-lg shadow-blue-500/10 ring-1 ring-blue-500"
-              : "bg-slate-900/80 border-slate-800 hover:border-slate-700"
+              ? "bg-emerald-50/80 border-2 border-emerald-600 shadow-md ring-2 ring-emerald-500/20"
+              : "bg-white border-2 border-emerald-300 hover:border-emerald-500 shadow-sm hover:shadow-md"
           }`}
         >
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-              Detected Entities
+          <div className="flex items-center justify-between mb-2.5">
+            <span className="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider flex items-center gap-1.5 font-lab-mono">
+              <span>DETECTED ENTITIES</span>
+              <span className="text-[10px] text-emerald-700 font-bold">| 検出</span>
             </span>
-            <div className="p-2 rounded-lg bg-blue-500/10 text-blue-400">
-              <FileText className="w-5 h-5" />
+            <div className="p-2 rounded-xl bg-emerald-50 text-emerald-700 border-2 border-emerald-200 group-hover:scale-105 transition shadow-2xs">
+              <FileText className="w-4 h-4" />
             </div>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-white font-mono">
+            <span className="text-3xl font-extrabold text-slate-900 font-lab-mono">
               {totalAnnotations}
             </span>
-            <span className="text-xs text-slate-400">items</span>
+            <span className="text-xs text-slate-500 font-bold">items</span>
           </div>
-          <div className="mt-2 flex items-center justify-between text-[11px] text-slate-400 pt-2 border-t border-slate-800">
-            <span>{documentType}</span>
-            <span className="text-blue-400 font-mono">
+          <div className="mt-3 flex items-center justify-between text-[11px] text-slate-500 pt-2.5 border-t border-slate-100 font-lab-mono">
+            <span className="truncate max-w-[120px] font-bold text-slate-700">{documentType}</span>
+            <span className="text-emerald-700 font-extrabold">
               {isVector ? "Vector CAD Stream" : "300 DPI Raster Scan"}
             </span>
           </div>
@@ -75,37 +76,37 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
         {/* 2. Asbestos Positive */}
         <div
           onClick={() => onFilterChange("POSITIVE")}
-          className={`cursor-pointer rounded-xl p-4 transition-all border ${
+          className={`cursor-pointer rounded-2xl p-4.5 transition-all relative overflow-hidden group ${
             activeFilter === "POSITIVE"
-              ? "bg-rose-950/40 border-rose-500 shadow-lg shadow-rose-500/20 ring-1 ring-rose-500"
-              : "bg-slate-900/80 border-slate-800 hover:border-rose-900/50"
+              ? "bg-rose-50 border-2 border-rose-600 shadow-md ring-2 ring-rose-500/20"
+              : "bg-white border-2 border-rose-300 hover:border-rose-500 shadow-sm hover:shadow-md"
           }`}
         >
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-rose-400 uppercase tracking-wider flex items-center gap-1.5">
+          <div className="flex items-center justify-between mb-2.5">
+            <span className="text-[11px] font-extrabold text-rose-800 uppercase tracking-wider flex items-center gap-1.5 font-lab-mono">
               <span className="inline-block w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
-              Asbestos Positive (石綿陽性)
+              <span>ASBESTOS POSITIVE (石綿陽性)</span>
             </span>
-            <div className="p-2 rounded-lg bg-rose-500/10 text-rose-400">
-              <AlertOctagon className="w-5 h-5" />
+            <div className="p-2 rounded-xl bg-rose-50 text-rose-600 border-2 border-rose-200 group-hover:scale-105 transition shadow-2xs">
+              <AlertOctagon className="w-4 h-4" />
             </div>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-rose-400 font-mono">
+            <span className="text-3xl font-extrabold text-rose-600 font-lab-mono">
               {summary.asbestos_positive}
             </span>
-            <span className="text-xs text-rose-300">hazardous items</span>
+            <span className="text-xs text-rose-700 font-bold">hazardous items</span>
           </div>
-          <div className="mt-2 text-[11px] text-slate-400 pt-2 border-t border-slate-800 flex items-center gap-2">
-            <span className="flex items-center gap-1 text-rose-400">
+          <div className="mt-3 text-[11px] text-slate-500 pt-2.5 border-t border-slate-100 flex items-center gap-2 font-lab-mono">
+            <span className="flex items-center gap-1 text-rose-600 font-extrabold">
               <Flame className="w-3.5 h-3.5" /> L1: {summary.hazard_levels.level_1_sprays}
             </span>
-            <span className="text-slate-600">•</span>
-            <span className="flex items-center gap-1 text-orange-400">
+            <span className="text-slate-300">•</span>
+            <span className="flex items-center gap-1 text-orange-600 font-extrabold">
               <Layers className="w-3.5 h-3.5" /> L2: {summary.hazard_levels.level_2_insulation}
             </span>
-            <span className="text-slate-600">•</span>
-            <span className="flex items-center gap-1 text-amber-400">
+            <span className="text-slate-300">•</span>
+            <span className="flex items-center gap-1 text-amber-600 font-extrabold">
               <Component className="w-3.5 h-3.5" /> L3: {summary.hazard_levels.level_3_molded}
             </span>
           </div>
@@ -114,58 +115,58 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
         {/* 3. Non-Asbestos Certified */}
         <div
           onClick={() => onFilterChange("NEGATIVE")}
-          className={`cursor-pointer rounded-xl p-4 transition-all border ${
+          className={`cursor-pointer rounded-2xl p-4.5 transition-all relative overflow-hidden group ${
             activeFilter === "NEGATIVE"
-              ? "bg-emerald-950/40 border-emerald-500 shadow-lg shadow-emerald-500/20 ring-1 ring-emerald-500"
-              : "bg-slate-900/80 border-slate-800 hover:border-emerald-900/50"
+              ? "bg-emerald-50 border-2 border-emerald-600 shadow-md ring-2 ring-emerald-500/20"
+              : "bg-white border-2 border-emerald-400 hover:border-emerald-600 shadow-sm hover:shadow-md"
           }`}
         >
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">
-              Certified Non-Asbestos (安全)
+          <div className="flex items-center justify-between mb-2.5">
+            <span className="text-[11px] font-extrabold text-emerald-900 uppercase tracking-wider flex items-center gap-1.5 font-lab-mono">
+              <span>CERTIFIED NON-ASBESTOS (安全)</span>
             </span>
-            <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400">
-              <CheckCircle2 className="w-5 h-5" />
+            <div className="p-2 rounded-xl bg-emerald-50 text-emerald-700 border-2 border-emerald-200 group-hover:scale-105 transition shadow-2xs">
+              <CheckCircle2 className="w-4 h-4" />
             </div>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-emerald-400 font-mono">
+            <span className="text-3xl font-extrabold text-emerald-700 font-lab-mono">
               {summary.non_asbestos}
             </span>
-            <span className="text-xs text-emerald-300">safe materials</span>
+            <span className="text-xs text-emerald-800 font-bold">safe materials</span>
           </div>
-          <div className="mt-2 text-[11px] text-slate-400 pt-2 border-t border-slate-800 flex items-center justify-between">
-            <span>Rockwool / Glasswool / Gypsum</span>
-            <span className="text-emerald-400 font-mono font-medium">&lt; 0.1 wt%</span>
+          <div className="mt-3 text-[11px] text-slate-500 pt-2.5 border-t border-slate-100 flex items-center justify-between font-lab-mono">
+            <span className="font-medium text-slate-600">Rockwool / Glasswool / Gypsum</span>
+            <span className="text-emerald-700 font-extrabold">&lt; 0.1 wt%</span>
           </div>
         </div>
 
         {/* 4. Human Review Required */}
         <div
           onClick={() => onFilterChange("UNCERTAIN")}
-          className={`cursor-pointer rounded-xl p-4 transition-all border ${
+          className={`cursor-pointer rounded-2xl p-4.5 transition-all relative overflow-hidden group ${
             activeFilter === "UNCERTAIN"
-              ? "bg-amber-950/40 border-amber-500 shadow-lg shadow-amber-500/20 ring-1 ring-amber-500"
-              : "bg-slate-900/80 border-slate-800 hover:border-amber-900/50"
+              ? "bg-amber-50 border-2 border-amber-600 shadow-md ring-2 ring-amber-500/20"
+              : "bg-white border-2 border-amber-300 hover:border-amber-500 shadow-sm hover:shadow-md"
           }`}
         >
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-amber-400 uppercase tracking-wider">
-              Requires Human Review (要確認)
+          <div className="flex items-center justify-between mb-2.5">
+            <span className="text-[11px] font-extrabold text-amber-900 uppercase tracking-wider flex items-center gap-1.5 font-lab-mono">
+              <span>REQUIRES HUMAN REVIEW (要確認)</span>
             </span>
-            <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400">
-              <AlertTriangle className="w-5 h-5" />
+            <div className="p-2 rounded-xl bg-amber-50 text-amber-700 border-2 border-amber-200 group-hover:scale-105 transition shadow-2xs">
+              <AlertTriangle className="w-4 h-4" />
             </div>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-amber-400 font-mono">
+            <span className="text-3xl font-extrabold text-amber-600 font-lab-mono">
               {summary.review_required}
             </span>
-            <span className="text-xs text-amber-300">items flagged</span>
+            <span className="text-xs text-amber-800 font-bold">items flagged</span>
           </div>
-          <div className="mt-2 text-[11px] text-slate-400 pt-2 border-t border-slate-800 flex items-center justify-between">
-            <span>Low OCR or ambiguous term</span>
-            <span className="text-amber-400 font-medium">Active Learning</span>
+          <div className="mt-3 text-[11px] text-slate-500 pt-2.5 border-t border-slate-100 flex items-center justify-between font-lab-mono">
+            <span className="font-medium text-slate-600">Low OCR or unique trade term</span>
+            <span className="text-amber-700 font-extrabold">Active Learning</span>
           </div>
         </div>
       </div>
@@ -173,64 +174,64 @@ export const KPIDashboard: React.FC<KPIDashboardProps> = ({
       {/* Adaptive Pre-Flight AI Preprocessing Decision Banner */}
       {qualityAssessment && (
         <div
-          className={`p-3 rounded-xl border flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs shadow-md transition-all ${
+          className={`p-3.5 rounded-2xl border-2 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs shadow-sm transition-all bg-white ${
             qualityAssessment.intensity_level === 0
-              ? "bg-emerald-950/30 border-emerald-700/60 text-emerald-200"
+              ? "border-emerald-300 text-emerald-950"
               : qualityAssessment.intensity_level === 1
-              ? "bg-cyan-950/30 border-cyan-700/60 text-cyan-200"
-              : "bg-amber-950/30 border-amber-700/60 text-amber-200"
+              ? "border-teal-300 text-teal-950"
+              : "border-amber-300 text-amber-950"
           }`}
         >
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-3">
             <div
-              className={`p-1.5 rounded-lg ${
+              className={`p-2 rounded-xl border-2 ${
                 qualityAssessment.intensity_level === 0
-                  ? "bg-emerald-500/20 text-emerald-400"
+                  ? "bg-emerald-50 text-emerald-700 border-emerald-300"
                   : qualityAssessment.intensity_level === 1
-                  ? "bg-cyan-500/20 text-cyan-400"
-                  : "bg-amber-500/20 text-amber-400"
+                  ? "bg-teal-50 text-teal-700 border-teal-300"
+                  : "bg-amber-50 text-amber-700 border-amber-300"
               }`}
             >
               <Cpu className="w-4 h-4" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <span className="font-bold tracking-tight">
-                  Adaptive Preprocessing Decision:
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="font-extrabold tracking-tight text-slate-900">
+                  Adaptive Vision Decision:
                 </span>
                 <span
-                  className={`px-2 py-0.5 rounded-md font-mono text-[10px] font-bold uppercase tracking-wider ${
+                  className={`px-2.5 py-0.5 rounded-full font-lab-mono text-[10px] font-bold uppercase tracking-wider ${
                     qualityAssessment.intensity_level === 0
-                      ? "bg-emerald-900/80 text-emerald-300 border border-emerald-600/80"
+                      ? "bg-emerald-100 text-emerald-900 border border-emerald-300"
                       : qualityAssessment.intensity_level === 1
-                      ? "bg-cyan-900/80 text-cyan-300 border border-cyan-600/80"
-                      : "bg-amber-900/80 text-amber-300 border border-amber-600/80"
+                      ? "bg-teal-100 text-teal-900 border border-teal-300"
+                      : "bg-amber-100 text-amber-900 border border-amber-300"
                   }`}
                 >
                   {qualityAssessment.intensity_level === 0
-                    ? "Level 0 • Clean Pass-Through (Raw Strokes Preserved)"
+                    ? "Level 0 • Clean Pass-Through (Raw CJK Strokes Preserved)"
                     : qualityAssessment.intensity_level === 1
                     ? "Level 1 • Gentle Enhancement (No Stroke Erosion)"
                     : "Level 2 • Deep Restoration (Sauvola + Illumination Leveling)"}
                 </span>
               </div>
-              <p className="text-[11px] text-slate-400 mt-0.5">
+              <p className="text-[11px] text-slate-600 mt-0.5 font-sans">
                 {qualityAssessment.recommendation_reason}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3 self-end md:self-center font-mono text-[11px] bg-slate-900/60 px-3 py-1.5 rounded-lg border border-slate-800">
-            <span title="Immerkær noise standard deviation">
-              Noise: <b className="text-white">{qualityAssessment.noise_sigma}</b>
+          <div className="flex items-center gap-3 self-end md:self-center font-lab-mono text-[11px] bg-emerald-50/70 px-3.5 py-1.5 rounded-full border-2 border-emerald-200 shadow-2xs">
+            <span title="Immerkær noise sigma">
+              Noise: <b className="text-slate-900 font-bold">{qualityAssessment.noise_sigma}</b>
             </span>
-            <span className="text-slate-700">•</span>
+            <span className="text-slate-300">•</span>
             <span title="Detected scanner tilt">
-              Skew: <b className="text-white">{qualityAssessment.skew_angle}°</b>
+              Skew: <b className="text-slate-900 font-bold">{qualityAssessment.skew_angle}°</b>
             </span>
-            <span className="text-slate-700">•</span>
+            <span className="text-slate-300">•</span>
             <span title="Otsu bimodal contrast separation">
-              Clarity: <b className="text-white">{(qualityAssessment.bimodal_clarity * 100).toFixed(0)}%</b>
+              Clarity: <b className="text-emerald-700 font-extrabold">{(qualityAssessment.bimodal_clarity * 100).toFixed(0)}%</b>
             </span>
           </div>
         </div>

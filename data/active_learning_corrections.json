@@ -187,5 +187,32 @@
     "corrected_material_name": "吹付け石綿",
     "reviewer_notes": "Verified by certified inspector",
     "timestamp": "2026-11-09T11:59:06.522639"
+  },
+  {
+    "item_id": "ITEM-TEST-UNIT-99",
+    "drawing_id": "DWG-1982-001",
+    "corrected_status": "POSITIVE",
+    "corrected_hazard_level": "LEVEL_1",
+    "corrected_material_name": "吹付け石綿",
+    "reviewer_notes": "Verified by certified inspector",
+    "timestamp": "2026-11-09T13:21:02.351938"
+  },
+  {
+    "item_id": "ITEM-TEST-UNIT-99",
+    "drawing_id": "DWG-1982-001",
+    "corrected_status": "POSITIVE",
+    "corrected_hazard_level": "LEVEL_1",
+    "corrected_material_name": "吹付け石綿",
+    "reviewer_notes": "Verified by certified inspector",
+    "timestamp": "2026-11-09T13:43:14.185710"
+  },
+  {
+    "item_id": "ITEM-16ED375F",
+    "drawing_id": "UPLOAD-2c1c5fdd",
+    "corrected_status": "POSITIVE",
+    "corrected_hazard_level": "LEVEL_3",
+    "corrected_material_name": "けい酸カルシウム板第1種",
+    "reviewer_notes": "",
+    "timestamp": "2026-11-09T19:17:00.735382"
   }
 ]

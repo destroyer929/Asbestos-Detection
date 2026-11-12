@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
 import { Navbar } from "@/components/Navbar";
 import { KPIDashboard } from "@/components/KPIDashboard";
 import { BlueprintCanvas } from "@/components/BlueprintCanvas";
@@ -26,7 +27,20 @@ import {
   fetchDrawingPage,
   fetchDrawingHistory,
 } from "@/lib/api";
-import { Loader2, AlertCircle, X, Upload, FileUp, Sparkles, Database, ArrowLeft, RefreshCw } from "lucide-react";
+import {
+  Loader2,
+  AlertCircle,
+  X,
+  Upload,
+  FileUp,
+  Sparkles,
+  Database,
+  ArrowLeft,
+  RefreshCw,
+  ShieldCheck,
+  Building2,
+  FileText,
+} from "lucide-react";
 
 export default function HomePage() {
   // Backend status & samples
@@ -226,7 +240,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100">
+    <div className="min-h-screen flex flex-col bg-[#f7fbf6] text-slate-800">
       {/* Navigation */}
       <Navbar
         health={health}
@@ -245,21 +259,21 @@ export default function HomePage() {
       <main className="flex-1 max-w-[1920px] w-full mx-auto p-4 sm:p-6 lg:p-8">
         {/* Error Alert */}
         {errorMessage && (
-          <div className="mb-4 p-4 rounded-xl bg-rose-950/70 border border-rose-800 text-rose-200 text-sm flex items-center justify-between shadow-lg">
+          <div className="mb-4 p-4 rounded-2xl bg-rose-50 border border-rose-300 text-rose-800 text-sm flex items-center justify-between shadow-sm">
             <div className="flex items-center gap-2.5">
-              <AlertCircle className="w-5 h-5 text-rose-400 flex-shrink-0" />
-              <span>{errorMessage}</span>
+              <AlertCircle className="w-5 h-5 text-rose-600 flex-shrink-0" />
+              <span className="font-medium">{errorMessage}</span>
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => loadSample(selectedSampleId)}
-                className="px-3 py-1 rounded-lg bg-rose-900 hover:bg-rose-800 text-xs font-semibold transition"
+                className="px-3.5 py-1.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition shadow-xs"
               >
                 Retry
               </button>
               <button
                 onClick={() => setErrorMessage(null)}
-                className="p-1 rounded-lg hover:bg-rose-900/60 text-rose-400 hover:text-rose-200 transition"
+                className="p-1 rounded-full hover:bg-rose-100 text-rose-600 hover:text-rose-800 transition"
                 title="Dismiss alert"
               >
                 <X className="w-4 h-4" />
@@ -270,46 +284,70 @@ export default function HomePage() {
 
         {/* Loading Indicator */}
         {isLoading && !analysis && (
-          <div className="h-[60vh] flex flex-col items-center justify-center text-slate-400">
-            <Loader2 className="w-10 h-10 animate-spin text-blue-500 mb-3" />
-            <p className="font-semibold text-sm">
-              Loading Architectural Blueprint & Deep Learning OCR Diagnostics...
+          <div className="h-[65vh] flex flex-col items-center justify-center text-slate-600">
+            <div className="relative mb-6">
+              <div className="w-20 h-20 rounded-3xl bg-white border border-emerald-200 flex items-center justify-center shadow-lg shadow-emerald-500/10">
+                <Image
+                  src="/brand/bird.png"
+                  alt="Alfred Logo"
+                  width={48}
+                  height={48}
+                  className="object-contain"
+                />
+              </div>
+              <Loader2 className="w-8 h-8 animate-spin text-emerald-600 absolute -bottom-2 -right-2 bg-white rounded-full p-1 border border-emerald-300 shadow-sm" />
+            </div>
+            <p className="font-extrabold text-base text-slate-900 tracking-wide">
+              Analyzing Architectural Blueprint & Material Schedules...
             </p>
-            <p className="text-xs text-slate-500 mt-1 font-mono">
-              Running Ingestion Router • Deskew Normalization • 4-Tier MLIT Matcher
+            <p className="text-xs text-emerald-700 mt-1.5 font-lab-mono font-medium">
+              PaddleOCR CJK • Deskew Normalization • 4-Tier MLIT Matching • Tier-5 LLM Arbitration
             </p>
           </div>
         )}
 
-        {/* Upload Sample to Diagnosis Landing State (Initial empty screen) */}
+        {/* Upload Sample to Diagnosis Landing State (Green + White Clean Theme) */}
         {!analysis && !isLoading && (
-          <div className="max-w-4xl mx-auto my-8 sm:my-12 px-4">
-            <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-8 sm:p-12 shadow-2xl backdrop-blur-sm text-center relative overflow-hidden">
-              {/* Decorative background glow */}
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-36 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="max-w-4xl mx-auto my-6 sm:my-10 px-4">
+            <div className="bg-white rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden border border-emerald-200/90 shadow-xl shadow-emerald-900/5">
+              {/* Soft decorative background tint */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[550px] h-48 bg-emerald-100/40 rounded-full blur-3xl pointer-events-none" />
 
-              {/* Main Icon */}
-              <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center shadow-xl shadow-blue-500/25 ring-8 ring-blue-500/10">
-                <FileUp className="w-10 h-10 text-white" />
+              {/* Alfred Brand Logo Emblem */}
+              <div className="relative w-24 h-24 mx-auto mb-6 rounded-3xl bg-gradient-to-br from-emerald-50 via-white to-emerald-50/50 flex items-center justify-center shadow-md shadow-emerald-900/10 ring-8 ring-emerald-500/10 border border-emerald-300">
+                <Image
+                  src="/brand/bird.png"
+                  alt="Alfred Logo"
+                  width={56}
+                  height={56}
+                  className="object-contain filter drop-shadow-sm"
+                  priority
+                />
+              </div>
+
+              {/* Japanese Precision Tagline */}
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-[11px] font-bold text-emerald-800 mb-3 font-lab-mono shadow-2xs">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>BUILT ON JAPANESE PRECISION • REIMAGINED FOR INDIA</span>
               </div>
 
               {/* Headline */}
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+              <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
                 Upload sample to diagnosis
               </h1>
-              <p className="text-sm font-semibold text-blue-400 mt-1.5">
+              <p className="text-sm font-bold text-[#28a745] mt-2 font-sans">
                 図面・サンプルをアップロードして石綿診断を開始
               </p>
 
-              <p className="max-w-xl mx-auto text-sm text-slate-400 mt-3 leading-relaxed">
-                Upload an architectural blueprint (PDF, Scanned JPG/PNG, CAD DXF) to run automated MLIT-compliant asbestos detection, OCR text extraction, 4-Tier matching, and Tier-5 LLM arbitration.
+              <p className="max-w-2xl mx-auto text-sm text-slate-600 mt-3.5 leading-relaxed font-sans">
+                2 Countries. 3+ Labs. 1 leading Asbestos Analysis platform. Upload architectural blueprints (PDF, High-Res Scanned JPG/PNG, CAD DXF) to run automated MLIT-compliant detection, PaddleOCR text extraction, and regulatory arbitration.
               </p>
 
-              {/* Primary Action Buttons */}
-              <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+              {/* Primary Action Buttons (Green + White) */}
+              <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3.5">
                 <button
                   onClick={() => setIsUploadOpen(true)}
-                  className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-600/30 transition transform hover:-translate-y-0.5 active:translate-y-0"
+                  className="btn-hover-shine w-full sm:w-auto px-7 py-3.5 rounded-full bg-gradient-to-r from-[#28a745] to-[#20923d] hover:from-[#218838] hover:to-[#1e7e34] text-white font-bold text-sm flex items-center justify-center gap-2.5 shadow-lg shadow-emerald-600/25 transition active:scale-95"
                 >
                   <Upload className="w-4 h-4" />
                   <span>Upload Blueprint / 図面アップロード</span>
@@ -320,52 +358,14 @@ export default function HomePage() {
                     refreshHistoryCount();
                     setIsDatabaseOpen(true);
                   }}
-                  className="w-full sm:w-auto px-5 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm border border-slate-700 flex items-center justify-center gap-2 transition"
+                  className="w-full sm:w-auto px-6 py-3.5 rounded-full bg-white hover:bg-emerald-50/70 text-emerald-800 font-bold text-sm border border-emerald-300 hover:border-emerald-500 flex items-center justify-center gap-2.5 transition shadow-sm"
                 >
-                  <Database className="w-4 h-4 text-cyan-400" />
+                  <Database className="w-4 h-4 text-emerald-600" />
                   <span>Open Database ({databaseCount} saved)</span>
                 </button>
               </div>
 
-              {/* Preset benchmark samples section */}
-              {samples.length > 0 && (
-                <div className="mt-12 pt-8 border-t border-slate-800/80 text-left">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                      Or choose a preset benchmark sample:
-                    </span>
-                    <span className="text-[11px] text-slate-500 font-mono">
-                      {samples.length} presets available
-                    </span>
-                  </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                    {samples.slice(0, 6).map((sample) => (
-                      <button
-                        key={sample.id}
-                        onClick={() => loadSample(sample.id)}
-                        className="p-3.5 rounded-xl bg-slate-950/60 hover:bg-slate-800/80 border border-slate-800 hover:border-blue-500/50 text-left transition group"
-                      >
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-[11px] font-mono font-bold text-blue-400 group-hover:text-blue-300 truncate mr-2">
-                            {sample.id}
-                          </span>
-                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 font-mono flex-shrink-0">
-                            {sample.doc_type}
-                          </span>
-                        </div>
-                        <p className="text-xs font-semibold text-slate-200 group-hover:text-white line-clamp-1">
-                          {sample.title}
-                        </p>
-                        <p className="text-[11px] text-slate-500 line-clamp-2 mt-1">
-                          {sample.description}
-                        </p>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         )}
@@ -373,27 +373,27 @@ export default function HomePage() {
         {analysis && (
           <>
             {/* Active Drawing Top Bar & Reset/Upload CTA */}
-            <div className="mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 shadow">
+            <div className="mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 rounded-2xl bg-white border-2 border-emerald-300 shadow-sm backdrop-blur-md">
               <div className="flex items-center gap-3">
                 <button
                   onClick={handleClearAnalysis}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-medium border border-slate-700 transition"
+                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold border border-emerald-200 transition"
                   title="Return to upload screen"
                 >
-                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <ArrowLeft className="w-3.5 h-3.5 text-emerald-600" />
                   <span>Upload Another Drawing</span>
                 </button>
-                <div className="h-4 w-[1px] bg-slate-800 hidden sm:block" />
+                <div className="h-4 w-[1px] bg-emerald-200 hidden sm:block" />
                 <div>
-                  <span className="text-xs text-slate-400 font-mono">Current File: </span>
-                  <span className="text-xs font-bold text-white font-mono">{analysis.filename}</span>
+                  <span className="text-xs text-slate-500 font-lab-mono">Active File: </span>
+                  <span className="text-xs font-bold text-slate-900 font-lab-mono">{analysis.filename}</span>
                 </div>
               </div>
 
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setIsUploadOpen(true)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition shadow shadow-blue-600/30"
+                  className="btn-hover-shine flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-r from-[#28a745] to-[#20923d] hover:from-[#218838] hover:to-[#1e7e34] text-white text-xs font-bold transition shadow-sm shadow-emerald-500/20"
                 >
                   <Upload className="w-3.5 h-3.5" />
                   <span>New Upload</span>
@@ -434,7 +434,7 @@ export default function HomePage() {
               </div>
 
               {/* Inspector & Override Panel: 4 cols on large screens */}
-              <div className="lg:col-span-4 h-[640px] lg:h-[720px]">
+              <div className="lg:col-span-4 h-[540px] lg:h-[620px] xl:h-[680px]">
                 <InspectorPanel
                   drawingId={analysis.drawing_id}
                   diagnoses={analysis.diagnoses}

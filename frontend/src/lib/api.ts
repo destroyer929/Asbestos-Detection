@@ -80,11 +80,40 @@ export async function analyzeBenchmarkSample(
   return await res.json();
 }
 
+export interface AnalysisProgressInfo {
+  session_id: string;
+  stage: string;
+  percent: number;
+  message: string;
+  tier5_total: number;
+  tier5_completed: number;
+  current_material: string;
+  is_complete: boolean;
+}
+
+export async function fetchAnalysisProgress(
+  sessionId: string
+): Promise<AnalysisProgressInfo | null> {
+  try {
+    const res = await fetch(`${getApiBaseUrl()}/api/v1/analyze/progress/${sessionId}`, {
+      cache: "no-store",
+    });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
 export async function analyzeUploadedFile(
-  file: File
+  file: File,
+  sessionId?: string
 ): Promise<DrawingAnalysisResponse> {
   const formData = new FormData();
   formData.append("file", file);
+  if (sessionId) {
+    formData.append("session_id", sessionId);
+  }
 
   const res = await fetch(`${getApiBaseUrl()}/api/v1/analyze`, {
     method: "POST",

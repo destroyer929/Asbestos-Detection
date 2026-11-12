@@ -35,6 +35,7 @@ export interface DiagnosisItem {
 
 export interface FinishScheduleItem {
   room: string;
+  room_name?: string;
   floor: string;
   wall: string;
   ceiling: string;

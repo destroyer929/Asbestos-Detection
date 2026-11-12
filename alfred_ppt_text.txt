@@ -1,0 +1,305 @@
+Page count: 13
+
+==================== PAGE 1 ====================
+DrawingScan
+AI-Powered Asbestos Identification, Bilingual OCR
+& Architectural Finish Schedule Diagnostics
+PRESENTER
+Karunakar Mandula
+M.Tech Computer Science and Engineering
+IIIT Lucknow
+CONTACT & PROFILES
+mcs25039@iiitl.ac.in
+|
++91 9390129925
+github.com/destroyer929
+|
+linkedin.com/in/karunakar-mandula
+
+==================== PAGE 2 ====================
+The Challenge: Asbestos Inspection in Historical Blueprints
+▶Strict Japanese Regulatory Mandate:
+Japan’s Air Pollution Control Act mandates identifying all asbestos materials prior to
+building demolition; missing friable spray asbestos carries severe criminal and legal liability.
+▶Severe Scanning & Photocopy Artifacts:
+Historical Showa-era blueprints (1970s–1980s) suffer from carbon smudging, photocopy
+fade, paper yellowing, micro-tilts, and low scanning resolution.
+▶80%+ Structural Dimension Clutter:
+Blueprints are saturated with structural measurements (4,500, FL±0, CH=2700,
+H-300x150) that corrupt off-the-shelf OCR engines.
+▶Commercial Trade Brand Jargon:
+Blueprints specify vintage manufacturer trade brands (e.g., Tomlex, Dailotone, Tonlight)
+rather than generic legal terms.
+Karunakar Mandula
+|
+DrawingScan
+2 / 13
+
+==================== PAGE 3 ====================
+The Solution: DrawingScan (Autonomous AI Diagnostics)
+▶Autonomous Sub-Second Blueprint Diagnostics:
+Ingests multi-page architectural blueprints and delivers legally compliant, room-level
+asbestos reports in under 1.0 second per drawing sheet.
+▶Adaptive Pre-Flight Quality Brain:
+Computes physical image noise (σ, P95, sharpness) in < 15ms to dynamically select
+processing intensity, guaranteeing 100% CAD stroke preservation.
+▶Morphological Finish Schedule Parser:
+Uses directional line morphology to reconstruct tabular Finish Schedules room-by-room
+while filtering out structural dimension noise.
+▶5-Tier Hierarchical Matching Engine:
+Cascades from O(1) exact hash lookups to localized LLM arbitration (Qwen3:1.7B),
+achieving 96.2% hazardous positive recall across 3,425 materials.
+Karunakar Mandula
+|
+DrawingScan
+3 / 13
+
+==================== PAGE 4 ====================
+System Architecture – Ingestion & Layout Parsing
+Input Blueprint
+(PDF / 300 DPI Scan / DXF)
+Ingestion
+Router
+Vector Text
+PyMuPDF Stream Parser
+0% CER · 0ms Latency
+Scanned Raster
+300 DPI Rasterizer
+Vector
+Scan
+Adaptive Quality Brain
+Noise σ, Bright-
+ness P95, Skew
+Adaptive
+Decision
+Level 1: Mild
+Deskew + CLAHE
+Level 0: Clean
+Passthrough (Zero Loss)
+Level 2: Heavy
+Sauvola + Bg Leveling
+Bilingual PyTorch OCR Engine
+EasyOCR / PaddleOCR
+(CUDA Acceleration)
+Spatial Layout Classifier
+(ResNet / Region MLP)
+Filters CAD Clutter · Seg-
+ments Architectural Regions
+Morphological Table Parser
+cv2.MORPH_RECT
+Matrix Rebuild
+Dimension Clutter
+4,500 · FL±0
+· CH=2700
+[Dropped]
+Material Callouts
+Leader Line Text
+CANDIDATE MATERIAL STREAM
+Clean text tokens + Room con-
+text −→To NLP Matching Engine
+Karunakar Mandula
+|
+DrawingScan
+4 / 13
+
+==================== PAGE 5 ====================
+System Architecture – NLP Matching & Production Serving
+Candidate Stream
+(From Layout Parser)
+Unicode NFKC Normalizer
+2 5 m m →25mm · t=25
+OCR Glyph Correction
+SudachiPy Tokenizer
+Mode B Segmentation
+Isolates Content Nouns
+Tier 1: Exact Hash
+<0.1ms · 100%
+Tier 2: Domain Regex
+<0.1ms · 95%
+Miss
+Tier 3: Rapid-
+Fuzz SIMD
+10ms · Score ≥78%
+Miss
+Tier 4: N-Gram Dice
+20ms · Overlap ≥65%
+Miss
+Tier 5: Local LLM Arbitrator
+Qwen3:1.7B (Ollama Local)
+Semantic Context Reasoning
+Miss
+State: UNCERTAIN
+Offline / Truly Unknown
+[Routed to Human Review]
+Unknown
+MLIT & JATI Database
+3,425 Regulatory Records
+27,066 Token Hash Keys
+Match
+Diagnostic Classifier
+Attaches Legal Citations
+(Level 1 / 2 / 3 Risk)
+Resolved (Pos / Safe)
+FastAPI REST Service
+Port 8000 · Async Queue
+Per-Page JSON Archive
+Next.js 16 Web Workspace
+60 FPS Pan/Zoom Canvas
+Bounding Box Overlays
+Active Learning Feedback
+active_learning_corrections.json
+Continuous Model Tuning
+Karunakar Mandula
+|
+DrawingScan
+5 / 13
+
+==================== PAGE 6 ====================
+Stage 2: Adaptive Pre-Flight Quality Brain
+▶Sub-15ms Physical Noise Quantification:
+Evaluates raw image noise standard deviation σ (Immerkær metric), P95 histogram
+brightness, and Laplacian sharpness before applying any transformations.
+▶Level 0 Clean Passthrough (CAD Stroke Preservation):
+High-resolution digital scans (σ < 4.0) bypass destructive binarization entirely, preserving
+delicate Kanji strokes and fine 0.1mm architectural line weights.
+▶Level 1 Deskew & CLAHE Contrast Normalization:
+Mild scans undergo Radon-transform deskew (±5◦) and tile-based CLAHE contrast
+adaptation to recover faded ink without threshold distortion.
+▶Level 2 Sauvola Local Binarization:
+Heavily degraded Showa-era prints undergo adaptive windowed binarization with
+background illumination leveling to remove deep carbon smudging and paper yellowing.
+Karunakar Mandula
+|
+DrawingScan
+6 / 13
+
+==================== PAGE 7 ====================
+Stage 3: Spatial Layout Classifier & Table Parser
+▶Architectural Spatial Region Classification:
+Distinguishes tabular Finish Schedules, free-floating callout annotations, title blocks, and
+structural floor plans using geometric bounding box semantics.
+▶80%+ Structural Dimension Noise Suppression:
+Automatically detects and filters non-material CAD clutter (4,500, FL±0, CH=2700,
+H-300x150) to prevent OCR corpus contamination.
+▶Morphological Grid Matrix Reconstruction:
+Applies directional morphological kernels (cv2.MORPH_RECT) with line intersection
+analysis to reconstruct broken or faded Showa-era table cell boundaries.
+▶Hierarchical Room-Context Binding:
+Binds detected material tokens to their spatial architectural parent (e.g., Boiler Room →
+Ceiling), generating localized multi-room diagnostic streams.
+Karunakar Mandula
+|
+DrawingScan
+7 / 13
+
+==================== PAGE 8 ====================
+Stage 4: 5-Tier Hierarchical Matching Engine
+▶Unicode NFKC & SudachiPy Morphological Tokenization:
+Normalizes full-width alphanumeric tokens (2 5 m m →25mm) and executes Mode-B
+compound word splitting to isolate core construction nouns.
+▶Sub-Millisecond Hash & Domain Regex Tiers:
+Tier 1 performs O(1) exact lookup (< 0.1ms) across 27,066 keys; Tier 2 evaluates
+precompiled Japanese domain rules for compound syntax (e.g., spray + rockwool).
+▶C++ SIMD Fuzzy & Sub-Character N-Gram Approximation:
+Tier 3 deploys RapidFuzz SIMD Levenshtein distance (≥78%) to survive OCR typos; Tier
+4 applies character 2/3-gram Dice overlap (≥65%) for partial strings.
+▶Tier 5 Local LLM Arbitrator (Qwen3:1.7B):
+Unmatched candidate tokens route to a localized Ollama LLM, performing offline
+semantic regulatory triage into Positive, Certified Safe, or Human Review.
+Karunakar Mandula
+|
+DrawingScan
+8 / 13
+
+==================== PAGE 9 ====================
+Regulatory Knowledge Base: MLIT & JATI Standards
+▶Official Japanese Statutory Database:
+Built directly upon Japan’s MLIT (Ministry of Land, Infrastructure, Transport and
+Tourism) and JATI asbestos registries, containing 3,425 materials and 27,066 lookup
+aliases.
+▶Statutory 3-Level Hazard Stratification:
+Rigorously classifies materials into Level 1 (friable spray asbestos, severe risk), Level 2
+(thermal pipe insulation), and Level 3 (non-friable molded slate/vinyl tiles).
+▶Certified Non-Asbestos Benchmark Controls:
+Explicitly catalogues safe standard building elements (gypsum board, rockwool post-2004,
+glass wool) to prevent false positives and unnecessary client abatement costs.
+▶Automated Regulatory Citation Generation:
+Links detected hazardous items directly to Japanese Air Pollution Control Act statutory
+clauses and inspection manuals for legal report generation.
+Karunakar Mandula
+|
+DrawingScan
+9 / 13
+
+==================== PAGE 10 ====================
+Production Serving & Continuous Active Learning
+▶High-Throughput FastAPI REST Engine (Port 8000):
+Asynchronous Python backend providing per-page JSON caching, batch drawing
+ingestion, and background audit history persistence.
+▶Interactive Next.js 16 Workspace (Port 3000):
+60 FPS GPU-accelerated canvas enabling smooth pan/zoom, interactive risk-colored
+bounding boxes, and multi-page blueprint navigation.
+▶Safety-First Human-in-the-Loop Review:
+Flags UNCERTAIN or ambiguous trade brands with distinct amber overlays, allowing
+certified asbestos inspectors to confirm or override with one click.
+▶Continuous Active Learning Feedback Loop:
+Expert inspector corrections automatically append to
+active_learning_corrections.json, expanding lookup aliases and continuously
+improving matching accuracy.
+Karunakar Mandula
+|
+DrawingScan
+10 / 13
+
+==================== PAGE 11 ====================
+Business Impact & Strategic Value for Alfred Lab
+▶10x Inspection Turnaround Acceleration:
+Compresses manual Showa-era blueprint review from 4–6 hours per building down to
+under 15 minutes of verified inspector review.
+▶Guaranteed Regulatory Compliance:
+Eliminates legal and criminal liability under Japan’s revised Air Pollution Control Act
+through automated MLIT statutory audit trails.
+▶Air-Gapped On-Premise Enterprise Privacy:
+Runs 100% locally with PyTorch, CUDA, and local Ollama inference; zero client
+blueprints or proprietary drawings leave Alfred Lab’s infrastructure.
+▶Turnkey Integration Ready:
+Fully modular architecture ready for immediate internal deployment or white-label SaaS
+API integration to power Alfred Lab’s commercial inspection services.
+Karunakar Mandula
+|
+DrawingScan
+11 / 13
+
+==================== PAGE 12 ====================
+System & Operational Limitations
+▶Faded historical Showa-era Diazo prints (aoyaki) and handwritten cursive Kanji
+annotations exhibit higher OCR transcription ambiguity.
+▶Classical morphological table parsing (cv2.MORPH_RECT) requires continuous
+orthogonal lines and struggles on borderless schedules.
+▶Identical trade brand names spanning pre- and post-asbestos bans require the
+building’s completion year for conclusive diagnosis.
+▶Blueprints reflect original design specifications but cannot account for
+undocumented on-site contractor substitutions or later renovations.
+▶Tier-5 local LLM arbitration (Qwen3:1.7B) introduces a 1–2 second inference
+delay on edge hardware without dedicated GPU acceleration.
+Karunakar Mandula
+|
+DrawingScan
+12 / 13
+
+==================== PAGE 13 ====================
+Future Advancements with Scaled Resources
+▶Deploy deep-learning Table Transformers (LayoutLMv3/TATR) to autonomously
+parse borderless, dashed, and irregular finish schedule matrices.
+▶Upgrade Tier-5 to a 7B/14B parameter model fine-tuned via LoRA directly on
+Alfred Lab’s historical inspection archives and JATI manuals.
+▶Fine-tune the PyTorch OCR engine on Showa-era architectural typography,
+cursive handwritten Kanji notes, and Japanese inspection stamps.
+▶Accelerate inference pipelines using NVIDIA TensorRT (FP16/INT8) and vLLM
+to compress per-sheet processing latency below 150 ms.
+▶Implement enterprise PostgreSQL, vector databases (Milvus/Qdrant), and
+distributed Celery worker clusters to process 100+ page drawing sets in parallel.
+Karunakar Mandula
+|
+DrawingScan
+13 / 13

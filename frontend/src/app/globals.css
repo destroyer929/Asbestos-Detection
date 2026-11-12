@@ -1,42 +1,106 @@
 @import "tailwindcss";
 
 :root {
-  --background: #020617;
-  --foreground: #f8fafc;
+  --background: #f7fbf6;
+  --foreground: #0f172a;
+  --alfred-green: #28a745;
+  --alfred-green-dark: #1e7e34;
+  --alfred-green-vibrant: #24b05b;
+  --alfred-green-light: #eef7ee;
+  --alfred-green-subtle: #f0fdf4;
+  --alfred-border-subtle: #d1fae5;
+  --alfred-text-heading: #0f291e;
+  --alfred-text-body: #334155;
+  --alfred-card-bg: #ffffff;
 }
 
 body {
-  background: #020617;
-  color: #f8fafc;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: #f7fbf6;
+  color: #1e293b;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   overflow-x: hidden;
 }
 
-/* Custom Scrollbars */
+/* Technical Monospace Accent (From Alfred Company Design System) */
+.font-lab-mono {
+  font-family: "Courier Prime", "Courier New", monospace !important;
+}
+
+/* Custom Alfred Green & White Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #090d16;
+  background: #eef7ee;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: #86efac;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #22c55e;
 }
 
+/* --- Alfred Website Button Hover Shimmer Effect (Green + White) --- */
+.btn-hover-shine {
+  position: relative !important;
+  overflow: hidden !important;
+  transition: all 0.3s ease !important;
+}
+
+.btn-hover-shine:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(40, 167, 69, 0.25), 0 0 25px rgba(40, 167, 69, 0.3) !important;
+}
+
+.btn-hover-shine::after {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: -150% !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.65), transparent) !important;
+  transition: left 0.7s cubic-bezier(0.23, 1, 0.32, 1) !important;
+  pointer-events: none;
+}
+
+.btn-hover-shine:hover::after {
+  left: 150% !important;
+}
+
+/* --- Alfred Clean Glass Card (Crisp White + Emerald Border) --- */
+.feature-glass-card {
+  isolation: isolate;
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(40, 167, 69, 0.25) !important;
+  box-shadow:
+    0 12px 30px -4px rgba(24, 75, 48, 0.08),
+    0 4px 6px -2px rgba(24, 75, 48, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.feature-glass-card-subtle {
+  isolation: isolate;
+  background: rgba(255, 255, 255, 0.85) !important;
+  border: 1px solid rgba(40, 167, 69, 0.18) !important;
+  box-shadow: 0 4px 14px rgba(24, 75, 48, 0.05) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
     transform: scale(0.98);
   }
-
   to {
     opacity: 1;
     transform: scale(1);

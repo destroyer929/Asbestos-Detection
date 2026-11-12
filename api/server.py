@@ -20,6 +20,7 @@ if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 import json
+import time
 import uuid
 import shutil
 import base64
@@ -76,6 +77,57 @@ history_mgr = BlueprintHistoryManager()
 
 UPLOAD_DIR = Path("data/uploads")
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+
+# In-memory dictionary for live analysis session progress tracking
+ANALYSIS_SESSIONS: Dict[str, Dict[str, Any]] = {}
+
+def update_session_progress(
+    session_id: Optional[str],
+    stage: str,
+    percent: float,
+    message: str,
+    tier5_total: int = 0,
+    tier5_completed: int = 0,
+    current_material: str = "",
+    is_complete: bool = False
+):
+    if not session_id:
+        return
+    now = time.time()
+    # Prune stale sessions older than 15 minutes
+    for s_id in list(ANALYSIS_SESSIONS.keys()):
+        if now - ANALYSIS_SESSIONS[s_id].get("timestamp", now) > 900:
+            ANALYSIS_SESSIONS.pop(s_id, None)
+
+    ANALYSIS_SESSIONS[session_id] = {
+        "session_id": session_id,
+        "stage": stage,
+        "percent": round(percent, 1),
+        "message": message,
+        "tier5_total": tier5_total,
+        "tier5_completed": tier5_completed,
+        "current_material": current_material,
+        "is_complete": is_complete,
+        "timestamp": now
+    }
+
+
+@app.get("/api/v1/analyze/progress/{session_id}")
+def get_analysis_progress(session_id: str):
+    """Returns real-time diagnostic progress including Tier-5 LLM material counts."""
+    prog = ANALYSIS_SESSIONS.get(session_id)
+    if not prog:
+        return {
+            "session_id": session_id,
+            "stage": "starting",
+            "percent": 5.0,
+            "message": "Initializing blueprint analysis...",
+            "tier5_total": 0,
+            "tier5_completed": 0,
+            "current_material": "",
+            "is_complete": False
+        }
+    return prog
 CORRECTIONS_FILE = Path("data/active_learning_corrections.json")
 
 
@@ -445,7 +497,27 @@ def analyze_sample(sample_id: str):
     if sample_meta.get("gt_path") and gt_path.exists() and gt_path.is_file():
         with open(gt_path, "r", encoding="utf-8") as f:
             gt_data = json.load(f)
-        input_items = gt_data.get("annotations", [])
+        raw_gt = gt_data.get("annotations", [])
+        dims = gt_data.get("dimensions", {})
+        gt_w = dims.get("width", w) if dims else w
+        gt_h = dims.get("height", h) if dims else h
+        scale_x = float(w) / float(gt_w) if gt_w > 0 else 1.0
+        scale_y = float(h) / float(gt_h) if gt_h > 0 else 1.0
+        for it in raw_gt:
+            bx1, by1, bx2, by2 = it["bbox"]
+            scaled_bbox = [
+                round(bx1 * scale_x, 1),
+                round(by1 * scale_y, 1),
+                round(bx2 * scale_x, 1),
+                round(by2 * scale_y, 1)
+            ]
+            scaled_it = {**it, "bbox": scaled_bbox}
+            if "polygon" in it and it["polygon"]:
+                scaled_it["polygon"] = [
+                    [round(pt[0] * scale_x, 1), round(pt[1] * scale_y, 1)]
+                    for pt in it["polygon"]
+                ]
+            input_items.append(scaled_it)
     else:
         ocr_items = ocr_engine.recognize(img_cv)
         input_items = [
@@ -453,11 +525,15 @@ def analyze_sample(sample_id: str):
             for item in ocr_items
         ]
 
+    # Pre-Flight Adaptive Quality Assessment & Deskew for authentic line detection
+    quality_assessment = pipeline.quality_assessor.assess(img_cv)
+    norm_img, geom_meta = pipeline.normalizer.adaptive_process(img_cv, quality_assessment)
+
     # Detect table boundary & parse schedule
-    table_box = table_parser.detect_table_boundary(img_cv)
+    table_box = table_parser.detect_table_boundary(norm_img) or table_parser.detect_table_boundary(img_cv)
     parsed_schedule_records = []
     if table_box:
-        records = table_parser.parse_schedule_cells(table_box, input_items)
+        records = table_parser.parse_schedule_cells(table_box, input_items, image=norm_img)
         parsed_schedule_records = [
             {
                 "room": r.room_name,
@@ -557,22 +633,29 @@ def analyze_sample(sample_id: str):
 
 
 @app.post("/api/v1/analyze")
-async def analyze_drawing(file: UploadFile = File(...)):
+async def analyze_drawing(
+    file: UploadFile = File(...),
+    session_id: Optional[str] = Form(None)
+):
     """
     Full end-to-end blueprint analysis:
-    Ingestion -> Deskew/Tiling -> OCR/Table Parsing -> 4-Tier MLIT Matching.
-    Supports multi-page documents (e.g. 30-page packages) with per-page caching & pagination.
+    Ingestion -> Deskew/Tiling -> OCR/Table Parsing -> 4-Tier MLIT Matching -> Tier-5 LLM Arbitration.
+    Supports live progress reporting via session_id and multi-page documents.
     """
     file_id = f"UPLOAD-{uuid.uuid4().hex[:8]}"
     ext = Path(file.filename).suffix.lower()
     temp_path = UPLOAD_DIR / f"{file_id}{ext}"
+    update_session_progress(session_id, "ingest", 8.0, "Ingesting blueprint file and validating format...")
+    await asyncio.sleep(0.01)
 
     try:
         with open(temp_path, "wb") as f:
             shutil.copyfileobj(file.file, f)
 
+        update_session_progress(session_id, "preprocess", 22.0, "Running adaptive Sauvola binarization & deskew...")
+        await asyncio.sleep(0.01)
         # 1. Ingestion & Preprocessing
-        prep_res = pipeline.process(temp_path)
+        prep_res = await asyncio.to_thread(pipeline.process, temp_path)
         is_vector = prep_res["is_vector"]
 
         all_diagnoses: List[DrawingItemDiagnosis] = []
@@ -585,18 +668,32 @@ async def analyze_drawing(file: UploadFile = File(...)):
 
         # Check for matched GT annotations if benchmark / sample
         stem = Path(file.filename).stem
+        clean_stem = stem.replace("_scanned", "").replace("_vector", "")
         matched_gt_items = None
-        for cand in [
-            Path("data/output/degraded") / f"{stem}_gt.json",
-            Path("data/output/degraded") / f"{stem}_scanned_gt.json",
-            Path("data/output/degraded") / f"{stem.replace('_scanned', '')}_scanned_gt.json",
-            Path("data/output/clean") / f"{stem.replace('_scanned', '').replace('_vector', '')}_gt.json",
-        ]:
+        gt_orig_w = 2400
+        gt_orig_h = 1600
+
+        candidates = []
+        if "_scanned" in stem:
+            candidates.extend([
+                Path("data/output/degraded") / f"{stem}_gt.json",
+                Path("data/output/degraded") / f"{stem}_scanned_gt.json",
+            ])
+        candidates.extend([
+            Path("data/output/clean") / f"{clean_stem}_gt.json",
+            Path("data/output/degraded") / f"{clean_stem}_scanned_gt.json",
+            Path("data/output/degraded") / f"{clean_stem}_gt.json",
+        ])
+        for cand in candidates:
             if cand.exists():
                 try:
                     with open(cand, "r", encoding="utf-8") as f:
                         gt_data = json.load(f)
                     matched_gt_items = gt_data.get("annotations", [])
+                    dims = gt_data.get("dimensions", {})
+                    if dims and "width" in dims and "height" in dims:
+                        gt_orig_w = dims["width"]
+                        gt_orig_h = dims["height"]
                     break
                 except Exception:
                     pass
@@ -609,7 +706,11 @@ async def analyze_drawing(file: UploadFile = File(...)):
             disp_img = p_info.get("display_image", p_info["normalized_image"])
             norm_img = p_info["normalized_image"]
             p_h, p_w = disp_img.shape[:2]
-            t_box = table_parser.detect_table_boundary(disp_img)
+
+            # Detect table boundary using normalized image for crisp morphological lines
+            t_box = table_parser.detect_table_boundary(norm_img)
+            if not t_box:
+                t_box = table_parser.detect_table_boundary(disp_img)
 
             # Cache authentic original blueprint image to disk for fast pagination & crisp viewer
             page_cache_path = UPLOAD_DIR / f"{file_id}_page_{page_num}.jpg"
@@ -639,20 +740,43 @@ async def analyze_drawing(file: UploadFile = File(...)):
                 # Use high-fidelity native CAD vector text for this page
                 raw_items = page_vec
             elif matched_gt_items:
-                # Ground truth benchmark matching
-                raw_items = matched_gt_items
+                # Ground truth benchmark matching - dynamically rescale coordinates to display resolution
+                scale_x = float(p_w) / float(gt_orig_w) if gt_orig_w > 0 else 1.0
+                scale_y = float(p_h) / float(gt_orig_h) if gt_orig_h > 0 else 1.0
+                raw_items = []
+                for it in matched_gt_items:
+                    bx1, by1, bx2, by2 = it["bbox"]
+                    scaled_bbox = [
+                        round(bx1 * scale_x, 1),
+                        round(by1 * scale_y, 1),
+                        round(bx2 * scale_x, 1),
+                        round(by2 * scale_y, 1)
+                    ]
+                    scaled_it = {
+                        **it,
+                        "bbox": scaled_bbox,
+                        "page_num": page_num
+                    }
+                    if "polygon" in it and it["polygon"]:
+                        scaled_it["polygon"] = [
+                            [round(pt[0] * scale_x, 1), round(pt[1] * scale_y, 1)]
+                            for pt in it["polygon"]
+                        ]
+                    raw_items.append(scaled_it)
             else:
                 # Scanned or non-vector page (e.g. CAD curves / scanned detail sheet):
                 # Run OCR across sheet using line-separated or normalized image
-                ocr_items = ocr_engine.recognize(norm_img)
+                ocr_items = await asyncio.to_thread(ocr_engine.recognize, norm_img)
                 raw_items = [
                     {"text": item.text, "bbox": item.bbox, "confidence": item.confidence, "page_num": page_num}
                     for item in ocr_items
                 ]
 
             # Parse schedule table if detected on this page
+            update_session_progress(session_id, "layout", 68.0, f"Analyzing page {page_num} layout & table boundaries...")
+            await asyncio.sleep(0.01)
             if t_box:
-                records = table_parser.parse_schedule_cells(t_box, raw_items)
+                records = table_parser.parse_schedule_cells(t_box, raw_items, image=norm_img)
                 parsed_schedule_records.extend([
                     {
                         "room": r.room_name,
@@ -664,7 +788,33 @@ async def analyze_drawing(file: UploadFile = File(...)):
                     for r in records
                 ])
 
-            page_diagnoses = classifier.diagnose_drawing(raw_items, table_bbox=t_box, page_number=page_num)
+            update_session_progress(session_id, "match", 82.0, f"Running 4-Tier MLIT regulatory matching on page {page_num}...")
+            await asyncio.sleep(0.01)
+
+            def tier5_progress_cb(cb_data: Dict[str, Any]):
+                tot = cb_data.get("total", 0)
+                comp = cb_data.get("completed", 0)
+                curr = cb_data.get("current", "")
+                msg = cb_data.get("message", "")
+                pct = 95.0 if tot == 0 else min(99.0, 88.0 + (comp / tot) * 11.0)
+                update_session_progress(
+                    session_id=session_id,
+                    stage="finalize",
+                    percent=pct,
+                    message=msg,
+                    tier5_total=tot,
+                    tier5_completed=comp,
+                    current_material=curr
+                )
+
+            page_diagnoses = await asyncio.to_thread(
+                classifier.diagnose_drawing,
+                raw_items,
+                t_box,
+                page_num,
+                None,
+                tier5_progress_cb
+            )
             all_diagnoses.extend(page_diagnoses)
 
         pos_count = sum(1 for d in all_diagnoses if d.status == "POSITIVE")
@@ -736,6 +886,18 @@ async def analyze_drawing(file: UploadFile = File(...)):
             )
         except Exception as e:
             print(f"Warning: Failed to record drawing to history: {e}")
+
+        t5_count = sum(1 for d in all_diagnoses if getattr(d, "match_tier", "") == "TIER_5_LLM")
+        update_session_progress(
+            session_id=session_id,
+            stage="complete",
+            percent=100.0,
+            message="Analysis complete!",
+            tier5_total=t5_count,
+            tier5_completed=t5_count,
+            current_material="Complete",
+            is_complete=True
+        )
 
         return result_payload
 

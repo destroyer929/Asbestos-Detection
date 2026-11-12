@@ -173,58 +173,58 @@ export const BlueprintCanvas: React.FC<BlueprintCanvasProps> = ({
   });
 
   return (
-    <div className="relative w-full h-[640px] lg:h-[720px] bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden shadow-2xl flex flex-col select-none">
+    <div className="relative w-full h-[540px] lg:h-[620px] xl:h-[680px] bg-[#0b1016] rounded-2xl border-2 border-emerald-400/90 overflow-hidden shadow-xl shadow-emerald-950/15 flex flex-col select-none">
       {/* Top Canvas Toolbar */}
       <div className="absolute top-3 left-3 right-3 z-20 flex items-center justify-between pointer-events-none">
         {/* Left: View Controls */}
-        <div className="flex items-center gap-1.5 bg-slate-900/90 backdrop-blur-md px-2.5 py-1.5 rounded-xl border border-slate-700/80 shadow-lg pointer-events-auto">
+        <div className="flex items-center gap-1.5 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full border-2 border-emerald-300 shadow-md pointer-events-auto">
           <button
             onClick={() => setScale((s) => Math.min(s * 1.2, 4.0))}
-            className="p-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition"
+            className="p-1.5 rounded-full text-slate-700 hover:text-emerald-800 hover:bg-emerald-50 transition"
             title="Zoom In"
           >
             <ZoomIn className="w-4 h-4" />
           </button>
           <button
             onClick={() => setScale((s) => Math.max(s / 1.2, 0.15))}
-            className="p-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition"
+            className="p-1.5 rounded-full text-slate-700 hover:text-emerald-800 hover:bg-emerald-50 transition"
             title="Zoom Out"
           >
             <ZoomOut className="w-4 h-4" />
           </button>
           <button
             onClick={fitToScreen}
-            className="p-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition"
+            className="p-1.5 rounded-full text-slate-700 hover:text-emerald-800 hover:bg-emerald-50 transition"
             title="Reset to Fit"
           >
             <RotateCcw className="w-4 h-4" />
           </button>
-          <div className="h-4 w-px bg-slate-700 mx-1"></div>
-          <span className="text-xs font-mono font-semibold text-slate-300 px-1">
+          <div className="h-4 w-px bg-slate-200 mx-1"></div>
+          <span className="text-xs font-lab-mono font-bold text-emerald-800 px-1">
             {Math.round(scale * 100)}%
           </span>
         </div>
 
         {/* Center: Multi-Page Navigation Controls (When document has multiple sheets) */}
         {pageCount > 1 && onPageChange && (
-          <div className="flex items-center gap-2 bg-slate-900/95 backdrop-blur-md px-3 py-1.5 rounded-xl border border-blue-500/40 shadow-xl pointer-events-auto">
+          <div className="flex items-center gap-2 bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full border-2 border-emerald-300 shadow-md pointer-events-auto">
             <button
               onClick={() => onPageChange(Math.max(1, currentPage - 1))}
               disabled={currentPage <= 1 || isPageLoading}
-              className="p-1 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 disabled:opacity-30 disabled:pointer-events-none transition"
+              className="p-1 rounded-full text-slate-700 hover:text-emerald-800 hover:bg-emerald-50 disabled:opacity-30 disabled:pointer-events-none transition"
               title="Previous Page"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
 
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-200">
-              <FileText className="w-3.5 h-3.5 text-blue-400" />
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+              <FileText className="w-3.5 h-3.5 text-emerald-600" />
               <span>Page</span>
               <select
                 value={currentPage}
                 onChange={(e) => onPageChange(Number(e.target.value))}
                 disabled={isPageLoading}
-                className="bg-slate-800 text-blue-400 font-mono text-xs px-2 py-0.5 rounded border border-slate-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="bg-emerald-50 text-emerald-800 font-lab-mono text-xs px-2 py-0.5 rounded-full border border-emerald-300 focus:outline-none focus:ring-1 focus:ring-emerald-500 font-bold"
               >
                 {Array.from({ length: pageCount }, (_, i) => i + 1).map((p) => (
                   <option key={p} value={p}>
@@ -232,44 +232,44 @@ export const BlueprintCanvas: React.FC<BlueprintCanvasProps> = ({
                   </option>
                 ))}
               </select>
-              <span className="text-slate-400 font-normal">of {pageCount}</span>
+              <span className="text-slate-400 font-normal font-lab-mono">of {pageCount}</span>
             </div>
 
             <button
               onClick={() => onPageChange(Math.min(pageCount, currentPage + 1))}
               disabled={currentPage >= pageCount || isPageLoading}
-              className="p-1 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 disabled:opacity-30 disabled:pointer-events-none transition"
+              className="p-1 rounded-full text-slate-700 hover:text-emerald-800 hover:bg-emerald-50 disabled:opacity-30 disabled:pointer-events-none transition"
               title="Next Page"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
             {isPageLoading && (
-              <span className="text-[10px] text-blue-400 animate-pulse font-mono">Loading...</span>
+              <span className="text-[10px] text-emerald-600 animate-pulse font-lab-mono font-bold">Loading...</span>
             )}
           </div>
         )}
 
         {/* Right: Layer Overlays */}
-        <div className="flex items-center gap-2 bg-slate-900/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-700/80 shadow-lg pointer-events-auto">
+        <div className="flex items-center gap-2 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full border-2 border-emerald-300 shadow-md pointer-events-auto">
           <button
             onClick={() => setShowBoxes((v) => !v)}
-            className={`flex items-center gap-1.5 text-xs font-medium px-2 py-1 rounded-lg transition ${
+            className={`flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full transition ${
               showBoxes
-                ? "bg-blue-600/30 text-blue-300 border border-blue-500/40"
-                : "text-slate-400 hover:text-slate-200"
+                ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
+                : "text-slate-600 hover:text-slate-900"
             }`}
           >
-            {showBoxes ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
-            <span>Boxes ({filteredDiagnoses.length})</span>
+            {showBoxes ? <Eye className="w-3.5 h-3.5 text-emerald-600" /> : <EyeOff className="w-3.5 h-3.5" />}
+            <span className="font-lab-mono">Boxes ({filteredDiagnoses.length})</span>
           </button>
 
           {tableBbox && (
             <button
               onClick={() => setShowTableGrid((v) => !v)}
-              className={`flex items-center gap-1.5 text-xs font-medium px-2 py-1 rounded-lg transition ${
+              className={`flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full transition ${
                 showTableGrid
-                  ? "bg-indigo-600/30 text-indigo-300 border border-indigo-500/40"
-                  : "text-slate-400 hover:text-slate-200"
+                  ? "bg-teal-100 text-teal-800 border border-teal-300"
+                  : "text-slate-600 hover:text-slate-900"
               }`}
             >
               <Layers className="w-3.5 h-3.5" />
@@ -279,7 +279,7 @@ export const BlueprintCanvas: React.FC<BlueprintCanvasProps> = ({
           {tableBbox && (
             <button
               onClick={focusTable}
-              className="flex items-center gap-1.5 text-xs font-medium px-2 py-1 rounded-lg bg-emerald-600/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-600/40 transition"
+              className="flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition"
               title="Zoom & pan to the Finish Schedule table"
             >
               <Crosshair className="w-3.5 h-3.5" />
@@ -297,12 +297,12 @@ export const BlueprintCanvas: React.FC<BlueprintCanvasProps> = ({
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
-        className={`w-full h-full relative overflow-hidden bg-slate-950 ${
+        className={`w-full h-full relative overflow-hidden bg-[#0a0f15] ${
           isDragging ? "cursor-grabbing" : "cursor-grab"
         }`}
         style={{
           backgroundImage: `
-            radial-gradient(circle at 1px 1px, rgba(255,255,255,0.06) 1px, transparent 0)
+            radial-gradient(circle at 1px 1px, rgba(36,176,91,0.22) 1px, transparent 0)
           `,
           backgroundSize: "24px 24px",
         }}
@@ -322,7 +322,7 @@ export const BlueprintCanvas: React.FC<BlueprintCanvasProps> = ({
             <img
               src={imageBase64}
               alt="Architectural Blueprint"
-              className="absolute inset-0 w-full h-full block pointer-events-none rounded shadow-2xl"
+              className="absolute inset-0 w-full h-full block pointer-events-none rounded shadow-[0_0_50px_rgba(0,0,0,0.9)] border border-slate-700/60"
               style={{ imageRendering: "crisp-edges" }}
             />
           ) : (
@@ -383,23 +383,23 @@ export const BlueprintCanvas: React.FC<BlueprintCanvasProps> = ({
                 const isSelected = selectedItem?.item_id === d.item_id;
 
                 let strokeColor = "#f59e0b"; // Amber (Uncertain)
-                let fillColor = "rgba(245, 158, 11, 0.22)";
+                let fillColor = "rgba(245, 158, 11, 0.28)";
                 let badgeBg = "#d97706";
 
                 if (d.status === "POSITIVE") {
-                  strokeColor = "#ef4444"; // Crimson Red
-                  fillColor = "rgba(239, 68, 68, 0.25)";
-                  badgeBg = "#dc2626";
+                  strokeColor = "#f43f5e"; // Bold Crimson Rose
+                  fillColor = "rgba(244, 63, 94, 0.32)";
+                  badgeBg = "#e11d48";
                 } else if (d.status === "NEGATIVE") {
-                  strokeColor = "#10b981"; // Emerald Green
-                  fillColor = "rgba(16, 185, 129, 0.20)";
+                  strokeColor = "#10b981"; // Bold Emerald Green
+                  fillColor = "rgba(16, 185, 129, 0.28)";
                   badgeBg = "#059669";
                 }
 
                 if (isSelected) {
-                  strokeColor = "#38bdf8"; // Cyan focus
-                  fillColor = "rgba(56, 189, 248, 0.40)";
-                  badgeBg = "#0284c7";
+                  strokeColor = "#06b6d4"; // Radiant Cyan focus
+                  fillColor = "rgba(6, 182, 212, 0.42)";
+                  badgeBg = "#0891b2";
                 }
 
                 return (
@@ -433,7 +433,7 @@ export const BlueprintCanvas: React.FC<BlueprintCanvasProps> = ({
                       height={height}
                       fill={fillColor}
                       stroke={strokeColor}
-                      strokeWidth={isSelected ? 4 : 2.5}
+                      strokeWidth={isSelected ? 4.5 : 3}
                       rx="2"
                     />
 
@@ -497,28 +497,28 @@ export const BlueprintCanvas: React.FC<BlueprintCanvasProps> = ({
         )}
       </div>
 
-      {/* Bottom Canvas Status Bar */}
-      <div className="bg-slate-900/95 border-t border-slate-800 px-4 py-2 flex items-center justify-between text-xs text-slate-400 font-mono">
+      {/* Bottom Canvas Status Bar with Alfred Dark CAD Engineering Bar */}
+      <div className="bg-[#080d12] border-t-2 border-emerald-500/30 px-4 py-2.5 flex items-center justify-between text-xs text-slate-300 font-lab-mono">
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
-            <span className="text-slate-300 font-medium">Asbestos Positive (Harmful - Red)</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.7)]"></span>
+            <span className="text-rose-200 font-bold">Asbestos Positive (Harmful - Red)</span>
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-            <span className="text-slate-300 font-medium">Non-Asbestos (Safe - Green)</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.7)]"></span>
+            <span className="text-emerald-200 font-bold">Non-Asbestos (Safe - Green)</span>
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
-            <span className="text-slate-300 font-medium">Uncertain (Review - Amber)</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.7)]"></span>
+            <span className="text-amber-200 font-bold">Uncertain (Review - Amber)</span>
           </span>
         </div>
 
         <div className="flex items-center gap-4">
-          <span>
+          <span className="text-slate-400">
             Canvas: {imageWidth} × {imageHeight} px
           </span>
-          <span>Click box to inspect</span>
+          <span className="text-emerald-400 font-bold">Click box to inspect</span>
         </div>
       </div>
     </div>

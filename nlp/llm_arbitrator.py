@@ -11,7 +11,7 @@ import re
 import json
 import time
 import logging
-from typing import List, Dict, Any, Optional, Tuple
+from typing import List, Dict, Any, Optional, Tuple, Callable
 import requests
 
 from data.database.db_manager import HazardLevel, AsbestosStatus
@@ -74,28 +74,61 @@ Respond ONLY with valid JSON in this exact structure:
 VALID_STATUSES = {"POSITIVE", "NEGATIVE", "UNCERTAIN"}
 VALID_HAZARD_LEVELS = {"LEVEL_1", "LEVEL_2", "LEVEL_3", "NON_ASBESTOS", "UNCERTAIN"}
 
+ARCHITECTURAL_SHORTHAND = {
+    "PB", "ALC", "EP", "VP", "RC", "PC", "OP", "DP", "A種", "B種",
+    "F板", "石綿", "合板", "波板", "直押", "金ゴテ", "なし", "同上",
+    "けい酸", "ケイカル", "フレキ", "コロニアル", "カラーベスト", "モルタル", "プラスター",
+    "GW", "RW", "LGS", "ECP", "CF", "CFシート", "岩綿", "スレート", "せっこうボード", "石膏ボード"
+}
+
 
 def is_valid_material_candidate(text: str) -> bool:
-    """Filters out obvious non-material noise (control chars, dimensions, single punctuation) before LLM call."""
+    """
+    GATE 4: Tier-5 Safety Pre-Filter.
+    Filters out non-material noise (dimensions, formulas, symbols, isolated numbers, single-char fragments)
+    so ONLY genuine ambiguous Japanese architectural materials are submitted to the LLM.
+    """
     if not text or len(text.strip()) == 0:
         return False
+
     # Strip unprintable control characters and mojibake blocks
     cleaned = re.sub(r'[\x00-\x1f\x7f-\x9f\u0250-\u02af\u1c80-\u1cbf\u1cd0-\u1cff]', '', text).strip()
     if not cleaned or len(cleaned) == 0:
         return False
-    # Filter out pure numbers or dimensions (e.g. "2400", "1500x300", "4,500")
-    if re.match(r'^[\d\s.,xX+\-~=]+$', cleaned):
+
+    # Whitelist check: If it's a known architectural shorthand, it's valid
+    if cleaned.upper() in ARCHITECTURAL_SHORTHAND or any(sh == cleaned for sh in ARCHITECTURAL_SHORTHAND):
+        return True
+
+    # Punctuation & bracket strip for core analysis
+    cleaned_pure = re.sub(r"^[\s:;,\-\.\'\"（(【\[\)=~`\*\[\]{}<>]+", "", cleaned)
+    cleaned_pure = re.sub(r"[\s:;,\-\.\'\"）)】\]\)=~`\*\[\]{}<>]+$", "", cleaned_pure).strip()
+    if not cleaned_pure:
         return False
-    # Filter out single character punctuation or noise (except single Kanji that might be material)
-    if len(cleaned) == 1 and not re.match(r'[\u4e00-\u9fff]', cleaned):
+
+    # Filter out pure numbers, dimensions, CAD coordinates, and mixed math symbols
+    # (e.g. '1* 790', '089 *1', 'X1a', '(4)', '009 °5', '2.70g', 'L--10', 'W00,D150.H1', '005×00')
+    if re.match(r"^[\d\s.,\*\+~=\-°/%×€$¥#@&_:\(\)\[\]\{\}<>\'\"\\a-zA-Z]+$", cleaned):
         return False
+
+    # Must contain Japanese script (Kanji, Katakana, Hiragana)
+    japanese_chars = re.findall(r"[\u4e00-\u9fff\u30a0-\u30ff\u3040-\u309f]", cleaned_pure)
+    if not japanese_chars:
+        return False
+
+    # Filter out isolated 1-character fragments (e.g. '什', '百', '是', '品', '国', '中', '日', '土', '号', '工')
+    # unless explicitly "石綿"
+    if len(japanese_chars) <= 1 and "".join(japanese_chars) != "石綿":
+        return False
+
     # Known drawing title / municipality keywords / table schedule column headers that are definitely not materials
     known_metadata_exact = {
         "流山市", "工中名称", "仕上リスト", "特記仕上表", "図面名称", "縮尺", "設計", "施工",
         "室", "室名", "腰", "腰壁", "壁", "柱", "型", "梁型", "天", "井", "天井", "床", "巾木", "下地", "備考"
     }
-    if cleaned in known_metadata_exact:
+    if cleaned in known_metadata_exact or cleaned_pure in known_metadata_exact:
         return False
+
     return True
 
 
@@ -159,22 +192,47 @@ class LocalLLMArbitrator:
     def arbitrate_batch(
         self,
         candidate_items: List[Dict[str, Any]],
-        max_batch_size: int = 12
+        max_batch_size: int = 6,
+        progress_callback: Optional[Callable[[Dict[str, Any]], None]] = None
     ) -> Dict[str, Dict[str, Any]]:
         """
         Sends a batch of uncertain items to the local LLM for MLIT statutory arbitration.
+        Processes in sub-batches (default 6) and emits real-time progress callbacks.
         Returns a dictionary mapping item_id -> parsed arbitration result.
         """
         if not candidate_items or not self.is_available():
             return {}
 
         results_by_id: Dict[str, Dict[str, Any]] = {}
+        total = len(candidate_items)
+        completed = 0
 
-        # Process in sub-batches of 4 items to prevent token overflow and ensure fast responses
-        for i in range(0, len(candidate_items), max_batch_size):
+        # Process in sub-batches of 6 items with live progress reporting
+        for i in range(0, total, max_batch_size):
             chunk = candidate_items[i : i + max_batch_size]
+            curr_text = chunk[0].get("raw_text") or chunk[0].get("text", "")
+            if progress_callback:
+                progress_callback({
+                    "stage": "finalize",
+                    "total": total,
+                    "completed": completed,
+                    "current": curr_text,
+                    "message": f"Arbitrating ({completed}/{total}): {curr_text}"
+                })
+
             chunk_results = self._process_chunk(chunk)
             results_by_id.update(chunk_results)
+            completed = min(total, completed + len(chunk))
+
+            last_text = chunk[-1].get("raw_text") or chunk[-1].get("text", "")
+            if progress_callback:
+                progress_callback({
+                    "stage": "finalize",
+                    "total": total,
+                    "completed": completed,
+                    "current": last_text,
+                    "message": f"Arbitrated {completed} of {total} materials"
+                })
 
         return results_by_id
 
@@ -304,14 +362,24 @@ class LocalLLMArbitrator:
     def arbitrate_diagnoses(
         self,
         diagnoses: List[Any],
-        confidence_threshold: float = 0.70
+        confidence_threshold: float = 0.70,
+        progress_callback: Optional[Callable[[Dict[str, Any]], None]] = None
     ) -> List[Any]:
         """
         Takes a list of DrawingItemDiagnosis objects from the 4-tier classifier,
         identifies UNCERTAIN items, arbitrates them with the local LLM, and updates them in-place.
+        Supports live progress reporting for Tier-5 processing counts.
         """
         if not self.is_available():
             logger.debug("Local LLM Arbitrator is unavailable. Keeping 4-tier determinations.")
+            if progress_callback:
+                progress_callback({
+                    "stage": "finalize",
+                    "total": 0,
+                    "completed": 0,
+                    "current": "",
+                    "message": "Tier-5 LLM offline; keeping 4-tier determinations."
+                })
             return diagnoses
 
         uncertain_items = [
@@ -320,6 +388,14 @@ class LocalLLMArbitrator:
         ]
 
         if not uncertain_items:
+            if progress_callback:
+                progress_callback({
+                    "stage": "finalize",
+                    "total": 0,
+                    "completed": 0,
+                    "current": "",
+                    "message": "All items resolved in Tiers 1-4 (0 items required Tier-5)."
+                })
             return diagnoses
 
         # Pre-filtering: identify candidate annotations vs obvious non-material noise
@@ -338,10 +414,28 @@ class LocalLLMArbitrator:
                 d.regulatory_citation = "Non-material noise or numerical dimension filtered as non-asbestos."
                 d.requires_human_review = False
 
-        if not valid_candidates:
+        total_cand = len(valid_candidates)
+        if total_cand == 0:
+            if progress_callback:
+                progress_callback({
+                    "stage": "finalize",
+                    "total": 0,
+                    "completed": 0,
+                    "current": "",
+                    "message": "Non-material noise filtered; 0 candidate materials sent to Tier-5."
+                })
             return diagnoses
 
-        logger.info(f"Routing {len(valid_candidates)} valid UNCERTAIN item(s) to Tier-5 LLM Arbitrator ({self.model_name})...")
+        logger.info(f"Routing {total_cand} valid UNCERTAIN item(s) to Tier-5 LLM Arbitrator ({self.model_name})...")
+
+        if progress_callback:
+            progress_callback({
+                "stage": "finalize",
+                "total": total_cand,
+                "completed": 0,
+                "current": valid_candidates[0].raw_text,
+                "message": f"Sent {total_cand} candidate materials to Tier-5 LLM ({self.model_name})"
+            })
 
         items_payload = [
             {
@@ -354,7 +448,11 @@ class LocalLLMArbitrator:
             for d in valid_candidates
         ]
 
-        llm_results = self.arbitrate_batch(items_payload)
+        llm_results = self.arbitrate_batch(
+            items_payload,
+            max_batch_size=6,
+            progress_callback=progress_callback
+        )
 
         for d in valid_candidates:
             res = llm_results.get(d.item_id)

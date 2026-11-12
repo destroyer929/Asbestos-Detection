@@ -85,14 +85,24 @@ class FinishScheduleTableParser:
             if x > int(w * 0.40) and y > int(h * 0.60):
                 continue
 
-            min_cw = int(w * 0.18)
-            min_ch = int(h * 0.08)
-            if cw >= min_cw and ch >= min_ch and (cw / float(ch)) >= 1.35:
+            # Finish schedule tables occupy a moderate vertical portion (never engulfing the whole floor plan)
+            if ch > int(h * 0.35):
+                continue
+
+            min_cw = int(w * 0.15)
+            min_ch = int(h * 0.06)
+            if cw >= min_cw and ch >= min_ch and (cw / float(ch)) >= 1.4:
                 roi_h = horiz_lines[y:y+ch, x:x+cw]
                 roi_v = vert_lines[y:y+ch, x:x+cw]
                 grid_density = cv2.countNonZero(roi_h) + cv2.countNonZero(roi_v)
+                density_ratio = grid_density / float(area)
 
-                score = area * 0.4 + grid_density * 0.6
+                # Require legitimate tabular grid density (filtering out open floor plan rooms)
+                if density_ratio < 0.035:
+                    continue
+
+                aspect_bonus = min(cw / float(ch), 4.0)
+                score = (density_ratio * 1000.0) * (area ** 0.3) * aspect_bonus
                 if score > max_score:
                     max_score = score
                     best_box = [x, y, x + cw, y + ch]
@@ -185,10 +195,12 @@ class FinishScheduleTableParser:
         self,
         table_bbox: List[int],
         detected_texts: List[Dict[str, Any]],
-        expected_cols: int = 6
+        expected_cols: int = 6,
+        image: Optional[np.ndarray] = None
     ) -> List[RoomFinishRecord]:
         """
         Groups detected text items into grid rows and columns based on spatial coordinates.
+        Supports direct physical cell assignment when image is provided, with anchor-based fallback.
         """
         tx1, ty1, tx2, ty2 = table_bbox
 
@@ -203,19 +215,96 @@ class FinishScheduleTableParser:
         if not table_texts:
             return []
 
+        # 1. High-fidelity physical grid mapping if image array is available
+        if image is not None:
+            cells = self.extract_grid_cells(image, table_bbox)
+            if len(cells) >= 12:
+                grid: Dict[Tuple[int, int], List[str]] = {}
+                header_names: Dict[int, str] = {}
+
+                for c in cells:
+                    r_idx, c_idx = c["row_idx"], c["col_idx"]
+                    if c_idx not in header_names and c.get("header_name"):
+                        header_names[c_idx] = c["header_name"]
+                    cx1, cy1, cx2, cy2 = c["bbox"]
+                    for it in table_texts:
+                        bx1, by1, bx2, by2 = it["bbox"]
+                        cen_x = (bx1 + bx2) / 2.0
+                        cen_y = (by1 + by2) / 2.0
+                        if cx1 <= cen_x <= cx2 and cy1 <= cen_y <= cy2:
+                            grid.setdefault((r_idx, c_idx), []).append(it["text"])
+
+                max_r = max(c["row_idx"] for c in cells)
+                max_c = max(c["col_idx"] for c in cells)
+
+                # Determine which row is the column header row (e.g. contains 室名, 床, 巾木, 壁, 天井, 備考)
+                header_r = -1
+                for r in range(min(3, max_r + 1)):
+                    row_r_texts = " ".join([t for c_idx in range(max_c + 1) for t in grid.get((r, c_idx), [])])
+                    match_count = sum(1 for k in ["室名", "床", "巾木", "壁", "天井", "備考", "FL", "WALL", "CEILING"] if k in row_r_texts)
+                    if match_count >= 2:
+                        header_r = r
+                        break
+
+                start_r = header_r + 1 if header_r >= 0 else (1 if max_r >= 1 else 0)
+
+                records: List[RoomFinishRecord] = []
+                for r in range(start_r, max_r + 1):
+                    row_cells: List[TableCell] = []
+                    for c_idx in range(max_c + 1):
+                        cell_bbox = next((c["bbox"] for c in cells if c["row_idx"] == r and c["col_idx"] == c_idx), table_bbox)
+                        col_h = header_names.get(c_idx, f"Col_{c_idx}")
+                        cell_text = " ".join(grid.get((r, c_idx), []))
+                        row_cells.append(
+                            TableCell(
+                                row_idx=r - start_r,
+                                col_idx=c_idx,
+                                header_name=col_h,
+                                bbox=cell_bbox,
+                                text=cell_text,
+                                confidence=1.0
+                            )
+                        )
+
+                    room_name = row_cells[0].text if len(row_cells) > 0 and row_cells[0].text.strip() else f"Room_{r}"
+                    floor = row_cells[1].text if len(row_cells) > 1 else ""
+                    skirting = row_cells[2].text if len(row_cells) > 2 else ""
+                    wall = row_cells[3].text if len(row_cells) > 3 else ""
+                    ceiling = row_cells[4].text if len(row_cells) > 4 else ""
+                    remarks = row_cells[5].text if len(row_cells) > 5 else ""
+
+                    if any([room_name.strip(), floor.strip(), wall.strip(), ceiling.strip(), remarks.strip()]):
+                        records.append(
+                            RoomFinishRecord(
+                                room_name=room_name,
+                                floor_finish=floor,
+                                skirting_finish=skirting,
+                                wall_finish=wall,
+                                ceiling_finish=ceiling,
+                                remarks=remarks,
+                                cells=row_cells
+                            )
+                        )
+                if records:
+                    return records
+
+        # 2. Adaptive anchor-based row clustering fallback
         sorted_by_y = sorted(table_texts, key=lambda t: (t["bbox"][1] + t["bbox"][3]) / 2.0)
+        table_h = ty2 - ty1
+        row_height_tol = max(20.0, table_h * 0.065)
 
         row_clusters: List[List[Dict[str, Any]]] = []
         current_cluster: List[Dict[str, Any]] = [sorted_by_y[0]]
+        anchor_y = (sorted_by_y[0]["bbox"][1] + sorted_by_y[0]["bbox"][3]) / 2.0
 
         for item in sorted_by_y[1:]:
             curr_y = (item["bbox"][1] + item["bbox"][3]) / 2.0
-            prev_y = (current_cluster[-1]["bbox"][1] + current_cluster[-1]["bbox"][3]) / 2.0
-            if abs(curr_y - prev_y) < 25:
+            if abs(curr_y - anchor_y) < row_height_tol:
                 current_cluster.append(item)
             else:
                 row_clusters.append(current_cluster)
                 current_cluster = [item]
+                anchor_y = curr_y
 
         if current_cluster:
             row_clusters.append(current_cluster)

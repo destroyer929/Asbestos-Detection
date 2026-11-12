@@ -47,15 +47,20 @@ class ArchitecturalRegionClassifier:
         re.compile(r"^[\.,\-\|\/\\]+$"),                          # Stray punctuation only
         re.compile(r"^\s*$"),                                     # Whitespace / empty
         re.compile(r"^[\d,\.\s\+\-±:/\\①②③④⑤⑥⑦⑧⑨⑩]+$"),          # Numeric/symbols mix
+        re.compile(r"^\(?\s*\d+\s*\)?$"),                         # Parenthesized numbers like "(1)", "(2)", "(4)"
+        re.compile(r"^[\d\s.,\*\+~=\-°/%×€$¥#@&_:\(\)\[\]\{\}<>\'\"\\]+$"), # Numbers with math/symbols: "1* 790", "005×00", "009 °5"
         re.compile(r"^FL\s*[±\+\-]?\d*", re.IGNORECASE),          # Floor level "FL ±0", "FL+150"
         re.compile(r"^\d*SL\s*[±\+\-]?\d*", re.IGNORECASE),       # Slab level "1SL +3,200"
         re.compile(r"^CH\s*=?\s*\d+", re.IGNORECASE),             # Ceiling height "CH=2700" or "CH2700"
         re.compile(r"^GL\s*[±\+\-]?\d*", re.IGNORECASE),          # Ground level "GL ±0"
         re.compile(r"^RFL\s*[±\+\-]?\d*", re.IGNORECASE),         # Roof floor level
         re.compile(r"^[WH]\s*=\s*\d+", re.IGNORECASE),            # Width/Height "W=900 H=2,100"
+        re.compile(r"^[WHDLt]\s*[=:\-]\s*[\d\.,\s\+]+", re.IGNORECASE), # CAD dimensions: "W00,D150.H1", "L--10", "L=10"
         re.compile(r"^H-\d+x\d+", re.IGNORECASE),                # Steel H-beam "H-300x150"
         re.compile(r"^\d+\s*x\s*\d+(\s*x\s*\d+)?$"),             # "100 x 50 x 20"
-        re.compile(r"^[XYZ]\d+$", re.IGNORECASE),                # Grid bubble "X1", "Y2"
+        re.compile(r"^[XYZ]\d+[a-zA-Z]?$", re.IGNORECASE),        # Grid bubble "X1", "X1a", "Y2"
+        re.compile(r"^No\.?\s*\d+", re.IGNORECASE),               # "No.1150", "N0.1150"
+        re.compile(r"^WC\s*\(*\)*", re.IGNORECASE),               # "WC", "WC())"
         re.compile(r"^\d+/\d+$"),                                 # Scale or ratio "1/100"
         re.compile(r"^[A-Za-z]{1,3}[\d\s]*$"),                    # Short alpha+digit: "FL", "CH", "A1", "PH2"
         re.compile(r"^[A-Za-z]{1,3}\s*[±\+\-]?\s*\d+$"),          # "EL+150", "GL-50"
@@ -93,7 +98,8 @@ class ArchitecturalRegionClassifier:
     ARCHITECTURAL_SHORTHAND = {
         "PB", "ALC", "EP", "VP", "RC", "PC", "OP", "DP", "A種", "B種",
         "F板", "石綿", "合板", "波板", "直押", "金ゴテ", "なし", "同上",
-        "けい酸", "ケイカル", "フレキ", "コロニアル", "カラーベスト", "モルタル", "プラスター"
+        "けい酸", "ケイカル", "フレキ", "コロニアル", "カラーベスト", "モルタル", "プラスター",
+        "GW", "RW", "LGS", "ECP", "CF", "CFシート", "岩綿", "スレート", "せっこうボード", "石膏ボード"
     }
 
     def __init__(self, sheet_width: int = 2400, sheet_height: int = 1600):
@@ -122,7 +128,7 @@ class ArchitecturalRegionClassifier:
             )
 
         # 1. PRIORITY: Finish Schedule Table Cells
-        # If inside table boundary, preserve ALL finish cells!
+        # If inside table boundary, check headers and non-material noise first!
         x_min, y_min, x_max, y_max = bbox
         if table_bbox is not None:
             tx1, ty1, tx2, ty2 = table_bbox
@@ -133,6 +139,14 @@ class ArchitecturalRegionClassifier:
                         text=cleaned, bbox=bbox, confidence=confidence,
                         region_type=RegionType.TABLE_CELL, is_asbestos_candidate=False,
                         filter_reason="Table column header label"
+                    )
+                # Check if cell is numerical dimension or parenthesized row noise (e.g. '(1)', '150', 't=25')
+                is_dim = any(pat.search(cleaned) for pat in self.DIMENSION_PATTERNS)
+                if is_dim and not any(m in cleaned for m in ["吹付", "波板", "タイル", "ボード", "ウール", "保温", "石綿", "スレート", "ロック", "ケイカル"]):
+                    return ClassifiedRegion(
+                        text=cleaned, bbox=bbox, confidence=confidence,
+                        region_type=RegionType.DIMENSION_NOISE, is_asbestos_candidate=False,
+                        filter_reason="Table cell numerical dimension or index noise"
                     )
                 # Any non-header cell inside the Finish Schedule is a valid material finish candidate!
                 return ClassifiedRegion(
@@ -158,7 +172,10 @@ class ArchitecturalRegionClassifier:
             )
 
         # 4. Check for Room Label
-        if any(r == cleaned or cleaned.startswith(r) for r in self.ROOM_NAMES) and not any(m in cleaned for m in ["t=", "mm", "吹付", "波板", "タイル"]):
+        is_room = any(r == cleaned or cleaned.startswith(r) for r in self.ROOM_NAMES) or bool(
+            re.search(r"(室|所|庫|库|ホール|廊下|階段|玄関|エントランス|シャフト)\s*[\(（]?.*[\)）]?$", cleaned)
+        )
+        if is_room and not any(m in cleaned for m in ["t=", "mm", "吹付", "波板", "タイル", "ボード", "ウール", "保温", "石綿", "スレート", "ロック", "ケイカル"]):
             return ClassifiedRegion(
                 text=cleaned, bbox=bbox, confidence=confidence,
                 region_type=RegionType.ROOM_LABEL, is_asbestos_candidate=False,
