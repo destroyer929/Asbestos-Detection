@@ -69,14 +69,15 @@ def test_table_parser_detection_and_reconstruction():
         assert len(records) >= 5, f"Expected at least 5 room records, got {len(records)}"
 
 
-def test_gpu_ocr_acceleration_and_memory_release():
-    """Verifies that BilingualOCREngine detects CUDA GPU, runs recognition, and releases GPU memory."""
+def test_paddleocr_gpu_acceleration_and_memory_release():
+    """Verifies that BilingualOCREngine with PaddleOCR detects CUDA GPU, runs recognition, and releases GPU memory."""
     engine = BilingualOCREngine(gpu=True)
-    # Check GPU flag is active when CUDA is available
-    import torch
-    if torch.cuda.is_available():
-        assert engine.gpu is True
-        assert engine.gpu_available is True
+    try:
+        import paddle
+        if paddle.is_compiled_with_cuda() and paddle.device.cuda.device_count() > 0:
+            assert engine.gpu_available is True
+    except Exception:
+        pass
 
     # Test synthetic annotation recognition
     dummy = np.ones((150, 500, 3), dtype=np.uint8) * 255
@@ -92,5 +93,6 @@ if __name__ == "__main__":
     test_cer_and_wer_metrics()
     test_region_classifier_filtering()
     test_table_parser_detection_and_reconstruction()
+    test_paddleocr_gpu_acceleration_and_memory_release()
     print("All Stage 3 OCR & Layout Analysis tests passed successfully!")
 

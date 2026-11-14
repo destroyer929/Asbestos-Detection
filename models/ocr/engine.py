@@ -1,6 +1,6 @@
 """
 Bilingual Deep Learning OCR & Recognition Engine.
-Integrates PaddleOCR v4 CJK for high-accuracy Japanese and English architectural annotations.
+Integrates GPU-accelerated PaddleOCR for high-accuracy Japanese and English architectural annotations.
 Includes Levenshtein distance CER (Character Error Rate) and WER (Word Error Rate) computation.
 """
 
@@ -16,20 +16,31 @@ from dataclasses import dataclass
 import numpy as np
 import cv2
 
-# 1. Safe shim for langchain_text_splitters to prevent paddlex from pulling in pyarrow on Windows (prevents 0xc0000005 access violation)
+# 1. Configure NVIDIA cuDNN and cuBLAS binary paths for CUDA GPU acceleration on Windows
+_cudnn_bin = r"C:\Users\Karunakar\AppData\Roaming\Python\Python311\site-packages\nvidia\cudnn\bin"
+_cublas_bin = r"C:\Users\Karunakar\AppData\Roaming\Python\Python311\site-packages\nvidia\cublas\bin"
+if os.path.exists(_cudnn_bin):
+    try:
+        os.add_dll_directory(_cudnn_bin)
+    except Exception:
+        pass
+    os.environ["PATH"] = _cudnn_bin + ";" + os.environ.get("PATH", "")
+if os.path.exists(_cublas_bin):
+    try:
+        os.add_dll_directory(_cublas_bin)
+    except Exception:
+        pass
+    os.environ["PATH"] = _cublas_bin + ";" + os.environ.get("PATH", "")
+
+# 2. Safe shim for albumentations and langchain_text_splitters to avoid training-only conflicts
+if "albumentations" not in sys.modules:
+    sys.modules["albumentations"] = types.ModuleType("albumentations")
 if "langchain_text_splitters" not in sys.modules:
     _m = types.ModuleType("langchain_text_splitters")
     class _DummySplitter:
         def __init__(self, *args, **kwargs): pass
     _m.RecursiveCharacterTextSplitter = _DummySplitter
     sys.modules["langchain_text_splitters"] = _m
-
-# 2. Initialize PyTorch DLL paths and import EasyOCR
-try:
-    import torch
-    import easyocr
-except ImportError:
-    pass
 
 
 @dataclass
@@ -43,77 +54,62 @@ class OCRTextItem:
 
 
 class BilingualOCREngine:
-    """Production bilingual OCR manager with CUDA GPU acceleration for Japanese architectural blueprints."""
+    """Production bilingual OCR manager powered by PaddleOCR on CUDA GPU for Japanese architectural drawings."""
 
     def __init__(
         self,
-        languages: List[str] = ["ja", "en"],
+        languages: List[str] = ["japan"],
         gpu: bool = True,
         min_confidence: float = 0.25,
-        use_paddle: bool = False,
         **kwargs
     ):
-        cuda_ok = False
-        try:
-            import torch
-            cuda_ok = torch.cuda.is_available()
-        except Exception:
-            pass
-
         self.languages = languages
-        self.gpu = gpu and cuda_ok
+        self.gpu = gpu
         self.min_confidence = min_confidence
-        self.use_paddle = use_paddle
-        self._reader: Optional[Any] = None
         self._paddle_ocr = None
 
     @property
+    def use_paddle(self) -> bool:
+        return True
+
+    @property
     def gpu_available(self) -> bool:
-        """Returns True if CUDA GPU acceleration is available."""
+        """Returns True if CUDA GPU acceleration is available for Paddle."""
         try:
-            import torch
-            return torch.cuda.is_available()
+            import paddle
+            return paddle.is_compiled_with_cuda() and paddle.device.cuda.device_count() > 0
         except Exception:
             return False
 
     @property
-    def reader(self):
-        """Lazy initializer for GPU-accelerated PyTorch EasyOCR Reader."""
-        if self._reader is None:
-            import easyocr
-            self._reader = easyocr.Reader(self.languages, gpu=self.gpu, verbose=False)
-        return self._reader
-
-    @property
     def paddle_ocr(self):
-        """Lazy initializer for PaddleOCR v4 CJK Japanese recognition engine."""
+        """Lazy initializer for GPU-accelerated PaddleOCR Japanese recognition engine."""
         if self._paddle_ocr is None:
             try:
                 import paddle
                 from paddleocr import PaddleOCR
-                use_cuda = self.gpu and paddle.is_compiled_with_cuda()
-                device = "gpu" if use_cuda else "cpu"
+                use_cuda = self.gpu and paddle.is_compiled_with_cuda() and paddle.device.cuda.device_count() > 0
                 self._paddle_ocr = PaddleOCR(
-                    use_textline_orientation=False,
+                    use_angle_cls=False,
                     lang="japan",
-                    enable_mkldnn=False,
-                    device=device
+                    use_gpu=use_cuda,
+                    show_log=False
                 )
             except Exception as e:
-                print(f"PaddleOCR initialization failed: {e}")
+                print(f"PaddleOCR GPU initialization failed: {e}")
                 self._paddle_ocr = None
         return self._paddle_ocr
 
     def release_gpu_memory(self) -> None:
-        """Releases cached PyTorch GPU memory so the local LLM has full VRAM headroom."""
+        """Releases cached Paddle GPU memory so local LLM (Ollama) has full VRAM access."""
         try:
-            import torch
-            if torch.cuda.is_available():
-                torch.cuda.empty_cache()
+            import paddle
+            if paddle.is_compiled_with_cuda():
+                paddle.device.cuda.empty_cache()
             import gc
             gc.collect()
         except Exception as e:
-            print(f"GPU memory release notice: {e}")
+            print(f"Paddle GPU memory release notice: {e}")
 
     def recognize(
         self,
@@ -121,128 +117,79 @@ class BilingualOCREngine:
         detect_orientation: bool = True
     ) -> List[OCRTextItem]:
         """
-        Executes hardware-accelerated text detection and recognition on an image array.
-        Uses CUDA-accelerated PyTorch EasyOCR on GPU (primary) for fast inference (~5-10s).
+        Executes text detection and recognition on an image array using PaddleOCR on CUDA GPU.
         """
         if image is None or image.size == 0:
             return []
 
-        # If user explicitly requested paddle and paddle_ocr is initialized
-        if self.use_paddle and self.paddle_ocr is not None:
-            try:
-                orig_h, orig_w = image.shape[:2]
-                max_dim = max(orig_h, orig_w)
-                scale = 2400.0 / float(max_dim) if max_dim > 2400 else 1.0
-                paddle_img = cv2.resize(image, (0, 0), fx=scale, fy=scale, interpolation=cv2.INTER_AREA) if scale < 1.0 else image
-
-                preds = self.paddle_ocr.predict(paddle_img)
-                if preds and len(preds) > 0:
-                    res = preds[0]
-                    texts = res.get("rec_texts", [])
-                    scores = res.get("rec_scores", [])
-                    boxes = res.get("rec_boxes", [])
-                    polys = res.get("dt_polys", [])
-
-                    items: List[OCRTextItem] = []
-                    for box, poly, text, conf in zip(boxes, polys, texts, scores):
-                        if float(conf) < self.min_confidence or not str(text).strip():
-                            continue
-
-                        x_min, y_min, x_max, y_max = [float(b) / scale for b in box]
-                        scaled_poly = [[float(pt[0]) / scale, float(pt[1]) / scale] for pt in poly] if poly is not None else []
-                        w = x_max - x_min
-                        h = y_max - y_min
-                        orientation = 90 if h > w * 1.5 else 0
-
-                        items.append(
-                            OCRTextItem(
-                                text=str(text).strip(),
-                                confidence=float(conf),
-                                bbox=[x_min, y_min, x_max, y_max],
-                                polygon=scaled_poly,
-                                orientation=orientation
-                            )
-                        )
-                    if len(items) >= 5:
-                        return items
-            except Exception as e:
-                print(f"PaddleOCR inference exception: {e}")
-
-        # Primary High-Speed GPU Path: PyTorch CRAFT Detector + Recognition
-        orig_h, orig_w = image.shape[:2]
-        proc_img = image
-        scale_x = 1.0
-        scale_y = 1.0
-
-        # Optimal blueprint resolution scaling for GPU memory & speed
-        if orig_w > 3000 or orig_h > 3000:
-            target_w = 2400
-            scale = target_w / float(orig_w)
-            target_h = int(orig_h * scale)
-            proc_img = cv2.resize(image, (target_w, target_h), interpolation=cv2.INTER_AREA)
-            scale_x = orig_w / float(target_w)
-            scale_y = orig_h / float(target_h)
+        if self.paddle_ocr is None:
+            print("Warning: PaddleOCR is not initialized.")
+            return []
 
         try:
-            raw_results = self.reader.readtext(
-                proc_img,
-                detail=1,
-                paragraph=False,
-                min_size=6,
-                text_threshold=0.35,
-                low_text=0.20,
-                link_threshold=0.25,
-                canvas_size=2800,
-                mag_ratio=1.3,
-                add_margin=0.15
-            )
+            orig_h, orig_w = image.shape[:2]
+            max_dim = max(orig_h, orig_w)
+            if max_dim > 2400:
+                scale = 2400.0 / float(max_dim)
+                paddle_img = cv2.resize(image, (0, 0), fx=scale, fy=scale, interpolation=cv2.INTER_AREA)
+            else:
+                scale = 1.0
+                paddle_img = image
 
+            # Run PaddleOCR inference on GPU
+            res = self.paddle_ocr.ocr(paddle_img, cls=False)
             items: List[OCRTextItem] = []
-            for poly, text, conf in raw_results:
-                if conf < self.min_confidence or not text.strip():
-                    continue
+            if res and len(res) > 0 and res[0]:
+                for line in res[0]:
+                    box = line[0]
+                    text, conf = line[1]
 
-                poly_arr = np.array(poly, dtype=np.float32)
-                poly_arr[:, 0] *= scale_x
-                poly_arr[:, 1] *= scale_y
+                    if float(conf) < self.min_confidence or not str(text).strip():
+                        continue
 
-                x_min = float(np.min(poly_arr[:, 0]))
-                y_min = float(np.min(poly_arr[:, 1]))
-                x_max = float(np.max(poly_arr[:, 0]))
-                y_max = float(np.max(poly_arr[:, 1]))
+                    scaled_poly = [[float(pt[0]) / scale, float(pt[1]) / scale] for pt in box]
+                    poly_arr = np.array(scaled_poly, dtype=np.float32)
 
-                w = x_max - x_min
-                h = y_max - y_min
-                orientation = 90 if h > w * 1.5 else 0
+                    x_min = float(np.min(poly_arr[:, 0]))
+                    y_min = float(np.min(poly_arr[:, 1]))
+                    x_max = float(np.max(poly_arr[:, 0]))
+                    y_max = float(np.max(poly_arr[:, 1]))
 
-                items.append(
-                    OCRTextItem(
-                        text=text.strip(),
-                        confidence=float(conf),
-                        bbox=[x_min, y_min, x_max, y_max],
-                        polygon=poly_arr.tolist(),
-                        orientation=orientation
+                    w = x_max - x_min
+                    h = y_max - y_min
+                    orientation = 90 if h > w * 1.5 else 0
+
+                    items.append(
+                        OCRTextItem(
+                            text=str(text).strip(),
+                            confidence=float(conf),
+                            bbox=[x_min, y_min, x_max, y_max],
+                            polygon=scaled_poly,
+                            orientation=orientation
+                        )
                     )
-                )
 
             return items
         except Exception as e:
-            print(f"GPU OCR recognition error: {e}")
+            print(f"PaddleOCR GPU inference error: {e}")
             return []
 
     def recognize_crop(self, crop: np.ndarray) -> Tuple[str, float]:
-        """Recognizes text within a pre-cropped bounding box."""
-        if crop is None or crop.size == 0:
+        """Recognizes text within a pre-cropped bounding box using PaddleOCR."""
+        if crop is None or crop.size == 0 or self.paddle_ocr is None:
             return "", 0.0
 
         try:
-            res = self.reader.readtext(crop, detail=1)
-            if res:
-                texts = [r[1] for r in res]
-                confs = [r[2] for r in res]
-                return " ".join(texts), float(np.mean(confs))
+            res = self.paddle_ocr.ocr(crop, det=False, cls=False)
+            if res and len(res) > 0 and res[0]:
+                first = res[0]
+                if isinstance(first, (list, tuple)) and len(first) > 0:
+                    item = first[0] if isinstance(first[0], (list, tuple)) else first
+                    text = str(item[0]).strip()
+                    conf = float(item[1])
+                    return text, conf
         except Exception as e:
-            print(f"recognize_crop error: {e}")
+            print(f"PaddleOCR recognize_crop error: {e}")
 
         return "", 0.0
 
