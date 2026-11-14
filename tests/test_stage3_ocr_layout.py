@@ -69,6 +69,25 @@ def test_table_parser_detection_and_reconstruction():
         assert len(records) >= 5, f"Expected at least 5 room records, got {len(records)}"
 
 
+def test_gpu_ocr_acceleration_and_memory_release():
+    """Verifies that BilingualOCREngine detects CUDA GPU, runs recognition, and releases GPU memory."""
+    engine = BilingualOCREngine(gpu=True)
+    # Check GPU flag is active when CUDA is available
+    import torch
+    if torch.cuda.is_available():
+        assert engine.gpu is True
+        assert engine.gpu_available is True
+
+    # Test synthetic annotation recognition
+    dummy = np.ones((150, 500, 3), dtype=np.uint8) * 255
+    cv2.putText(dummy, "ASBESTOS TEST", (20, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 0), 2)
+    items = engine.recognize(dummy)
+    assert isinstance(items, list)
+
+    # Test GPU memory release does not throw
+    engine.release_gpu_memory()
+
+
 if __name__ == "__main__":
     test_cer_and_wer_metrics()
     test_region_classifier_filtering()

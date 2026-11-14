@@ -806,6 +806,10 @@ async def analyze_drawing(
             )
             all_diagnoses.extend(page_diagnoses)
 
+        # Hand off GPU resources: Release OCR GPU memory cache so Tier-5 LLM has full VRAM headroom
+        if hasattr(ocr_engine, "release_gpu_memory"):
+            ocr_engine.release_gpu_memory()
+
         # Pass 2 & 3: End-of-document Deduplication Map & Batch Tier-5 LLM Arbitration
         def tier5_progress_cb(cb_data: Dict[str, Any]):
             tot = cb_data.get("total", 0)
