@@ -212,6 +212,23 @@ class AsbestosDiagnosticClassifier:
 
         return diagnoses
 
+    def arbitrate_diagnoses(
+        self,
+        diagnoses: List[DrawingItemDiagnosis],
+        progress_callback: Optional[Callable[[Dict[str, Any]], None]] = None
+    ) -> List[DrawingItemDiagnosis]:
+        """
+        Arbitrates aggregated diagnoses across multi-page blueprints using the Tier-5 Local LLM.
+        Deduplicates identical material names across multiple pages and broadcast results to all coordinates.
+        """
+        run_llm = self.enable_llm
+        if run_llm and self.llm_arbitrator:
+            return self.llm_arbitrator.arbitrate_diagnoses(
+                diagnoses,
+                progress_callback=progress_callback
+            )
+        return diagnoses
+
 
 if __name__ == "__main__":
     classifier = AsbestosDiagnosticClassifier()

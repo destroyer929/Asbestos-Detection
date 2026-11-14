@@ -132,6 +132,183 @@ def is_valid_material_candidate(text: str) -> bool:
     return True
 
 
+class UnidentifiedMaterialMap:
+    """
+    In-memory Map / Trie data structure tracking unidentified / ambiguous material
+    annotations across multiple pages of an architectural blueprint.
+
+    Deduplicates identical material names across multiple occurrences and pages while
+    preserving all unique spatial coordinates (bbox, polygon), page numbers, room contexts,
+    and item IDs. Enables single-query batch arbitration to the local LLM and broadcasts
+    the arbitrated determinations back to all recorded coordinate locations.
+    """
+
+    def __init__(self):
+        # Map: clean_key -> dict with metadata and list of diagnosis instances
+        self._map: Dict[str, Dict[str, Any]] = {}
+        # Mapping from query ID (e.g. MAT-0001) back to clean_key
+        self._id_to_key: Dict[str, str] = {}
+        # Mapping from clean_key to query ID
+        self._key_to_id: Dict[str, str] = {}
+
+    @staticmethod
+    def normalize_key(text: str) -> str:
+        """Normalizes candidate text for deduplication across pages."""
+        if not text:
+            return ""
+        # Strip outer whitespace and collapse multiple internal whitespace
+        cleaned = re.sub(r"\s+", " ", text.strip())
+        return cleaned
+
+    def add(self, diagnosis: Any) -> None:
+        """
+        Registers an unidentified diagnosis occurrence into the map.
+        Preserves coordinates, page number, room context, and item_id.
+        """
+        raw_text = getattr(diagnosis, "raw_text", "") or ""
+        norm_text = getattr(diagnosis, "normalized_text", "") or ""
+
+        # Primary key from normalized text, fallback to raw text
+        clean_key = self.normalize_key(norm_text) or self.normalize_key(raw_text)
+        if not clean_key:
+            clean_key = raw_text.strip() or "UNKNOWN_MATERIAL"
+
+        if clean_key not in self._map:
+            mat_id = f"MAT-{len(self._map) + 1:04d}"
+            self._map[clean_key] = {
+                "id": mat_id,
+                "key": clean_key,
+                "raw_text": raw_text,
+                "normalized_text": norm_text,
+                "instances": [],
+                "page_numbers": set(),
+                "locations": []  # list of {item_id, page_number, bbox, room_context}
+            }
+            self._id_to_key[mat_id] = clean_key
+            self._key_to_id[clean_key] = mat_id
+
+        entry = self._map[clean_key]
+        entry["instances"].append(diagnosis)
+        page_num = getattr(diagnosis, "page_number", 1)
+        entry["page_numbers"].add(page_num)
+        entry["locations"].append({
+            "item_id": getattr(diagnosis, "item_id", ""),
+            "page_number": page_num,
+            "bbox": getattr(diagnosis, "bbox", []),
+            "room_context": getattr(diagnosis, "room_context", "")
+        })
+
+    def get_unique_payload(self) -> List[Dict[str, Any]]:
+        """
+        Generates deduplicated payload for Tier-5 LLM batch arbitration.
+        Aggregates room contexts across occurrences so the LLM has complete context.
+        """
+        payload = []
+        for key, entry in self._map.items():
+            instances = entry["instances"]
+            first_inst = instances[0]
+            # Aggregate unique non-empty room contexts across all occurrences
+            unique_rooms = sorted({
+                getattr(d, "room_context", "")
+                for d in instances
+                if getattr(d, "room_context", "")
+            })
+            room_context_str = ", ".join(unique_rooms) if unique_rooms else getattr(first_inst, "room_context", "")
+
+            payload.append({
+                "item_id": entry["id"],
+                "raw_text": entry["raw_text"],
+                "normalized_text": entry["normalized_text"],
+                "room_context": room_context_str,
+                "region_type": getattr(first_inst, "region_type", "GENERAL_NOTES")
+            })
+        return payload
+
+    def broadcast_results(
+        self,
+        llm_results: Dict[str, Dict[str, Any]],
+        model_name: str
+    ) -> int:
+        """
+        Broadcasts LLM arbitration determinations to ALL recorded instances across all pages.
+        Returns the number of individual diagnosis instances updated.
+        """
+        updated_count = 0
+        for mat_id, res in llm_results.items():
+            clean_key = self._id_to_key.get(mat_id)
+            if not clean_key or clean_key not in self._map:
+                continue
+
+            entry = self._map[clean_key]
+            instances = entry["instances"]
+
+            status = res.get("status", "UNCERTAIN")
+            hazard_level = res.get("hazard_level", "UNCERTAIN")
+            mat_ja = res.get("matched_material_ja", "")
+            mat_en = res.get("matched_material_en", "")
+            conf = res.get("confidence", 0.0)
+            reasoning = res.get("reasoning", "")
+            review_req = res.get("review_required", False)
+
+            for d in instances:
+                # Case 1: NEGATIVE - Confirmed non-asbestos materials, everyday words, room names, or general specs
+                if status == "NEGATIVE":
+                    d.status = "NEGATIVE"
+                    d.hazard_level = "NON_ASBESTOS"
+                    d.matched_material_ja = mat_ja or d.raw_text
+                    d.matched_material_en = mat_en or d.raw_text
+                    d.confidence = max(0.90, conf)
+                    d.match_tier = MatchTier.TIER_5_LLM.value
+                    d.regulatory_citation = f"[Tier-5 LLM: {model_name}] {reasoning}"
+                    d.requires_human_review = False
+                    logger.info(
+                        f"Resolved {d.item_id} (Page {getattr(d, 'page_number', 1)}, '{d.raw_text}') -> NEGATIVE [NON_ASBESTOS] ({d.matched_material_ja}) via Tier-5 LLM"
+                    )
+
+                # Case 2: POSITIVE - Confirmed MLIT statutory asbestos materials
+                elif status == "POSITIVE" and hazard_level in ("LEVEL_1", "LEVEL_2", "LEVEL_3"):
+                    d.status = "POSITIVE"
+                    d.hazard_level = hazard_level
+                    d.matched_material_ja = mat_ja
+                    d.matched_material_en = mat_en or mat_ja
+                    d.confidence = max(0.85, conf)
+                    d.match_tier = MatchTier.TIER_5_LLM.value
+                    d.regulatory_citation = f"[Tier-5 LLM: {model_name}] {reasoning}"
+                    if hazard_level == "LEVEL_1" or d.confidence < 0.85 or review_req:
+                        d.requires_human_review = True
+                    else:
+                        d.requires_human_review = False
+                    logger.info(
+                        f"Resolved {d.item_id} (Page {getattr(d, 'page_number', 1)}, '{d.raw_text}') -> POSITIVE [{d.hazard_level}] ({d.matched_material_ja}) via Tier-5 LLM"
+                    )
+
+                # Case 3: UNCERTAIN - Unique brand names, ambiguous proprietary codes, or fallback
+                else:
+                    d.status = "UNCERTAIN"
+                    d.hazard_level = "UNCERTAIN"
+                    d.matched_material_ja = mat_ja if mat_ja and "None" not in mat_ja else "未特定商標・要確認"
+                    d.matched_material_en = mat_en if mat_en and "None" not in mat_en else "Unidentified Brand / Review Required"
+                    d.confidence = conf
+                    d.match_tier = MatchTier.TIER_5_LLM.value
+                    d.regulatory_citation = f"[Tier-5 LLM Review Needed: {model_name}] {reasoning or 'Unique brand name or ambiguous material requiring human expert verification.'}"
+                    d.requires_human_review = True
+                    logger.info(
+                        f"Flagged {d.item_id} (Page {getattr(d, 'page_number', 1)}, '{d.raw_text}') -> UNCERTAIN (Human Review Required) via Tier-5 LLM"
+                    )
+
+                updated_count += 1
+
+        return updated_count
+
+    @property
+    def total_unique(self) -> int:
+        return len(self._map)
+
+    @property
+    def total_occurrences(self) -> int:
+        return sum(len(entry["instances"]) for entry in self._map.values())
+
+
 class LocalLLMArbitrator:
     """
     Tier-5 Arbitrator communicating with a local Ollama instance (default: qwen3:1.7b).
@@ -151,6 +328,7 @@ class LocalLLMArbitrator:
         self.timeout = timeout
         self.temperature = temperature
         self.enabled = enabled
+        self.last_material_map: Optional[UnidentifiedMaterialMap] = None
 
         # Cache availability status to avoid repeated HTTP calls when offline
         self._last_health_check_time: float = 0.0
@@ -426,92 +604,40 @@ class LocalLLMArbitrator:
                 })
             return diagnoses
 
-        logger.info(f"Routing {total_cand} valid UNCERTAIN item(s) to Tier-5 LLM Arbitrator ({self.model_name})...")
+        # Build In-Memory Map of Unidentified Materials (Deduplication across pages & locations)
+        material_map = UnidentifiedMaterialMap()
+        for d in valid_candidates:
+            material_map.add(d)
+
+        self.last_material_map = material_map
+        total_unique = material_map.total_unique
+        total_occurrences = material_map.total_occurrences
+
+        logger.info(
+            f"Deduplication map: {total_occurrences} occurrence(s) across drawing grouped into "
+            f"{total_unique} unique candidate material(s) for Tier-5 LLM ({self.model_name})."
+        )
+
+        unique_payload = material_map.get_unique_payload()
 
         if progress_callback:
             progress_callback({
                 "stage": "finalize",
-                "total": total_cand,
+                "total": total_unique,
                 "completed": 0,
-                "current": valid_candidates[0].raw_text,
-                "message": f"Sent {total_cand} candidate materials to Tier-5 LLM ({self.model_name})"
+                "current": unique_payload[0]["raw_text"] if unique_payload else "",
+                "message": f"Deduplicated {total_occurrences} candidates into {total_unique} unique materials for Tier-5 LLM ({self.model_name})"
             })
 
-        items_payload = [
-            {
-                "item_id": d.item_id,
-                "raw_text": d.raw_text,
-                "normalized_text": d.normalized_text,
-                "room_context": d.room_context,
-                "region_type": d.region_type
-            }
-            for d in valid_candidates
-        ]
-
         llm_results = self.arbitrate_batch(
-            items_payload,
+            unique_payload,
             max_batch_size=6,
             progress_callback=progress_callback
         )
 
-        for d in valid_candidates:
-            res = llm_results.get(d.item_id)
-            if not res:
-                continue
-
-            status = res.get("status", "UNCERTAIN")
-            hazard_level = res.get("hazard_level", "UNCERTAIN")
-            mat_ja = res.get("matched_material_ja", "")
-            mat_en = res.get("matched_material_en", "")
-            conf = res.get("confidence", 0.0)
-            reasoning = res.get("reasoning", "")
-            review_req = res.get("review_required", False)
-
-            # Case 1: NEGATIVE - Confirmed non-asbestos materials, everyday words, room names, or general specs
-            if status == "NEGATIVE":
-                d.status = "NEGATIVE"
-                d.hazard_level = "NON_ASBESTOS"
-                d.matched_material_ja = mat_ja or d.raw_text
-                d.matched_material_en = mat_en or d.raw_text
-                d.confidence = max(0.90, conf)
-                d.match_tier = MatchTier.TIER_5_LLM.value
-                d.regulatory_citation = f"[Tier-5 LLM: {self.model_name}] {reasoning}"
-                d.requires_human_review = False  # Everyday words, room names & safe materials DO NOT need human review!
-                logger.info(
-                    f"Resolved {d.item_id} ('{d.raw_text}') -> NEGATIVE [NON_ASBESTOS] ({d.matched_material_ja}) via Tier-5 LLM"
-                )
-
-            # Case 2: POSITIVE - Confirmed MLIT statutory asbestos materials (or historical slang/abbreviations)
-            elif status == "POSITIVE" and hazard_level in ("LEVEL_1", "LEVEL_2", "LEVEL_3"):
-                d.status = "POSITIVE"
-                d.hazard_level = hazard_level
-                d.matched_material_ja = mat_ja
-                d.matched_material_en = mat_en or mat_ja
-                d.confidence = max(0.85, conf)
-                d.match_tier = MatchTier.TIER_5_LLM.value
-                d.regulatory_citation = f"[Tier-5 LLM: {self.model_name}] {reasoning}"
-                # Level 1 friable spray or lower confidence matches require human confirmation
-                if hazard_level == "LEVEL_1" or d.confidence < 0.85 or review_req:
-                    d.requires_human_review = True
-                else:
-                    d.requires_human_review = False
-                logger.info(
-                    f"Resolved {d.item_id} ('{d.raw_text}') -> POSITIVE [{d.hazard_level}] ({d.matched_material_ja}) via Tier-5 LLM"
-                )
-
-            # Case 3: UNCERTAIN - Unique brand names, ambiguous proprietary codes, or when LLM fails to classify
-            else:
-                d.status = "UNCERTAIN"
-                d.hazard_level = "UNCERTAIN"
-                d.matched_material_ja = mat_ja if mat_ja and "None" not in mat_ja else "未特定商標・要確認"
-                d.matched_material_en = mat_en if mat_en and "None" not in mat_en else "Unidentified Brand / Review Required"
-                d.confidence = conf
-                d.match_tier = MatchTier.TIER_5_LLM.value
-                d.regulatory_citation = f"[Tier-5 LLM Review Needed: {self.model_name}] {reasoning or 'Unique brand name or ambiguous material requiring human expert verification.'}"
-                d.requires_human_review = True  # ONLY truly ambiguous trade names/products require human review!
-                logger.info(
-                    f"Flagged {d.item_id} ('{d.raw_text}') -> UNCERTAIN (Human Review Required) via Tier-5 LLM"
-                )
+        # Broadcast LLM decisions back to all coordinate instances across all pages
+        updated_count = material_map.broadcast_results(llm_results, self.model_name)
+        logger.info(f"Broadcasted Tier-5 LLM determinations to {updated_count} location instance(s).")
 
         return diagnoses
 

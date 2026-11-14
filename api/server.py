@@ -788,34 +788,53 @@ async def analyze_drawing(
                     for r in records
                 ])
 
-            update_session_progress(session_id, "match", 82.0, f"Running 4-Tier MLIT regulatory matching on page {page_num}...")
+            match_pct = min(85.0, 70.0 + (p_idx / total_pages) * 15.0)
+            update_session_progress(
+                session_id,
+                "match",
+                match_pct,
+                f"Running 4-Tier MLIT regulatory matching on page {page_num}/{total_pages}..."
+            )
             await asyncio.sleep(0.01)
-
-            def tier5_progress_cb(cb_data: Dict[str, Any]):
-                tot = cb_data.get("total", 0)
-                comp = cb_data.get("completed", 0)
-                curr = cb_data.get("current", "")
-                msg = cb_data.get("message", "")
-                pct = 95.0 if tot == 0 else min(99.0, 88.0 + (comp / tot) * 11.0)
-                update_session_progress(
-                    session_id=session_id,
-                    stage="finalize",
-                    percent=pct,
-                    message=msg,
-                    tier5_total=tot,
-                    tier5_completed=comp,
-                    current_material=curr
-                )
 
             page_diagnoses = await asyncio.to_thread(
                 classifier.diagnose_drawing,
                 raw_items,
                 t_box,
                 page_num,
-                None,
-                tier5_progress_cb
+                False  # Pass 1: Scan and check DB; defer Tier-5 LLM arbitration until end of document
             )
             all_diagnoses.extend(page_diagnoses)
+
+        # Pass 2 & 3: End-of-document Deduplication Map & Batch Tier-5 LLM Arbitration
+        def tier5_progress_cb(cb_data: Dict[str, Any]):
+            tot = cb_data.get("total", 0)
+            comp = cb_data.get("completed", 0)
+            curr = cb_data.get("current", "")
+            msg = cb_data.get("message", "")
+            pct = 95.0 if tot == 0 else min(99.0, 88.0 + (comp / tot) * 11.0)
+            update_session_progress(
+                session_id=session_id,
+                stage="finalize",
+                percent=pct,
+                message=msg,
+                tier5_total=tot,
+                tier5_completed=comp,
+                current_material=curr
+            )
+
+        if classifier.enable_llm and classifier.llm_arbitrator:
+            update_session_progress(
+                session_id=session_id,
+                stage="finalize",
+                percent=87.0,
+                message=f"Deduplicating materials across {total_pages} page(s) for Tier-5 arbitration..."
+            )
+            all_diagnoses = await asyncio.to_thread(
+                classifier.arbitrate_diagnoses,
+                all_diagnoses,
+                tier5_progress_cb
+            )
 
         pos_count = sum(1 for d in all_diagnoses if d.status == "POSITIVE")
         neg_count = sum(1 for d in all_diagnoses if d.status == "NEGATIVE")
