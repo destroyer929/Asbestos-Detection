@@ -214,5 +214,68 @@
     "corrected_material_name": "けい酸カルシウム板第1種",
     "reviewer_notes": "",
     "timestamp": "2026-11-09T19:17:00.735382"
+  },
+  {
+    "item_id": "ITEM-TEST-UNIT-99",
+    "drawing_id": "DWG-1982-001",
+    "corrected_status": "POSITIVE",
+    "corrected_hazard_level": "LEVEL_1",
+    "corrected_material_name": "吹付け石綿",
+    "reviewer_notes": "Verified by certified inspector",
+    "timestamp": "2026-11-12T21:44:52.517258"
+  },
+  {
+    "item_id": "ITEM-TEST-UNIT-99",
+    "drawing_id": "DWG-1982-001",
+    "corrected_status": "POSITIVE",
+    "corrected_hazard_level": "LEVEL_1",
+    "corrected_material_name": "吹付け石綿",
+    "reviewer_notes": "Verified by certified inspector",
+    "timestamp": "2026-11-15T00:59:58.152801"
+  },
+  {
+    "item_id": "ITEM-TEST-UNIT-99",
+    "drawing_id": "DWG-1982-001",
+    "corrected_status": "POSITIVE",
+    "corrected_hazard_level": "LEVEL_1",
+    "corrected_material_name": "吹付け石綿",
+    "reviewer_notes": "Verified by certified inspector",
+    "timestamp": "2026-11-15T01:06:50.136717"
+  },
+  {
+    "item_id": "ITEM-TEST-UNIT-99",
+    "drawing_id": "DWG-1982-001",
+    "corrected_status": "POSITIVE",
+    "corrected_hazard_level": "LEVEL_1",
+    "corrected_material_name": "吹付け石綿",
+    "reviewer_notes": "Verified by certified inspector",
+    "timestamp": "2026-11-15T02:25:18.561143"
+  },
+  {
+    "item_id": "ITEM-TEST-UNIT-99",
+    "drawing_id": "DWG-1982-001",
+    "corrected_status": "POSITIVE",
+    "corrected_hazard_level": "LEVEL_1",
+    "corrected_material_name": "吹付け石綿",
+    "reviewer_notes": "Verified by certified inspector",
+    "timestamp": "2026-11-15T02:27:36.343309"
+  },
+  {
+    "item_id": "ITEM-TEST-UNIT-99",
+    "drawing_id": "DWG-1982-001",
+    "corrected_status": "POSITIVE",
+    "corrected_hazard_level": "LEVEL_1",
+    "corrected_material_name": "吹付け石綿",
+    "reviewer_notes": "Verified by certified inspector",
+    "timestamp": "2026-11-15T02:58:43.276615"
+  },
+  {
+    "item_id": "ITEM-TEST-UNIT-99",
+    "drawing_id": "DWG-1982-001",
+    "corrected_status": "POSITIVE",
+    "corrected_hazard_level": "LEVEL_1",
+    "corrected_material_name": "吹付け石綿",
+    "reviewer_notes": "Verified by certified inspector",
+    "timestamp": "2026-11-15T21:12:13.141897"
   }
 ]
