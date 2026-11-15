@@ -61,11 +61,17 @@ class BilingualOCREngine:
         languages: List[str] = ["japan"],
         gpu: bool = True,
         min_confidence: float = 0.25,
+        det_limit_side_len: int = 2400,
+        det_db_box_thresh: float = 0.5,
+        det_db_unclip_ratio: float = 1.6,
         **kwargs
     ):
         self.languages = languages
         self.gpu = gpu
         self.min_confidence = min_confidence
+        self.det_limit_side_len = det_limit_side_len
+        self.det_db_box_thresh = det_db_box_thresh
+        self.det_db_unclip_ratio = det_db_unclip_ratio
         self._paddle_ocr = None
 
     @property
@@ -93,7 +99,12 @@ class BilingualOCREngine:
                     use_angle_cls=False,
                     lang="japan",
                     use_gpu=use_cuda,
-                    show_log=False
+                    show_log=False,
+                    det_limit_side_len=self.det_limit_side_len,
+                    det_limit_type="max",
+                    det_db_thresh=0.3,
+                    det_db_box_thresh=self.det_db_box_thresh,
+                    det_db_unclip_ratio=self.det_db_unclip_ratio
                 )
             except Exception as e:
                 print(f"PaddleOCR GPU initialization failed: {e}")
@@ -127,16 +138,12 @@ class BilingualOCREngine:
             return []
 
         try:
-            orig_h, orig_w = image.shape[:2]
-            max_dim = max(orig_h, orig_w)
-            if max_dim > 2400:
-                scale = 2400.0 / float(max_dim)
-                paddle_img = cv2.resize(image, (0, 0), fx=scale, fy=scale, interpolation=cv2.INTER_AREA)
+            if len(image.shape) == 2:
+                paddle_img = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
             else:
-                scale = 1.0
                 paddle_img = image
 
-            # Run PaddleOCR inference on GPU
+            # Run PaddleOCR inference on GPU (Paddle handles high-res scaling and coordinate mapping natively)
             res = self.paddle_ocr.ocr(paddle_img, cls=False)
             items: List[OCRTextItem] = []
             if res and len(res) > 0 and res[0]:
@@ -147,8 +154,7 @@ class BilingualOCREngine:
                     if float(conf) < self.min_confidence or not str(text).strip():
                         continue
 
-                    scaled_poly = [[float(pt[0]) / scale, float(pt[1]) / scale] for pt in box]
-                    poly_arr = np.array(scaled_poly, dtype=np.float32)
+                    poly_arr = np.array(box, dtype=np.float32)
 
                     x_min = float(np.min(poly_arr[:, 0]))
                     y_min = float(np.min(poly_arr[:, 1]))
@@ -164,7 +170,7 @@ class BilingualOCREngine:
                             text=str(text).strip(),
                             confidence=float(conf),
                             bbox=[x_min, y_min, x_max, y_max],
-                            polygon=scaled_poly,
+                            polygon=[[float(pt[0]), float(pt[1])] for pt in box],
                             orientation=orientation
                         )
                     )

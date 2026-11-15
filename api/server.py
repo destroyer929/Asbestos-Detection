@@ -765,8 +765,8 @@ async def analyze_drawing(
                     raw_items.append(scaled_it)
             else:
                 # Scanned or non-vector page (e.g. CAD curves / scanned detail sheet):
-                # Run OCR across sheet using line-separated or normalized image
-                ocr_items = await asyncio.to_thread(ocr_engine.recognize, norm_img)
+                # Run OCR across sheet using authentic display image to preserve fine kanji strokes
+                ocr_items = await asyncio.to_thread(ocr_engine.recognize, disp_img)
                 raw_items = [
                     {"text": item.text, "bbox": item.bbox, "confidence": item.confidence, "page_num": page_num}
                     for item in ocr_items
