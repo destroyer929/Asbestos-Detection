@@ -105,49 +105,50 @@ ROOM_SUFFIX_PATTERN = re.compile(
 KATAKANA_BRAND_PATTERN = re.compile(r"[\u30a1-\u30fa\u30fc]{3,}")
 
 
-def is_valid_material_candidate(text: str) -> bool:
+def check_material_candidate(text: str) -> Tuple[bool, str]:
     """
-    GATE 4: Tier-5 Safety Gate (Strict Japanese Character & Material Filter).
+    GATE 4: Tier-5 Safety Gate (Strict Japanese Character, Material & Jamdict Filter).
     Ensures that ONLY genuine ambiguous Japanese architectural materials (or obscure trade names)
     are submitted to the local LLM. Room names, building sections, execution specifications,
     and dimension/symbol noise are safely auto-resolved as NEGATIVE (Zero Ollama calls).
+    Returns (is_valid, reason).
     """
     if not text or len(text.strip()) == 0:
-        return False
+        return False, "Empty text"
 
     # Strip unprintable control characters and mojibake blocks
     cleaned = re.sub(r'[\x00-\x1f\x7f-\x9f\u0250-\u02af\u1c80-\u1cbf\u1cd0-\u1cff]', '', text).strip()
     if not cleaned or len(cleaned) == 0:
-        return False
+        return False, "Unprintable/control character noise"
 
     # Whitelist check: If it's a known architectural shorthand, it's valid
     if cleaned.upper() in ARCHITECTURAL_SHORTHAND or any(sh == cleaned for sh in ARCHITECTURAL_SHORTHAND):
-        return True
+        return True, "Architectural shorthand"
 
     # Punctuation & bracket strip for core analysis
     cleaned_pure = re.sub(r"^[\s:;,\-\.\'\"（(【\[\)=~`\*\[\]{}<>]+", "", cleaned)
     cleaned_pure = re.sub(r"[\s:;,\-\.\'\"）)】\]\)=~`\*\[\]{}<>]+$", "", cleaned_pure).strip()
     if not cleaned_pure:
-        return False
+        return False, "Only punctuation/brackets"
 
     # Filter out pure numbers, dimensions, CAD coordinates, and mixed math symbols
     # (e.g. '1* 790', '089 *1', 'X1a', '(4)', '009 °5', '2.70g', 'L--10', 'W00,D150.H1', '005×00')
     if re.match(r"^[\d\s.,\*\+~=\-°/%×€$¥#@&_:\(\)\[\]\{\}<>\'\"\\a-zA-Z]+$", cleaned):
-        return False
+        return False, "Dimension / coordinate / numeric formula string"
 
     # Must contain Japanese script (Kanji, Katakana, Hiragana)
     japanese_chars = re.findall(r"[\u4e00-\u9fff\u30a0-\u30ff\u3040-\u309f]", cleaned_pure)
     if not japanese_chars:
-        return False
+        return False, "No Japanese characters"
 
     # Filter out isolated 1-character fragments (e.g. '什', '百', '是', '品', '国', '中', '日', '土', '号', '工')
     # unless explicitly "石綿"
     if len(japanese_chars) <= 1 and "".join(japanese_chars) != "石綿":
-        return False
+        return False, "Isolated single Japanese character fragment"
 
     # Known drawing title / municipality keywords / non-material terms
     if cleaned in KNOWN_NON_MATERIAL_TERMS or cleaned_pure in KNOWN_NON_MATERIAL_TERMS:
-        return False
+        return False, "Known blueprint non-material specification keyword"
 
     # Check for room label without material indicators
     has_material_indicator = (
@@ -157,15 +158,32 @@ def is_valid_material_candidate(text: str) -> bool:
     )
     if not has_material_indicator:
         if ROOM_SUFFIX_PATTERN.match(cleaned_pure):
-            return False
+            return False, "Architectural room / space label pattern"
+
+    # Semantic dictionary check via Jamdict:
+    # Uses offline JMdict to detect room names, construction actions, and non-material structural notes.
+    try:
+        from nlp.jamdict_filter import get_jamdict_filter
+        jf = get_jamdict_filter()
+        is_non_mat, reason = jf.is_non_material(cleaned_pure)
+        if is_non_mat:
+            return False, reason
+    except Exception as e:
+        logger.debug(f"Jamdict filter check skipped: {e}")
 
     # Genuine Ambiguous Material Check (Diagram Gate 4):
     # Must have either a physical material affix/specification OR a 3+ Katakana trade name pattern
     has_katakana_trade = bool(KATAKANA_BRAND_PATTERN.search(cleaned_pure))
     if not (has_material_indicator or has_katakana_trade):
-        return False
+        return False, "Lacks material affix or Katakana trade name pattern"
 
-    return True
+    return True, "Valid material candidate"
+
+
+def is_valid_material_candidate(text: str) -> bool:
+    """Boolean wrapper for Gate 4 material validation."""
+    valid, _ = check_material_candidate(text)
+    return valid
 
 
 class UnidentifiedMaterialMap:
@@ -233,6 +251,10 @@ class UnidentifiedMaterialMap:
             "bbox": getattr(diagnosis, "bbox", []),
             "room_context": getattr(diagnosis, "room_context", "")
         })
+
+    def get_key_for_id(self, mat_id: str) -> Optional[str]:
+        """Retrieves original material text key from query identifier (e.g. MAT-0001)."""
+        return self._id_to_key.get(mat_id)
 
     def get_unique_payload(self) -> List[Dict[str, Any]]:
         """
@@ -357,7 +379,9 @@ class LocalLLMArbitrator:
         model_name: Optional[str] = None,
         timeout: float = 35.0,
         temperature: float = 0.1,
-        enabled: bool = True
+        enabled: bool = True,
+        learned_cache: Optional[Any] = None,
+        db: Optional[Any] = None
     ):
         self.ollama_url = (ollama_url or os.getenv("OLLAMA_HOST", "http://localhost:11434")).rstrip("/")
         self.model_name = model_name or os.getenv("OLLAMA_MODEL", "qwen3:1.7b")
@@ -365,6 +389,16 @@ class LocalLLMArbitrator:
         self.temperature = temperature
         self.enabled = enabled
         self.last_material_map: Optional[UnidentifiedMaterialMap] = None
+
+        if learned_cache is not None:
+            self.learned_cache = learned_cache
+        else:
+            try:
+                from data.database.learned_cache import LearnedMaterialCache
+                self.learned_cache = LearnedMaterialCache()
+            except Exception:
+                self.learned_cache = None
+        self.db = db
 
         # Cache availability status to avoid repeated HTTP calls when offline
         self._last_health_check_time: float = 0.0
@@ -522,6 +556,20 @@ class LocalLLMArbitrator:
                     pass
 
         if not data:
+            # Fallback 2: Extract individual JSON object items via regex
+            item_pattern = re.compile(r'\{[^{}]*"id"\s*:\s*"[^"]+"[^{}]*\}', re.DOTALL)
+            extracted_items = []
+            for m in item_pattern.finditer(raw_text):
+                try:
+                    obj = json.loads(m.group(0))
+                    if isinstance(obj, dict) and "id" in obj:
+                        extracted_items.append(obj)
+                except Exception:
+                    pass
+            if extracted_items:
+                data = {"results": extracted_items}
+
+        if not data:
             logger.warning(f"Failed to parse JSON from LLM response: {raw_text[:200]}")
             return parsed_dict
 
@@ -615,7 +663,8 @@ class LocalLLMArbitrator:
         # Pre-filtering: identify candidate annotations vs obvious non-material noise
         valid_candidates = []
         for d in uncertain_items:
-            if is_valid_material_candidate(d.raw_text):
+            is_valid, reject_reason = check_material_candidate(d.raw_text)
+            if is_valid:
                 valid_candidates.append(d)
             else:
                 # Obvious dimensions, punctuation, rooms, or general specs are auto-resolved as non-asbestos
@@ -625,10 +674,39 @@ class LocalLLMArbitrator:
                 d.matched_material_en = "Non-Material Architectural Entity (Non-Asbestos)"
                 d.confidence = 1.0
                 d.match_tier = MatchTier.TIER_5_LLM.value
-                d.regulatory_citation = "Non-material architectural entity, room label, or general specification auto-resolved as non-asbestos (Zero Ollama calls)."
+                d.regulatory_citation = f"Gate 4 Auto-Resolved: {reject_reason} (Zero Ollama calls)."
                 d.requires_human_review = False
 
-        total_cand = len(valid_candidates)
+        if not valid_candidates:
+            if progress_callback:
+                progress_callback({
+                    "stage": "finalize",
+                    "total": 0,
+                    "completed": 0,
+                    "current": "",
+                    "message": "Non-material noise filtered at Gate 4; 0 candidate materials sent to Tier-5."
+                })
+            return diagnoses
+
+        # Check Persistent Learned Material Cache before invoking Tier-5 LLM!
+        uncached_candidates = []
+        for d in valid_candidates:
+            if self.learned_cache:
+                cached_rec = self.learned_cache.lookup(d.raw_text) or self.learned_cache.lookup(d.normalized_text)
+                if cached_rec:
+                    d.status = cached_rec.status
+                    d.hazard_level = cached_rec.hazard_level
+                    d.matched_material_ja = cached_rec.matched_material_ja
+                    d.matched_material_en = cached_rec.matched_material_en
+                    d.confidence = cached_rec.confidence
+                    d.match_tier = MatchTier.TIER_1_EXACT.value
+                    d.regulatory_citation = f"Tier 1 Learned Cache: {cached_rec.regulatory_citation} (Zero Ollama calls)"
+                    d.requires_human_review = (cached_rec.status == "POSITIVE" and cached_rec.hazard_level == "LEVEL_1")
+                    logger.info(f"Resolved {d.item_id} ('{d.raw_text}') via Learned Material Cache (0 LLM calls).")
+                    continue
+            uncached_candidates.append(d)
+
+        total_cand = len(uncached_candidates)
         if total_cand == 0:
             if progress_callback:
                 progress_callback({
@@ -636,13 +714,13 @@ class LocalLLMArbitrator:
                     "total": 0,
                     "completed": 0,
                     "current": "",
-                    "message": "Non-material noise filtered; 0 candidate materials sent to Tier-5."
+                    "message": "All ambiguous candidates resolved via Learned Material Cache (0 LLM calls)."
                 })
             return diagnoses
 
         # Build In-Memory Map of Unidentified Materials (Deduplication across pages & locations)
         material_map = UnidentifiedMaterialMap()
-        for d in valid_candidates:
+        for d in uncached_candidates:
             material_map.add(d)
 
         self.last_material_map = material_map
@@ -674,6 +752,30 @@ class LocalLLMArbitrator:
         # Broadcast LLM decisions back to all coordinate instances across all pages
         updated_count = material_map.broadcast_results(llm_results, self.model_name)
         logger.info(f"Broadcasted Tier-5 LLM determinations to {updated_count} location instance(s).")
+
+        # Persist definitive LLM determinations to Learned Material Cache
+        # CRITICAL RULE: Record ONLY POSITIVE or NEGATIVE with high confidence. NEVER record UNCERTAIN!
+        if self.learned_cache:
+            for mat_id, res in llm_results.items():
+                status = str(res.get("status", "UNCERTAIN")).strip().upper()
+                conf = float(res.get("confidence", 0.0))
+                clean_key = material_map.get_key_for_id(mat_id)
+                if clean_key and status in ("POSITIVE", "NEGATIVE") and conf >= 0.75:
+                    self.learned_cache.record_decision(
+                        query_text=clean_key,
+                        status=status,
+                        hazard_level=res.get("hazard_level", "NON_ASBESTOS" if status == "NEGATIVE" else "LEVEL_3"),
+                        matched_material_ja=res.get("matched_material_ja", clean_key),
+                        matched_material_en=res.get("matched_material_en", clean_key),
+                        confidence=conf,
+                        reasoning=res.get("reasoning", f"Tier-5 LLM ({self.model_name}) arbitration"),
+                        persist=True
+                    )
+                    # Dynamically add to Tier 1 in-memory database index if available
+                    if self.db and hasattr(self.db, "add_learned_entry"):
+                        rec = self.learned_cache.lookup(clean_key)
+                        if rec:
+                            self.db.add_learned_entry(rec)
 
         return diagnoses
 

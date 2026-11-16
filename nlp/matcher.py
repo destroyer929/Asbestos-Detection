@@ -198,6 +198,12 @@ class AsbestosMatchingEngine:
         # -------------------------------------------------------------
         exact_entry = self.db.exact_lookup(cleaned)
         if exact_entry:
+            is_learned = str(exact_entry.id).startswith("MAT-LEARNED")
+            expl = (
+                f"Tier 1 Learned Cache: matched previously arbitrated material '{cleaned}'. {exact_entry.regulatory_note}"
+                if is_learned
+                else f"Tier 1 Exact Match: matched canonical/synonym '{cleaned}'. {exact_entry.regulatory_note}"
+            )
             return MatchResult(
                 raw_query=query,
                 normalized_query=cleaned,
@@ -207,7 +213,7 @@ class AsbestosMatchingEngine:
                 matched_key=cleaned,
                 status=exact_entry.status,
                 hazard_level=exact_entry.hazard_level,
-                explanation=f"Tier 1 Exact Match: matched canonical/synonym '{cleaned}'. {exact_entry.regulatory_note}"
+                explanation=expl
             )
 
         # -------------------------------------------------------------

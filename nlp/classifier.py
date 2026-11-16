@@ -59,7 +59,11 @@ class AsbestosDiagnosticClassifier:
         self.matcher = AsbestosMatchingEngine(db=self.db)
         self.region_classifier = ArchitecturalRegionClassifier()
         self.enable_llm = enable_llm
-        self.llm_arbitrator = llm_arbitrator or LocalLLMArbitrator(enabled=enable_llm)
+        self.llm_arbitrator = llm_arbitrator or LocalLLMArbitrator(
+            enabled=enable_llm,
+            learned_cache=getattr(self.db, "learned_cache", None),
+            db=self.db
+        )
 
     def diagnose_item(
         self,
@@ -186,10 +190,18 @@ class AsbestosDiagnosticClassifier:
         diagnoses: List[DrawingItemDiagnosis] = []
 
         for item in detected_items:
-            raw_text = item.get("text", "")
-            bbox = item.get("bbox", [0, 0, 0, 0])
-            conf = item.get("confidence", 1.0)
-            room = item.get("room", "")
+            if isinstance(item, dict):
+                raw_text = item.get("text", "")
+                bbox = item.get("bbox", [0, 0, 0, 0])
+                conf = item.get("confidence", 1.0)
+                room = item.get("room", "")
+                item_page = item.get("page_num", page_number)
+            else:
+                raw_text = getattr(item, "text", "")
+                bbox = getattr(item, "bbox", [0, 0, 0, 0])
+                conf = getattr(item, "confidence", 1.0)
+                room = getattr(item, "room", "")
+                item_page = getattr(item, "page_num", page_number)
 
             diag = self.diagnose_item(
                 raw_text=raw_text,
@@ -197,7 +209,7 @@ class AsbestosDiagnosticClassifier:
                 ocr_confidence=conf,
                 room_context=room,
                 table_bbox=table_bbox,
-                page_number=item.get("page_num", page_number)
+                page_number=item_page
             )
             if diag is not None:
                 diagnoses.append(diag)

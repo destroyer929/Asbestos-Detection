@@ -9,6 +9,9 @@ import json
 from pathlib import Path
 from typing import List, Dict, Optional, Literal
 from pydantic import BaseModel, Field
+import hashlib
+
+from data.database.learned_cache import LearnedMaterialCache, LearnedRecord
 
 
 HazardLevel = Literal["LEVEL_1", "LEVEL_2", "LEVEL_3", "NON_ASBESTOS", "UNCERTAIN"]
@@ -35,12 +38,17 @@ class MaterialEntry(BaseModel):
 class MaterialsDatabase:
     """Manages the reference materials database and provides indexing for matching."""
 
-    def __init__(self, db_path: Optional[Path | str] = None):
+    def __init__(
+        self,
+        db_path: Optional[Path | str] = None,
+        learned_cache: Optional[LearnedMaterialCache] = None
+    ):
         if db_path is None:
             db_path = Path(__file__).parent / "mlit_materials.json"
         self.db_path = Path(db_path)
         self.entries: List[MaterialEntry] = []
         self._exact_index: Dict[str, MaterialEntry] = {}
+        self.learned_cache = learned_cache if learned_cache is not None else LearnedMaterialCache()
         self.load_database()
 
     def load_database(self) -> None:
@@ -53,6 +61,26 @@ class MaterialsDatabase:
 
         self.entries = [MaterialEntry(**item) for item in raw_data]
         self._build_indices()
+
+    def _convert_learned_to_entry(self, learned: LearnedRecord) -> MaterialEntry:
+        """Converts a LearnedRecord from Tier 5 into a standard MaterialEntry for Tier 1 matching."""
+        h = hashlib.md5(learned.query_text.encode("utf-8")).hexdigest()[:8].upper()
+        return MaterialEntry(
+            id=f"MAT-LEARNED-{h}",
+            canonical_name_ja=learned.matched_material_ja or learned.query_text,
+            canonical_name_en=learned.matched_material_en or learned.query_text,
+            synonyms_ja=[learned.query_text],
+            synonyms_en=[],
+            hazard_level=learned.hazard_level,
+            status=learned.status,
+            friability="NONE" if learned.status == "NEGATIVE" else "MOLDED_OR_FRIABLE",
+            component_category="Learned Material",
+            manufacturer="Field Observed (Learned)",
+            production_period="All Eras",
+            application_locations=[],
+            typical_specifications=[],
+            regulatory_note=learned.regulatory_citation
+        )
 
     def _build_indices(self) -> None:
         """Builds lookup dictionaries for instantaneous Tier 1 exact matching."""
@@ -69,6 +97,21 @@ class MaterialsDatabase:
             # Index all English synonyms
             for syn in entry.synonyms_en:
                 self._exact_index[syn.lower().strip()] = entry
+
+        # Supplement index with learned materials from persistent cache
+        for key, learned in self.learned_cache.get_all().items():
+            learned_entry = self._convert_learned_to_entry(learned)
+            self._exact_index[key] = learned_entry
+            if learned.matched_material_ja:
+                self._exact_index[learned.matched_material_ja.lower().strip()] = learned_entry
+
+    def add_learned_entry(self, learned: LearnedRecord) -> None:
+        """Dynamically adds a newly learned material into in-memory Tier 1 index."""
+        learned_entry = self._convert_learned_to_entry(learned)
+        key = learned.query_text.lower().strip()
+        self._exact_index[key] = learned_entry
+        if learned.matched_material_ja:
+            self._exact_index[learned.matched_material_ja.lower().strip()] = learned_entry
 
     def exact_lookup(self, query: str) -> Optional[MaterialEntry]:
         """Performs a direct exact string lookup against canonical names and aliases."""
