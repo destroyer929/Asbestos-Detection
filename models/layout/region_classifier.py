@@ -84,7 +84,8 @@ class ArchitecturalRegionClassifier:
     # Finish schedule header keywords
     SCHEDULE_HEADERS = [
         "仕上表", "室名", "部屋名", "床", "巾木", "壁", "天井", "下地", "備考",
-        "特記仕上表", "FINISH SCHEDULE", "SCHEDULE", "FL", "WALL", "CEILING", "巾木 H=60"
+        "特記仕上表", "外部仕上表", "内部仕上表", "仕上リスト", "仕上げ表", "外部仕上", "内部仕上",
+        "FINISH SCHEDULE", "SCHEDULE", "FL", "WALL", "CEILING", "巾木 H=60"
     ]
 
     # Standard Japanese Room names

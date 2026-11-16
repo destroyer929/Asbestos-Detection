@@ -81,12 +81,36 @@ ARCHITECTURAL_SHORTHAND = {
     "GW", "RW", "LGS", "ECP", "CF", "CFシート", "岩綿", "スレート", "せっこうボード", "石膏ボード"
 }
 
+# Material indicators (affixes, compound stems, and specification tokens)
+MATERIAL_AFFIXES = {
+    "材", "板", "吹付", "吹き", "保温", "被覆", "吸音", "断熱", "スレート", "フェルト",
+    "ロック", "ウール", "綿", "石綿", "アスベスト", "パネル", "シート", "タイル", "ボード",
+    "モルタル", "プラスター", "クロス", "塗装", "ペイント", "リシン", "スタッコ",
+    "パーライト", "バーミキュライト", "ケイカル", "けい酸", "石膏", "せっこう",
+    "ルーフィング", "パッキン", "ガスケット", "シーリング", "コーキング", "目地", "仕上", "仕上げ"
+}
+
+# Known drawing metadata, room types, and non-material keywords that should never be sent to the LLM
+KNOWN_NON_MATERIAL_TERMS = {
+    "流山市", "工中名称", "仕上リスト", "特記仕上表", "外部仕上表", "内部仕上表", "図面名称", "縮尺", "設計", "施工",
+    "室", "室名", "腰", "腰壁", "壁", "柱", "型", "梁型", "天", "井", "天井", "床", "巾木", "下地", "備考",
+    "屋根", "庇", "外壁", "内壁", "パラペット", "基礎", "構造", "凡例", "特記", "一般部", "保温要", "耐水",
+    "防音仕様", "耐震改修", "平面詳細図", "立面図", "断面図", "配置図", "案内図", "特記事項"
+}
+
+ROOM_SUFFIX_PATTERN = re.compile(
+    r"^(.*)(室|所|庫|ホール|廊下|階段|玄関|エントランス|シャフト|ピロティ|屋上|バルコニー|テラス|風除室|トイレ|便所)[\s\(（]?.*[\)）]?$"
+)
+
+KATAKANA_BRAND_PATTERN = re.compile(r"[\u30a1-\u30fa\u30fc]{3,}")
+
 
 def is_valid_material_candidate(text: str) -> bool:
     """
-    GATE 4: Tier-5 Safety Pre-Filter.
-    Filters out non-material noise (dimensions, formulas, symbols, isolated numbers, single-char fragments)
-    so ONLY genuine ambiguous Japanese architectural materials are submitted to the LLM.
+    GATE 4: Tier-5 Safety Gate (Strict Japanese Character & Material Filter).
+    Ensures that ONLY genuine ambiguous Japanese architectural materials (or obscure trade names)
+    are submitted to the local LLM. Room names, building sections, execution specifications,
+    and dimension/symbol noise are safely auto-resolved as NEGATIVE (Zero Ollama calls).
     """
     if not text or len(text.strip()) == 0:
         return False
@@ -121,12 +145,24 @@ def is_valid_material_candidate(text: str) -> bool:
     if len(japanese_chars) <= 1 and "".join(japanese_chars) != "石綿":
         return False
 
-    # Known drawing title / municipality keywords / table schedule column headers that are definitely not materials
-    known_metadata_exact = {
-        "流山市", "工中名称", "仕上リスト", "特記仕上表", "図面名称", "縮尺", "設計", "施工",
-        "室", "室名", "腰", "腰壁", "壁", "柱", "型", "梁型", "天", "井", "天井", "床", "巾木", "下地", "備考"
-    }
-    if cleaned in known_metadata_exact or cleaned_pure in known_metadata_exact:
+    # Known drawing title / municipality keywords / non-material terms
+    if cleaned in KNOWN_NON_MATERIAL_TERMS or cleaned_pure in KNOWN_NON_MATERIAL_TERMS:
+        return False
+
+    # Check for room label without material indicators
+    has_material_indicator = (
+        any(aff in cleaned for aff in MATERIAL_AFFIXES)
+        or bool(re.search(r"t\s*=\s*\d+", cleaned))
+        or bool(re.search(r"\d+\s*mm", cleaned))
+    )
+    if not has_material_indicator:
+        if ROOM_SUFFIX_PATTERN.match(cleaned_pure):
+            return False
+
+    # Genuine Ambiguous Material Check (Diagram Gate 4):
+    # Must have either a physical material affix/specification OR a 3+ Katakana trade name pattern
+    has_katakana_trade = bool(KATAKANA_BRAND_PATTERN.search(cleaned_pure))
+    if not (has_material_indicator or has_katakana_trade):
         return False
 
     return True
@@ -582,14 +618,14 @@ class LocalLLMArbitrator:
             if is_valid_material_candidate(d.raw_text):
                 valid_candidates.append(d)
             else:
-                # Obvious dimensions, punctuation or pure numbers are confirmed non-asbestos noise
+                # Obvious dimensions, punctuation, rooms, or general specs are auto-resolved as non-asbestos
                 d.status = "NEGATIVE"
                 d.hazard_level = "NON_ASBESTOS"
-                d.matched_material_ja = "寸法・数値・記号 (Dimension / Symbol Noise)"
-                d.matched_material_en = "Dimension / Symbol Noise (Non-Asbestos)"
+                d.matched_material_ja = d.raw_text
+                d.matched_material_en = "Non-Material Architectural Entity (Non-Asbestos)"
                 d.confidence = 1.0
                 d.match_tier = MatchTier.TIER_5_LLM.value
-                d.regulatory_citation = "Non-material noise or numerical dimension filtered as non-asbestos."
+                d.regulatory_citation = "Non-material architectural entity, room label, or general specification auto-resolved as non-asbestos (Zero Ollama calls)."
                 d.requires_human_review = False
 
         total_cand = len(valid_candidates)
