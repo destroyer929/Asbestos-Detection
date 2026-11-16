@@ -90,25 +90,28 @@ class DocumentIngestionRouter:
             rect = page.rect
             dimensions.append((int(rect.width), int(rect.height)))
 
-            # Extract raw words and text blocks
-            blocks = page.get_text("blocks")
-            for b in blocks:
-                # b: (x0, y0, x1, y1, text, block_no, block_type)
-                # block_type 0 is text, 1 is image
-                if len(b) >= 7 and b[6] == 0:
-                    text = b[4].strip()
-                    if text:
-                        total_chars += len(text)
-                        vector_entities.append(
-                            ExtractedVectorEntity(
-                                text=text,
-                                bbox=[float(b[0]), float(b[1]), float(b[2]), float(b[3])],
-                                font_name="StandardCADFont",
-                                font_size=12.0,
-                                page_num=page_idx,
-                                confidence=1.0
-                            )
-                        )
+            # Extract fine-grained text spans so individual table cells, materials,
+            # and room annotations are isolated with accurate bounding boxes,
+            # preventing whole rows/blocks from being merged into single lines.
+            page_dict = page.get_text("dict")
+            for block in page_dict.get("blocks", []):
+                if block.get("type") == 0:  # Text block
+                    for line in block.get("lines", []):
+                        for span in line.get("spans", []):
+                            text = span.get("text", "").strip()
+                            if text:
+                                total_chars += len(text)
+                                sb = span.get("bbox", [0.0, 0.0, 0.0, 0.0])
+                                vector_entities.append(
+                                    ExtractedVectorEntity(
+                                        text=text,
+                                        bbox=[float(sb[0]), float(sb[1]), float(sb[2]), float(sb[3])],
+                                        font_name=str(span.get("font", "StandardCADFont")),
+                                        font_size=float(span.get("size", 12.0)),
+                                        page_num=page_idx,
+                                        confidence=1.0
+                                    )
+                                )
 
         # Classification Heuristic:
         # If significant text streams exist, it is a digital CAD export
