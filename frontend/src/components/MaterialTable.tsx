@@ -251,6 +251,10 @@ export const MaterialTable: React.FC<MaterialTableProps> = ({
                       <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-purple-100 border border-purple-300 text-purple-900 font-bold shadow-2xs whitespace-nowrap">
                         <span>🤖</span> T5_LLM
                       </span>
+                    ) : item.match_tier === "GATE_4" ? (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-300 font-bold text-[10px] whitespace-nowrap">
+                        GATE_4
+                      </span>
                     ) : (
                       <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200 font-bold">
                         {item.match_tier.replace("TIER_", "T")}

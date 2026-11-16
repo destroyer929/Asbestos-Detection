@@ -28,6 +28,7 @@ class MatchTier(str, Enum):
     TIER_3_FUZZY = "TIER_3_FUZZY"
     TIER_4_SEMANTIC = "TIER_4_SEMANTIC"
     TIER_5_LLM = "TIER_5_LLM"
+    GATE_4 = "GATE_4"
     NO_MATCH = "NO_MATCH"
 
 

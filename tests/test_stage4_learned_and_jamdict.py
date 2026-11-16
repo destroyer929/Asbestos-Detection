@@ -70,6 +70,37 @@ def test_gate4_material_candidate_checking():
     assert is_valid_material_candidate("ケイカル板 t=6") is True
 
 
+def test_gate4_returns_gate4_tier():
+    """Verifies that non-materials filtered at Gate 4 return MatchTier.GATE_4 and NEVER TIER_5_LLM."""
+    arbitrator = LocalLLMArbitrator(enabled=True)
+    item = DrawingItemDiagnosis(
+        item_id="ITEM-TEST-G4",
+        raw_text="機械室",
+        normalized_text="機械室",
+        bbox=[100, 100, 200, 150],
+        region_type="GENERAL_NOTES",
+        room_context="",
+        status="UNCERTAIN",
+        hazard_level="UNCERTAIN",
+        matched_material_ja="該当なし (None)",
+        matched_material_en="None",
+        confidence=0.0,
+        match_tier="NO_MATCH",
+        requires_human_review=True,
+        regulatory_citation="",
+        page_number=1
+    )
+
+    arbitrated = arbitrator.arbitrate_diagnoses([item])
+    assert len(arbitrated) == 1
+    diag = arbitrated[0]
+    assert diag.status == "NEGATIVE"
+    assert diag.hazard_level == "NON_ASBESTOS"
+    assert diag.match_tier == MatchTier.GATE_4.value
+    assert diag.match_tier != MatchTier.TIER_5_LLM.value
+    assert "Gate 4 Auto-Resolved" in diag.regulatory_citation
+
+
 def test_persistent_learned_cache_strict_rules():
     """Verifies that LearnedMaterialCache saves only POSITIVE and NEGATIVE and rejects UNCERTAIN."""
     with tempfile.TemporaryDirectory() as tmp_dir:

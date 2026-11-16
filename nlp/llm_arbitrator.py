@@ -673,7 +673,7 @@ class LocalLLMArbitrator:
                 d.matched_material_ja = d.raw_text
                 d.matched_material_en = "Non-Material Architectural Entity (Non-Asbestos)"
                 d.confidence = 1.0
-                d.match_tier = MatchTier.TIER_5_LLM.value
+                d.match_tier = MatchTier.GATE_4.value
                 d.regulatory_citation = f"Gate 4 Auto-Resolved: {reject_reason} (Zero Ollama calls)."
                 d.requires_human_review = False
 

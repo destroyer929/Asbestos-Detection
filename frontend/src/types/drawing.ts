@@ -13,6 +13,7 @@ export type MatchTier =
   | "TIER_3_FUZZY"
   | "TIER_4_VECTOR_SEMANTIC"
   | "TIER_5_LLM"
+  | "GATE_4"
   | "NONE";
 
 export interface DiagnosisItem {
