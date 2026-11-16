@@ -64,6 +64,7 @@ class BilingualOCREngine:
         det_limit_side_len: int = 2400,
         det_db_box_thresh: float = 0.5,
         det_db_unclip_ratio: float = 1.6,
+        det_db_max_candidates: int = 8000,
         **kwargs
     ):
         self.languages = languages
@@ -72,6 +73,7 @@ class BilingualOCREngine:
         self.det_limit_side_len = det_limit_side_len
         self.det_db_box_thresh = det_db_box_thresh
         self.det_db_unclip_ratio = det_db_unclip_ratio
+        self.det_db_max_candidates = det_db_max_candidates
         self._paddle_ocr = None
 
     @property
@@ -106,6 +108,11 @@ class BilingualOCREngine:
                     det_db_box_thresh=self.det_db_box_thresh,
                     det_db_unclip_ratio=self.det_db_unclip_ratio
                 )
+                # Blueprint sheets often contain >1000 annotations. PaddleOCR's DBNet defaults to
+                # max_candidates=1000 in postprocess_op, which causes cv2.findContours to truncate
+                # and drop half the page. Override max_candidates to preserve full-page detections.
+                if hasattr(self._paddle_ocr, "text_detector") and hasattr(self._paddle_ocr.text_detector, "postprocess_op"):
+                    self._paddle_ocr.text_detector.postprocess_op.max_candidates = self.det_db_max_candidates
             except Exception as e:
                 print(f"PaddleOCR GPU initialization failed: {e}")
                 self._paddle_ocr = None
@@ -138,6 +145,9 @@ class BilingualOCREngine:
             return []
 
         try:
+            if hasattr(self.paddle_ocr, "text_detector") and hasattr(self.paddle_ocr.text_detector, "postprocess_op"):
+                self.paddle_ocr.text_detector.postprocess_op.max_candidates = self.det_db_max_candidates
+
             if len(image.shape) == 2:
                 paddle_img = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
             else:
