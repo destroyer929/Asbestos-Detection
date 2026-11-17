@@ -368,6 +368,105 @@ class LearnedMaterialCache:
         logger.info(f"Learned material cached: '{query_text}' -> {clean_status} ({hazard_level}, conf={confidence:.2f})")
         return True
 
+    def record_decisions_batch(
+        self,
+        records: List[Dict[str, Any]],
+        persist: bool = True
+    ) -> int:
+        """
+        Batch records multiple classifications into L1 cache and SQLite WAL in a single transaction.
+        CRITICAL RULE: Only records POSITIVE or NEGATIVE determinations with confidence >= 0.75.
+        Returns the number of records successfully cached.
+        """
+        saved_count = 0
+        sqlite_rows = []
+        with self._lock:
+            for item in records:
+                query_text = item.get("query_text", "").strip()
+                status = str(item.get("status", "")).strip().upper()
+                hazard_level = str(item.get("hazard_level", "")).strip().upper()
+                matched_material_ja = str(item.get("matched_material_ja", query_text)).strip()
+                matched_material_en = str(item.get("matched_material_en", query_text)).strip()
+                confidence = float(item.get("confidence", 0.0))
+                reasoning = str(item.get("reasoning", "")).strip()
+                source = str(item.get("source", "TIER_5_LLM_ARBITRATION")).strip()
+
+                if status not in ("POSITIVE", "NEGATIVE"):
+                    continue
+                if confidence < 0.75:
+                    continue
+
+                key = self._normalize_key(query_text)
+                if not key:
+                    continue
+
+                rec = LearnedRecord(
+                    query_text=query_text,
+                    status=status,
+                    hazard_level=hazard_level,
+                    matched_material_ja=matched_material_ja,
+                    matched_material_en=matched_material_en,
+                    confidence=confidence,
+                    regulatory_citation=f"{source}: {reasoning}" if reasoning else source,
+                    source=source
+                )
+
+                self._l1_cache[key] = rec
+                saved_count += 1
+
+                if not self.is_json_backend and self._conn is not None:
+                    sqlite_rows.append((
+                        key,
+                        rec.query_text,
+                        rec.status,
+                        rec.hazard_level,
+                        rec.matched_material_ja,
+                        rec.matched_material_en,
+                        rec.confidence,
+                        rec.regulatory_citation,
+                        rec.source,
+                        rec.learned_at
+                    ))
+
+            if persist:
+                if self.is_json_backend:
+                    self._save_json()
+                elif self._conn is not None and sqlite_rows:
+                    try:
+                        self._conn.executemany(
+                            """
+                            INSERT OR REPLACE INTO learned_materials 
+                            (query_key, query_text, status, hazard_level, matched_material_ja, matched_material_en, confidence, regulatory_citation, source, learned_at)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            """,
+                            sqlite_rows
+                        )
+                        self._conn.commit()
+                    except Exception as e:
+                        logger.error(f"Failed to batch persist learned records to SQLite: {e}")
+
+        logger.info(f"Batch cached {saved_count} learned material records.")
+        return saved_count
+
+    def export_to_json(self, json_path: Optional[Path | str] = None) -> int:
+        """Exports entire cache to JSON for backups or external tools."""
+        target_path = Path(json_path) if json_path else self.DEFAULT_LEGACY_JSON
+        with self._lock:
+            records_list = [r.model_dump() for r in self._l1_cache.values()]
+            payload = {
+                "version": "1.0",
+                "updated_at": datetime.now(timezone.utc).isoformat(),
+                "total_records": len(records_list),
+                "records": records_list
+            }
+            target_path.parent.mkdir(parents=True, exist_ok=True)
+            temp_file = target_path.with_suffix(".tmp")
+            with open(temp_file, "w", encoding="utf-8") as f:
+                json.dump(payload, f, ensure_ascii=False, indent=2)
+            os.replace(temp_file, target_path)
+            logger.info(f"Exported {len(records_list)} learned records to {target_path.name}")
+            return len(records_list)
+
     def get_all(self) -> Dict[str, LearnedRecord]:
         """Returns all cached entries from L1 in-memory cache."""
         with self._lock:

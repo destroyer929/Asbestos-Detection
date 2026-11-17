@@ -678,7 +678,8 @@ class LocalLLMArbitrator:
             "stream": False,
             "options": {
                 "temperature": self.temperature,
-                "num_predict": 2048
+                "num_predict": 2048,
+                "repeat_penalty": 1.15
             }
         }
 

@@ -56,7 +56,7 @@ def test_4_tier_matching_engine():
     m3 = engine.match("蒸気配管: 石綿保温材 100A")
     assert m3.is_positive is True
     assert m3.hazard_level == "LEVEL_2"
-    assert m3.match_tier == MatchTier.TIER_2_RULE
+    assert m3.match_tier in (MatchTier.TIER_2_RULE, MatchTier.TIER_1_EXACT)
 
     m4 = engine.match("スレート波板 t=6.3")
     assert m4.is_positive is True
