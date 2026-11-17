@@ -200,7 +200,12 @@ export const MaterialTable: React.FC<MaterialTableProps> = ({
             {sortedItems.map((item, idx) => {
               const isSelected = selectedItem?.item_id === item.item_id;
               const isPos = item.status === "POSITIVE";
-              const isNeg = item.status === "NEGATIVE";
+              const isNonArch =
+                item.matched_material_en?.includes("(Non-Architectural Material)") ||
+                item.matched_material_en?.includes("Non-Architectural") ||
+                item.matched_material_en?.includes("Non-Material") ||
+                item.match_tier === "GATE_4";
+              const isNeg = item.status === "NEGATIVE" && !isNonArch;
 
               return (
                 <tr
@@ -208,7 +213,11 @@ export const MaterialTable: React.FC<MaterialTableProps> = ({
                   onClick={() => onSelectItem(item)}
                   className={`cursor-pointer transition-colors ${
                     isSelected
-                      ? "bg-emerald-100/70 hover:bg-emerald-100 border-l-4 border-emerald-600"
+                      ? isNonArch
+                        ? "bg-blue-100/70 hover:bg-blue-100 border-l-4 border-blue-600"
+                        : "bg-emerald-100/70 hover:bg-emerald-100 border-l-4 border-emerald-600"
+                      : isNonArch
+                      ? "hover:bg-blue-50/50"
                       : "hover:bg-emerald-50/50"
                   }`}
                 >
@@ -223,15 +232,20 @@ export const MaterialTable: React.FC<MaterialTableProps> = ({
                       className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
                         isPos
                           ? "bg-rose-50 text-rose-700 border border-rose-300"
+                          : isNonArch
+                          ? "bg-blue-50 text-blue-700 border border-blue-300"
                           : isNeg
                           ? "bg-emerald-50 text-emerald-800 border border-emerald-300"
                           : "bg-amber-50 text-amber-800 border border-amber-300"
                       }`}
                     >
-                      {isPos && <AlertOctagon className="w-3 h-3" />}
-                      {isNeg && <CheckCircle2 className="w-3 h-3" />}
-                      {!isPos && !isNeg && <AlertTriangle className="w-3 h-3" />}
-                      {item.status} [{item.hazard_level.replace("LEVEL_", "L")}]
+                      {isPos && <AlertOctagon className="w-3 h-3 text-rose-600" />}
+                      {isNonArch && <CheckCircle2 className="w-3 h-3 text-blue-600" />}
+                      {!isNonArch && isNeg && <CheckCircle2 className="w-3 h-3 text-emerald-600" />}
+                      {!isPos && !isNeg && !isNonArch && <AlertTriangle className="w-3 h-3 text-amber-600" />}
+                      {isNonArch
+                        ? "NEGATIVE [NON_MATERIAL]"
+                        : `${item.status} [${item.hazard_level.replace("LEVEL_", "L")}]`}
                     </span>
                   </td>
                   <td className="py-2.5 px-3.5 font-sans text-slate-900 max-w-xs truncate font-bold">
@@ -239,9 +253,13 @@ export const MaterialTable: React.FC<MaterialTableProps> = ({
                   </td>
                   <td className="py-2.5 px-3.5 font-sans text-slate-800 font-medium">
                     <span>{item.matched_material_ja}</span>
-                    <span className="text-slate-400 text-[11px] ml-1.5 hidden md:inline">
-                      ({item.matched_material_en})
-                    </span>
+                    {item.matched_material_en && (
+                      <span className="text-slate-400 text-[11px] ml-1.5 hidden md:inline">
+                        {item.matched_material_en.startsWith("(") && item.matched_material_en.endsWith(")")
+                          ? item.matched_material_en
+                          : `(${item.matched_material_en})`}
+                      </span>
+                    )}
                   </td>
                   <td className="py-2.5 px-3.5 text-slate-700 font-semibold">
                     {(item.confidence * 100).toFixed(1)}%
@@ -252,7 +270,7 @@ export const MaterialTable: React.FC<MaterialTableProps> = ({
                         <span>🤖</span> T5_LLM
                       </span>
                     ) : item.match_tier === "GATE_4" ? (
-                      <span className="inline-flex items-center px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-300 font-bold text-[10px] whitespace-nowrap">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200 font-bold text-[10px] whitespace-nowrap">
                         GATE_4
                       </span>
                     ) : (

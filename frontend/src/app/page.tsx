@@ -384,9 +384,21 @@ export default function HomePage() {
                   <span>Upload Another Drawing</span>
                 </button>
                 <div className="h-4 w-[1px] bg-emerald-200 hidden sm:block" />
-                <div>
-                  <span className="text-xs text-slate-500 font-lab-mono">Active File: </span>
-                  <span className="text-xs font-bold text-slate-900 font-lab-mono">{analysis.filename}</span>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <div>
+                    <span className="text-xs text-slate-500 font-lab-mono">Active File: </span>
+                    <span className="text-xs font-bold text-slate-900 font-lab-mono">{analysis.filename}</span>
+                  </div>
+                  {analysis.processing_time_seconds !== undefined && analysis.processing_time_seconds !== null && (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-100 border border-slate-300 text-slate-700 text-xs font-lab-mono font-bold" title="Diagnosis Elapsed Time">
+                      <span>⏱️</span>
+                      <span>
+                        {analysis.processing_time_seconds < 60
+                          ? `${analysis.processing_time_seconds.toFixed(1)}s`
+                          : `${Math.floor(analysis.processing_time_seconds / 60)}m ${(analysis.processing_time_seconds % 60).toFixed(1)}s`}
+                      </span>
+                    </span>
+                  )}
                 </div>
               </div>
 

@@ -386,10 +386,20 @@ export const BlueprintCanvas: React.FC<BlueprintCanvasProps> = ({
                 let fillColor = "rgba(245, 158, 11, 0.28)";
                 let badgeBg = "#d97706";
 
+                const isNonArch =
+                  d.matched_material_en?.includes("(Non-Architectural Material)") ||
+                  d.matched_material_en?.includes("Non-Architectural") ||
+                  d.matched_material_en?.includes("Non-Material") ||
+                  d.match_tier === "GATE_4";
+
                 if (d.status === "POSITIVE") {
                   strokeColor = "#f43f5e"; // Bold Crimson Rose
                   fillColor = "rgba(244, 63, 94, 0.32)";
                   badgeBg = "#e11d48";
+                } else if (isNonArch) {
+                  strokeColor = "#2563eb"; // Bold Safe Blue
+                  fillColor = "rgba(37, 99, 235, 0.28)";
+                  badgeBg = "#1d4ed8";
                 } else if (d.status === "NEGATIVE") {
                   strokeColor = "#10b981"; // Bold Emerald Green
                   fillColor = "rgba(16, 185, 129, 0.28)";
@@ -463,43 +473,53 @@ export const BlueprintCanvas: React.FC<BlueprintCanvasProps> = ({
         </div>
 
         {/* Hover Tooltip */}
-        {hoveredItem && hoverPos && (
-          <div
-            className="absolute z-30 pointer-events-none bg-slate-900/95 backdrop-blur-md text-white p-3 rounded-xl border border-slate-700 shadow-2xl max-w-xs transition-opacity duration-150"
-            style={{
-              left: Math.min(hoverPos.x + 15, (containerRef.current?.clientWidth || 500) - 260),
-              top: Math.max(hoverPos.y - 80, 20),
-            }}
-          >
-            <div className="flex items-center justify-between gap-2 mb-1.5">
-              <span
-                className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                  hoveredItem.status === "POSITIVE"
-                    ? "bg-rose-500/20 text-rose-300 border border-rose-500/40"
-                    : hoveredItem.status === "NEGATIVE"
-                    ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
-                    : "bg-amber-500/20 text-amber-300 border border-amber-500/40"
-                }`}
-              >
-                {hoveredItem.status} • {hoveredItem.hazard_level}
-              </span>
-              <span className="text-[11px] font-mono text-slate-400">
-                {(hoveredItem.confidence * 100).toFixed(0)}%
-              </span>
+        {hoveredItem && hoverPos && (() => {
+          const isHoverNonArch =
+            hoveredItem.matched_material_en?.includes("(Non-Architectural Material)") ||
+            hoveredItem.matched_material_en?.includes("Non-Architectural") ||
+            hoveredItem.matched_material_en?.includes("Non-Material") ||
+            hoveredItem.match_tier === "GATE_4";
+
+          return (
+            <div
+              className="absolute z-30 pointer-events-none bg-slate-900/95 backdrop-blur-md text-white p-3 rounded-xl border border-slate-700 shadow-2xl max-w-xs transition-opacity duration-150"
+              style={{
+                left: Math.min(hoverPos.x + 15, (containerRef.current?.clientWidth || 500) - 260),
+                top: Math.max(hoverPos.y - 80, 20),
+              }}
+            >
+              <div className="flex items-center justify-between gap-2 mb-1.5">
+                <span
+                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                    hoveredItem.status === "POSITIVE"
+                      ? "bg-rose-500/20 text-rose-300 border border-rose-500/40"
+                      : isHoverNonArch
+                      ? "bg-blue-500/20 text-blue-300 border border-blue-500/40"
+                      : hoveredItem.status === "NEGATIVE"
+                      ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
+                      : "bg-amber-500/20 text-amber-300 border border-amber-500/40"
+                  }`}
+                >
+                  {isHoverNonArch ? "NEGATIVE • NON_MATERIAL" : `${hoveredItem.status} • ${hoveredItem.hazard_level}`}
+                </span>
+                <span className="text-[11px] font-mono text-slate-400">
+                  {(hoveredItem.confidence * 100).toFixed(0)}%
+                </span>
+              </div>
+              <p className="text-xs font-semibold text-slate-100 line-clamp-1">
+                {hoveredItem.raw_text}
+              </p>
+              <p className="text-[11px] text-slate-400 mt-0.5">
+                Matched: {hoveredItem.matched_material_ja} ({hoveredItem.matched_material_en})
+              </p>
             </div>
-            <p className="text-xs font-semibold text-slate-100 line-clamp-1">
-              {hoveredItem.raw_text}
-            </p>
-            <p className="text-[11px] text-slate-400 mt-0.5">
-              Matched: {hoveredItem.matched_material_ja} ({hoveredItem.matched_material_en})
-            </p>
-          </div>
-        )}
+          );
+        })()}
       </div>
 
       {/* Bottom Canvas Status Bar with Alfred Dark CAD Engineering Bar */}
       <div className="bg-[#080d12] border-t-2 border-emerald-500/30 px-4 py-2.5 flex items-center justify-between text-xs text-slate-300 font-lab-mono">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 flex-wrap">
           <span className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.7)]"></span>
             <span className="text-rose-200 font-bold">Asbestos Positive (Harmful - Red)</span>
@@ -507,6 +527,10 @@ export const BlueprintCanvas: React.FC<BlueprintCanvasProps> = ({
           <span className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.7)]"></span>
             <span className="text-emerald-200 font-bold">Non-Asbestos (Safe - Green)</span>
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(37,99,235,0.7)]"></span>
+            <span className="text-blue-200 font-bold">Non-Architectural (Safe - Blue)</span>
           </span>
           <span className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.7)]"></span>

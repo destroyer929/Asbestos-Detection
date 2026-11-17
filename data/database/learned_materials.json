@@ -1,0 +1,216 @@
+{
+  "version": "1.0",
+  "updated_at": "2026-11-17T18:35:13.157124+00:00",
+  "total_records": 19,
+  "records": [
+    {
+      "query_text": "仕上高",
+      "status": "NEGATIVE",
+      "hazard_level": "NON_ASBESTOS",
+      "matched_material_ja": "仕上高",
+      "matched_material_en": "Finish Height (Non-Architectural Material)",
+      "confidence": 1.0,
+      "regulatory_citation": "GATE_4_ARCHITECTURAL_FILTER: Gate 4 Architectural Entity: Known blueprint non-material specification keyword",
+      "source": "GATE_4_ARCHITECTURAL_FILTER",
+      "learned_at": "2026-11-17T18:29:33.867974+00:00"
+    },
+    {
+      "query_text": "[打放し",
+      "status": "NEGATIVE",
+      "hazard_level": "NON_ASBESTOS",
+      "matched_material_ja": "[打放し",
+      "matched_material_en": "Exposed Concrete / As-Cast Finish (Non-Architectural Material)",
+      "confidence": 1.0,
+      "regulatory_citation": "GATE_4_ARCHITECTURAL_FILTER: Gate 4 Architectural Entity: Known blueprint non-material specification keyword",
+      "source": "GATE_4_ARCHITECTURAL_FILTER",
+      "learned_at": "2026-11-17T18:29:33.870028+00:00"
+    },
+    {
+      "query_text": "素地)",
+      "status": "NEGATIVE",
+      "hazard_level": "NON_ASBESTOS",
+      "matched_material_ja": "素地)",
+      "matched_material_en": "Bare Substrate / Unfinished (Non-Architectural Material)",
+      "confidence": 1.0,
+      "regulatory_citation": "GATE_4_ARCHITECTURAL_FILTER: Gate 4 Architectural Entity: Known blueprint non-material specification keyword",
+      "source": "GATE_4_ARCHITECTURAL_FILTER",
+      "learned_at": "2026-11-17T18:29:33.871071+00:00"
+    },
+    {
+      "query_text": "とする。",
+      "status": "NEGATIVE",
+      "hazard_level": "NON_ASBESTOS",
+      "matched_material_ja": "とする。",
+      "matched_material_en": "Shall be / Stipulated as (Non-Architectural Material)",
+      "confidence": 1.0,
+      "regulatory_citation": "GATE_4_ARCHITECTURAL_FILTER: Gate 4 Architectural Entity: Lacks material affix or Katakana trade name pattern",
+      "source": "GATE_4_ARCHITECTURAL_FILTER",
+      "learned_at": "2026-11-17T18:29:33.954937+00:00"
+    },
+    {
+      "query_text": "Zからの床高さ示す",
+      "status": "NEGATIVE",
+      "hazard_level": "NON_ASBESTOS",
+      "matched_material_ja": "Zからの床高さ示す",
+      "matched_material_en": "Indicates Floor Height from Z-datum (Non-Architectural Material)",
+      "confidence": 1.0,
+      "regulatory_citation": "GATE_4_ARCHITECTURAL_FILTER: Gate 4 Architectural Entity: Known blueprint non-material specification keyword",
+      "source": "GATE_4_ARCHITECTURAL_FILTER",
+      "learned_at": "2026-11-17T18:29:33.955945+00:00"
+    },
+    {
+      "query_text": "吊りボルト9d",
+      "status": "NEGATIVE",
+      "hazard_level": "NON_ASBESTOS",
+      "matched_material_ja": "吊りボルト9d",
+      "matched_material_en": "Hanger Bolt 9d (Non-Architectural Material)",
+      "confidence": 1.0,
+      "regulatory_citation": "GATE_4_ARCHITECTURAL_FILTER: Gate 4 Architectural Entity: Known blueprint non-material specification keyword",
+      "source": "GATE_4_ARCHITECTURAL_FILTER",
+      "learned_at": "2026-11-17T18:29:33.956944+00:00"
+    },
+    {
+      "query_text": "NPは外",
+      "status": "NEGATIVE",
+      "hazard_level": "NON_ASBESTOS",
+      "matched_material_ja": "NPは外",
+      "matched_material_en": "Non-Paint Exterior / Non-Coated (Non-Architectural Material)",
+      "confidence": 1.0,
+      "regulatory_citation": "GATE_4_ARCHITECTURAL_FILTER: Gate 4 Architectural Entity: Lacks material affix or Katakana trade name pattern",
+      "source": "GATE_4_ARCHITECTURAL_FILTER",
+      "learned_at": "2026-11-17T18:29:33.974845+00:00"
+    },
+    {
+      "query_text": "機械室",
+      "status": "NEGATIVE",
+      "hazard_level": "NON_ASBESTOS",
+      "matched_material_ja": "機械室",
+      "matched_material_en": "機械室 (Non-Architectural Material)",
+      "confidence": 1.0,
+      "regulatory_citation": "GATE_4_ARCHITECTURAL_FILTER: Gate 4 Architectural Entity: Architectural room / space label pattern",
+      "source": "GATE_4_ARCHITECTURAL_FILTER",
+      "learned_at": "2026-11-17T18:33:16.458570+00:00"
+    },
+    {
+      "query_text": "ボイラー室",
+      "status": "NEGATIVE",
+      "hazard_level": "NON_ASBESTOS",
+      "matched_material_ja": "ボイラー室",
+      "matched_material_en": "ボイラー室 (Non-Architectural Material)",
+      "confidence": 1.0,
+      "regulatory_citation": "GATE_4_ARCHITECTURAL_FILTER: Gate 4 Architectural Entity: Architectural room / space label pattern",
+      "source": "GATE_4_ARCHITECTURAL_FILTER",
+      "learned_at": "2026-11-17T18:33:16.459567+00:00"
+    },
+    {
+      "query_text": "保温要",
+      "status": "NEGATIVE",
+      "hazard_level": "NON_ASBESTOS",
+      "matched_material_ja": "保温要",
+      "matched_material_en": "Thermal Insulation Required (Non-Architectural Material)",
+      "confidence": 1.0,
+      "regulatory_citation": "GATE_4_ARCHITECTURAL_FILTER: Gate 4 Architectural Entity: Known blueprint non-material specification keyword",
+      "source": "GATE_4_ARCHITECTURAL_FILTER",
+      "learned_at": "2026-11-17T18:33:16.461577+00:00"
+    },
+    {
+      "query_text": "倉庫 (1)",
+      "status": "NEGATIVE",
+      "hazard_level": "NON_ASBESTOS",
+      "matched_material_ja": "倉庫 (1)",
+      "matched_material_en": "倉庫 (1 (Non-Architectural Material)",
+      "confidence": 1.0,
+      "regulatory_citation": "GATE_4_ARCHITECTURAL_FILTER: Gate 4 Architectural Entity: Architectural room / space label pattern",
+      "source": "GATE_4_ARCHITECTURAL_FILTER",
+      "learned_at": "2026-11-17T18:35:13.103412+00:00"
+    },
+    {
+      "query_text": "事務室 (A)",
+      "status": "NEGATIVE",
+      "hazard_level": "NON_ASBESTOS",
+      "matched_material_ja": "事務室 (A)",
+      "matched_material_en": "事務室 (A (Non-Architectural Material)",
+      "confidence": 1.0,
+      "regulatory_citation": "GATE_4_ARCHITECTURAL_FILTER: Gate 4 Architectural Entity: Architectural room / space label pattern",
+      "source": "GATE_4_ARCHITECTURAL_FILTER",
+      "learned_at": "2026-11-17T18:35:13.157124+00:00"
+    },
+    {
+      "query_text": "一般部",
+      "status": "NEGATIVE",
+      "hazard_level": "NON_ASBESTOS",
+      "matched_material_ja": "一般部",
+      "matched_material_en": "Standard Area / General Section (Non-Architectural Material)",
+      "confidence": 1.0,
+      "regulatory_citation": "GATE_4_ARCHITECTURAL_FILTER: Gate 4 Architectural Entity: Known blueprint non-material specification keyword",
+      "source": "GATE_4_ARCHITECTURAL_FILTER",
+      "learned_at": "2026-11-17T18:33:16.466123+00:00"
+    },
+    {
+      "query_text": "給湯室",
+      "status": "NEGATIVE",
+      "hazard_level": "NON_ASBESTOS",
+      "matched_material_ja": "給湯室",
+      "matched_material_en": "給湯室 (Non-Architectural Material)",
+      "confidence": 1.0,
+      "regulatory_citation": "GATE_4_ARCHITECTURAL_FILTER: Gate 4 Architectural Entity: Architectural room / space label pattern",
+      "source": "GATE_4_ARCHITECTURAL_FILTER",
+      "learned_at": "2026-11-17T18:33:16.468129+00:00"
+    },
+    {
+      "query_text": "耐水",
+      "status": "NEGATIVE",
+      "hazard_level": "NON_ASBESTOS",
+      "matched_material_ja": "耐水",
+      "matched_material_en": "Waterproof Specification (Non-Architectural Material)",
+      "confidence": 1.0,
+      "regulatory_citation": "GATE_4_ARCHITECTURAL_FILTER: Gate 4 Architectural Entity: Known blueprint non-material specification keyword",
+      "source": "GATE_4_ARCHITECTURAL_FILTER",
+      "learned_at": "2026-11-17T18:33:16.469029+00:00"
+    },
+    {
+      "query_text": "廊下・ホール",
+      "status": "NEGATIVE",
+      "hazard_level": "NON_ASBESTOS",
+      "matched_material_ja": "廊下・ホール",
+      "matched_material_en": "廊下・ホール (Non-Architectural Material)",
+      "confidence": 1.0,
+      "regulatory_citation": "GATE_4_ARCHITECTURAL_FILTER: Gate 4 Architectural Entity: Architectural room / space label pattern",
+      "source": "GATE_4_ARCHITECTURAL_FILTER",
+      "learned_at": "2026-11-17T18:33:16.471322+00:00"
+    },
+    {
+      "query_text": "防音仕様",
+      "status": "NEGATIVE",
+      "hazard_level": "NON_ASBESTOS",
+      "matched_material_ja": "防音仕様",
+      "matched_material_en": "Soundproof Specification (Non-Architectural Material)",
+      "confidence": 1.0,
+      "regulatory_citation": "GATE_4_ARCHITECTURAL_FILTER: Gate 4 Architectural Entity: Known blueprint non-material specification keyword",
+      "source": "GATE_4_ARCHITECTURAL_FILTER",
+      "learned_at": "2026-11-17T18:33:16.473323+00:00"
+    },
+    {
+      "query_text": "特記仕上表 (FINISH SCHEDULE",
+      "status": "NEGATIVE",
+      "hazard_level": "NON_ASBESTOS",
+      "matched_material_ja": "仕上表",
+      "matched_material_en": "Finish Schedule",
+      "confidence": 0.95,
+      "regulatory_citation": "TIER_5_LLM_ARBITRATION: 特記仕上表は標準的な建設材料であり、アスベストを含まない。",
+      "source": "TIER_5_LLM_ARBITRATION",
+      "learned_at": "2026-11-17T18:33:27.452681+00:00"
+    },
+    {
+      "query_text": "タイル巾木",
+      "status": "NEGATIVE",
+      "hazard_level": "NON_ASBESTOS",
+      "matched_material_ja": "タイル巾木",
+      "matched_material_en": "Tile Board",
+      "confidence": 0.95,
+      "regulatory_citation": "TIER_5_LLM_ARBITRATION: タイル巾木は標準的な建設材料であり、アスベストを含まない。",
+      "source": "TIER_5_LLM_ARBITRATION",
+      "learned_at": "2026-11-17T18:33:27.454808+00:00"
+    }
+  ]
+}

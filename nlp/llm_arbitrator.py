@@ -36,9 +36,10 @@ Perform 3-way triage for each item:
 
 2. NEGATIVE (Confirmed Non-Asbestos - Normal Building Elements & Everyday Words):
    - Group 2A: Safe standard construction materials without asbestos (e.g. グラスウール / GW, ロックウール保温材 / RW post-2004, せっこうボード / GB-R, プラスターボード, けい酸カルシウム板第2種, モルタル, 木製巾木, 磁器質タイル, タイル巾木, コンクリート, 合板, 鋼板, アルミ, ガラス, 塗料仕上げ).
-   - Group 2B: Common everyday words, room/space/office names, general specifications, drawing notes, and municipal titles that are completely unrelated to asbestos:
+   - Group 2B: Common everyday words, room/space/office names, dimension heights, general specifications, drawing notes, and municipal titles that are completely unrelated to asbestos:
      * Room / place names: 機械室, 事務室, 倉庫, 給湯室, ボイラー室, 廊下, ホール, 便所, トイレ, 会議室, 更衣室, 階段室, EVホール, 湯沸室, 控室, etc.
-     * Common architectural specifications / notes: 耐水, 耐水仕様, 防音仕様, 保温要, 一般部, なし, 特記, 仕様, 標準, 特記なき限り, etc.
+     * Finish heights / levels / dimensions: 仕上高, 仕上げ高, 躯体高, 躯体高さ, 床高, 床高さ, 天井高, 天井高さ, CH, FL, SL, GL, 勾配, etc.
+     * Common architectural specifications / notes: 打放し, 打放, 素地, 素地仕上げ, とする, とす, 吊りボルト, 耐水, 耐水仕様, 防音仕様, 保温要, 一般部, なし, 特記, 仕様, 標準, 特記なき限り, etc.
      * Municipal titles / drawing headers: 流山市, 工中名称, 仕上表, 仕上リスト, 設計, 施工, etc.
    - For ALL Group 2A and Group 2B items, you MUST output:
      * status: "NEGATIVE"
@@ -46,9 +47,10 @@ Perform 3-way triage for each item:
      * review_required: false
      * confidence: 0.95 to 1.0
 
-3. UNCERTAIN (Unique Brand Names, Ambiguous Trade Products, or Genuine Unknowns):
-   - ONLY for rare proprietary trade names, unknown manufacturer product brands (e.g. obscure 1970s commercial brand names, cryptic product codes like 'ハイベストX', 'ダンパック', custom composite panels), or ambiguous strings where asbestos content cannot be safely ruled out.
-   - Or when you genuinely cannot determine the meaning or safety of the material.
+3. UNCERTAIN (STRICTLY RESERVED FOR UNREADABLE MOJIBAKE NOISE & UNKNOWN ASBESTOS TRADE NAMES):
+   - ONLY for completely unreadable, meaningless noise / OCR mojibake garble (e.g. random corrupted characters like '§$%&', '¢£¤¥', uninterpretable symbol fragments) where the text has NO architectural or linguistic meaning.
+   - Or rare proprietary trade names / unknown manufacturer product brands (e.g. obscure 1970s commercial brand names, cryptic product codes like 'ハイベストX', 'ダンパック', custom composite panels) where asbestos content cannot be safely ruled out.
+   - If the text has ANY understandable meaning as an architectural specification, drawing note, finish height, dimension, room name, action verb, or normal building element, it is NEVER UNCERTAIN — you MUST classify it as NEGATIVE.
    - status: "UNCERTAIN"
    - hazard_level: "UNCERTAIN"
    - review_required: true
@@ -95,8 +97,174 @@ KNOWN_NON_MATERIAL_TERMS = {
     "流山市", "工中名称", "仕上リスト", "特記仕上表", "外部仕上表", "内部仕上表", "図面名称", "縮尺", "設計", "施工",
     "室", "室名", "腰", "腰壁", "壁", "柱", "型", "梁型", "天", "井", "天井", "床", "巾木", "下地", "備考",
     "屋根", "庇", "外壁", "内壁", "パラペット", "基礎", "構造", "凡例", "特記", "一般部", "保温要", "耐水",
-    "防音仕様", "耐震改修", "平面詳細図", "立面図", "断面図", "配置図", "案内図", "特記事項"
+    "防音仕様", "耐震改修", "平面詳細図", "立面図", "断面図", "配置図", "案内図", "特記事項",
+    "仕上高", "仕上げ高", "躯体高", "躯体高さ", "床高", "床高さ", "天井高", "天井高さ", "最高高", "軒高", "階高",
+    "とする", "素地", "打放し", "打放", "吊りボルト", "吊ボルト"
 }
+
+# Architectural glossary mapping Japanese notes and non-material specifications to English meanings
+ARCHITECTURAL_GLOSSARY: Dict[str, str] = {
+    # Heights, levels & dimensions
+    "仕上高": "Finish Height",
+    "仕上げ高": "Finish Height",
+    "躯体高": "Structural Frame Height",
+    "躯体高さ": "Structural Frame Height",
+    "床高": "Floor Height",
+    "床高さ": "Floor Height",
+    "天井高": "Ceiling Height",
+    "天井高さ": "Ceiling Height",
+    "最高高": "Maximum Building Height",
+    "軒高": "Eaves Height",
+    "階高": "Floor-to-Floor Story Height",
+    "CH": "Ceiling Height",
+    "FL": "Floor Level",
+    "SL": "Slab Level",
+    "GL": "Ground Level",
+    "BM": "Bench Mark",
+    "勾配": "Drainage Slope / Pitch",
+    "水勾配": "Drainage Slope / Pitch",
+
+    # Structural & finishing elements / notes
+    "打放し": "Exposed Concrete / As-Cast Finish",
+    "打放": "Exposed Concrete / As-Cast Finish",
+    "素地": "Bare Substrate / Unfinished",
+    "素地仕上げ": "Bare Substrate / Unfinished",
+    "とする": "Shall be / Stipulated as",
+    "とする。": "Shall be / Stipulated as",
+    "とす": "Shall be / Stipulated as",
+    "示す": "Indicates",
+    "に示す": "Indicates As Shown",
+    "床高さ示す": "Indicates Floor Height",
+    "Zからの床高さ示す": "Indicates Floor Height from Z-datum",
+    "吊りボルト": "Hanger Bolt",
+    "吊ボルト": "Hanger Bolt",
+    "吊りボルト9d": "Hanger Bolt 9d",
+    "吊ボルト9d": "Hanger Bolt 9d",
+    "下地": "Substrate / Underlayment",
+    "目地": "Joint / Grout Line",
+    "伸縮目地": "Expansion Joint Line",
+    "水切": "Flashing / Drip Edge",
+    "水切り": "Flashing / Drip Edge",
+    "見切": "Trim / Transition Edge",
+    "見切り": "Trim / Transition Edge",
+    "幅木": "Baseboard / Skirting",
+    "巾木": "Baseboard / Skirting",
+    "腰": "Wainscot / Dado",
+    "腰壁": "Wainscot / Dado Wall",
+    "梁型": "Beam Casing / Formwork",
+    "型": "Formwork / Moulding",
+    "パラペット": "Parapet",
+    "庇": "Eaves / Canopy",
+    "基礎": "Foundation",
+    "構造": "Structure / Framework",
+    "凡例": "Legend / Key",
+    "縮尺": "Scale",
+    "設計": "Design Specification",
+    "施工": "Construction Specification",
+    "仕様": "General Specification",
+    "特記": "Special Specification Note",
+    "特記なき限り": "Unless Otherwise Specified",
+    "標準": "Standard Specification",
+    "なし": "None / Omitted",
+    "一般部": "Standard Area / General Section",
+    "耐水": "Waterproof Specification",
+    "耐水仕様": "Waterproof Specification",
+    "防音": "Soundproof Specification",
+    "防音仕様": "Soundproof Specification",
+    "保温要": "Thermal Insulation Required",
+    "NPは外": "Non-Paint Exterior / Non-Coated",
+    "NP": "Non-Paint Specification",
+    "流山市": "Nagareyama City (Municipal Metadata)",
+    "工中名称": "Project Name / Construction Title",
+}
+
+
+def resolve_non_material_description(text: str) -> str:
+    """
+    Translates or resolves a non-architectural material entity or drawing note into
+    its English meaning with '(Non-Architectural Material)' suffix.
+    Strictly omits '(Non-Asbestos)'.
+    """
+    if not text:
+        return "Drawing Note (Non-Architectural Material)"
+
+    # Clean outer brackets, quotes, punctuation, and leading/trailing whitespace
+    cleaned = re.sub(r"^[\s:;,\-\.\'\"（(【\[\)=~`\*\[\]{}<>]+", "", text)
+    cleaned = re.sub(r"[\s:;,\-\.\'\"）)】\]\)=~`\*\[\]{}<>]+$", "", cleaned).strip()
+
+    # 1. Direct dictionary match
+    if cleaned in ARCHITECTURAL_GLOSSARY:
+        return f"{ARCHITECTURAL_GLOSSARY[cleaned]} (Non-Architectural Material)"
+    if text.strip() in ARCHITECTURAL_GLOSSARY:
+        return f"{ARCHITECTURAL_GLOSSARY[text.strip()]} (Non-Architectural Material)"
+
+    # 2. Substring & semantic rule matches
+    if "床高" in cleaned:
+        if "示す" in cleaned:
+            if "Z" in cleaned.upper():
+                meaning = "Indicates Floor Height from Z-datum"
+            else:
+                meaning = "Indicates Floor Height"
+        else:
+            meaning = "Floor Height Specification"
+        return f"{meaning} (Non-Architectural Material)"
+
+    if "仕上高" in cleaned or "仕上げ高" in cleaned:
+        return "Finish Height (Non-Architectural Material)"
+
+    if "躯体高" in cleaned:
+        return "Structural Frame Height (Non-Architectural Material)"
+
+    if "天井高" in cleaned or "CH" in cleaned.upper():
+        return "Ceiling Height (Non-Architectural Material)"
+
+    if "打放" in cleaned:
+        return "Exposed Concrete / As-Cast Finish (Non-Architectural Material)"
+
+    if "素地" in cleaned:
+        return "Bare Substrate / Unfinished (Non-Architectural Material)"
+
+    if "とする" in cleaned or "とす" in cleaned:
+        return "Shall be / Stipulated as (Non-Architectural Material)"
+
+    if ("ボルト" in cleaned or "市ト" in cleaned or "ホト" in cleaned or "ボト" in cleaned) and ("吊" in cleaned):
+        return "Hanger Bolt (Non-Architectural Material)"
+
+    if "NP" in cleaned.upper() and "外" in cleaned:
+        return "Non-Paint Exterior / Non-Coated (Non-Architectural Material)"
+
+    if "特記" in cleaned:
+        return "Special Specification Note (Non-Architectural Material)"
+
+    if "耐水" in cleaned:
+        return "Waterproof Specification (Non-Architectural Material)"
+
+    if "防音" in cleaned:
+        return "Soundproof Specification (Non-Architectural Material)"
+
+    if "保温" in cleaned:
+        return "Thermal Insulation Specification (Non-Architectural Material)"
+
+    # 3. Offline Jamdict lookup fallback
+    try:
+        from nlp.jamdict_filter import get_jamdict_filter
+        jf = get_jamdict_filter()
+        if jf._ensure_loaded() and jf._jmd:
+            res = jf._jmd.lookup(cleaned)
+            if res and res.entries:
+                glosses = [
+                    g.text for e in res.entries for s in e.senses for g in s.gloss if g.text
+                ]
+                if glosses:
+                    gloss_text = glosses[0].capitalize()
+                    return f"{gloss_text} (Non-Architectural Material)"
+    except Exception:
+        pass
+
+    # 4. Fallback to cleaned text
+    label = cleaned if cleaned else "Architectural Specification / Note"
+    return f"{label} (Non-Architectural Material)"
+
 
 ROOM_SUFFIX_PATTERN = re.compile(
     r"^(.*)(室|所|庫|ホール|廊下|階段|玄関|エントランス|シャフト|ピロティ|屋上|バルコニー|テラス|風除室|トイレ|便所)[\s\(（]?.*[\)）]?$"
@@ -147,7 +315,12 @@ def check_material_candidate(text: str) -> Tuple[bool, str]:
         return False, "Isolated single Japanese character fragment"
 
     # Known drawing title / municipality keywords / non-material terms
-    if cleaned in KNOWN_NON_MATERIAL_TERMS or cleaned_pure in KNOWN_NON_MATERIAL_TERMS:
+    if (
+        cleaned in KNOWN_NON_MATERIAL_TERMS
+        or cleaned_pure in KNOWN_NON_MATERIAL_TERMS
+        or any(k in cleaned_pure for k in ("吊りボルト", "吊ボルト", "仕上高", "仕上げ高", "躯体高", "床高", "床高さ", "天井高", "天井高さ"))
+        or (("吊" in cleaned_pure or "吊り" in cleaned_pure) and any(b in cleaned_pure for b in ("ボルト", "市ト", "ホト", "ボト")))
+    ):
         return False, "Known blueprint non-material specification keyword"
 
     # Check for room label without material indicators
@@ -668,14 +841,35 @@ class LocalLLMArbitrator:
                 valid_candidates.append(d)
             else:
                 # Obvious dimensions, punctuation, rooms, or general specs are auto-resolved as non-asbestos
+                meaning_desc = resolve_non_material_description(d.raw_text)
                 d.status = "NEGATIVE"
                 d.hazard_level = "NON_ASBESTOS"
                 d.matched_material_ja = d.raw_text
-                d.matched_material_en = "Non-Material Architectural Entity (Non-Asbestos)"
+                d.matched_material_en = meaning_desc
                 d.confidence = 1.0
                 d.match_tier = MatchTier.GATE_4.value
                 d.regulatory_citation = f"Gate 4 Auto-Resolved: {reject_reason} (Zero Ollama calls)."
                 d.requires_human_review = False
+
+                # PERSISTENT CACHE: Save non-material entity so future scans avoid re-evaluation
+                if self.learned_cache:
+                    clean_key = UnidentifiedMaterialMap.normalize_key(d.raw_text)
+                    if clean_key:
+                        self.learned_cache.record_decision(
+                            query_text=clean_key,
+                            status="NEGATIVE",
+                            hazard_level="NON_ASBESTOS",
+                            matched_material_ja=d.raw_text,
+                            matched_material_en=meaning_desc,
+                            confidence=1.0,
+                            reasoning=f"Gate 4 Architectural Entity: {reject_reason}",
+                            persist=True,
+                            source="GATE_4_ARCHITECTURAL_FILTER"
+                        )
+                        if self.db and hasattr(self.db, "add_learned_entry"):
+                            rec = self.learned_cache.lookup(clean_key)
+                            if rec:
+                                self.db.add_learned_entry(rec)
 
         if not valid_candidates:
             if progress_callback:

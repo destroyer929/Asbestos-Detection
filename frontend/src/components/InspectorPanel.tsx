@@ -134,7 +134,12 @@ export const InspectorPanel: React.FC<InspectorPanelProps> = ({
 
   // Status visual attributes
   const isPositive = selectedItem.status === "POSITIVE";
-  const isNegative = selectedItem.status === "NEGATIVE";
+  const isNonArch =
+    selectedItem.matched_material_en?.includes("(Non-Architectural Material)") ||
+    selectedItem.matched_material_en?.includes("Non-Architectural") ||
+    selectedItem.matched_material_en?.includes("Non-Material") ||
+    selectedItem.match_tier === "GATE_4";
+  const isNegative = selectedItem.status === "NEGATIVE" && !isNonArch;
   const isUncertain = selectedItem.status === "UNCERTAIN";
 
   return (
@@ -179,6 +184,8 @@ export const InspectorPanel: React.FC<InspectorPanelProps> = ({
           className={`p-3.5 rounded-2xl border ${
             isPositive
               ? "bg-rose-50 border-2 border-rose-300 text-rose-800 shadow-2xs"
+              : isNonArch
+              ? "bg-blue-50 border-2 border-blue-400 text-blue-900 shadow-2xs"
               : isNegative
               ? "bg-emerald-50 border-2 border-emerald-400 text-emerald-800 shadow-2xs"
               : "bg-amber-50 border-2 border-amber-300 text-amber-800 shadow-2xs"
@@ -187,10 +194,11 @@ export const InspectorPanel: React.FC<InspectorPanelProps> = ({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               {isPositive && <ShieldAlert className="w-5 h-5 text-rose-600 flex-shrink-0" />}
-              {isNegative && <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />}
+              {isNonArch && <CheckCircle2 className="w-5 h-5 text-blue-600 flex-shrink-0" />}
+              {!isNonArch && isNegative && <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />}
               {isUncertain && <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0" />}
               <span className="font-extrabold text-sm tracking-tight">
-                {selectedItem.status} [{selectedItem.hazard_level}]
+                {isNonArch ? "NEGATIVE [NON_MATERIAL]" : `${selectedItem.status} [${selectedItem.hazard_level}]`}
               </span>
             </div>
             <span className="text-xs font-lab-mono px-2.5 py-0.5 rounded-full bg-white font-bold border border-slate-200 shadow-2xs">

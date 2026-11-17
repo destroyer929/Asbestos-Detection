@@ -359,6 +359,16 @@ export const DatabaseModal: React.FC<DatabaseModalProps> = ({
                       <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200 font-lab-mono font-medium">
                         {reportDetail.document_type || "DRAWING"}
                       </span>
+                      {reportDetail.processing_time_seconds !== undefined && reportDetail.processing_time_seconds !== null && (
+                        <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-300 font-lab-mono font-bold flex items-center gap-1" title="Diagnosis Time">
+                          <span>⏱️</span>
+                          <span>
+                            {reportDetail.processing_time_seconds < 60
+                              ? `${reportDetail.processing_time_seconds.toFixed(1)}s`
+                              : `${Math.floor(reportDetail.processing_time_seconds / 60)}m ${(reportDetail.processing_time_seconds % 60).toFixed(1)}s`}
+                          </span>
+                        </span>
+                      )}
                     </div>
                     <h2 className="text-xl font-extrabold text-slate-900 mt-2 flex items-center gap-2">
                       {reportDetail.filename}
@@ -573,9 +583,18 @@ export const DatabaseModal: React.FC<DatabaseModalProps> = ({
                                 </span>
                               )}
                               {item.status === "NEGATIVE" && (
-                                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
-                                  SAFE
-                                </span>
+                                item.matched_material_en?.includes("(Non-Architectural Material)") ||
+                                item.matched_material_en?.includes("Non-Architectural") ||
+                                item.matched_material_en?.includes("Non-Material") ||
+                                item.match_tier === "GATE_4" ? (
+                                  <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 border border-blue-300">
+                                    NON-MATERIAL
+                                  </span>
+                                ) : (
+                                  <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
+                                    SAFE
+                                  </span>
+                                )
                               )}
                               {item.status === "UNCERTAIN" && (
                                 <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-300">
@@ -748,6 +767,16 @@ export const DatabaseModal: React.FC<DatabaseModalProps> = ({
                               <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200 font-lab-mono">
                                 {item.page_count || 1} page{(item.page_count || 1) > 1 ? "s" : ""}
                               </span>
+                              {item.processing_time_seconds !== undefined && item.processing_time_seconds !== null && (
+                                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-300 font-lab-mono font-bold flex items-center gap-1" title="Diagnosis Elapsed Time">
+                                  <span>⏱️</span>
+                                  <span>
+                                    {item.processing_time_seconds < 60
+                                      ? `${item.processing_time_seconds.toFixed(1)}s`
+                                      : `${Math.floor(item.processing_time_seconds / 60)}m ${(item.processing_time_seconds % 60).toFixed(1)}s`}
+                                  </span>
+                                </span>
+                              )}
                               {item.quality_assessment && (
                                 <span
                                   className={`text-[10px] px-2.5 py-0.5 rounded-full border font-lab-mono font-bold ${

@@ -87,6 +87,7 @@ class BlueprintHistoryManager:
                 "overall_verdict": r.get("overall_verdict"),
                 "verdict_label": r.get("verdict_label"),
                 "total_material_annotations": r.get("total_material_annotations", 0),
+                "processing_time_seconds": r.get("processing_time_seconds"),
                 "summary": r.get("summary", {}),
                 "positive_materials": r.get("positive_materials", []),
                 "quality_assessment": r.get("quality_assessment"),
@@ -117,7 +118,8 @@ class BlueprintHistoryManager:
         image_width: int = 2400,
         image_height: int = 1600,
         table_bbox: Optional[List[float]] = None,
-        quality_assessment: Optional[Dict[str, Any]] = None
+        quality_assessment: Optional[Dict[str, Any]] = None,
+        processing_time_seconds: Optional[float] = None
     ) -> Dict[str, Any]:
         """Saves or updates an analyzed blueprint into the persistent database."""
         records = self._load_records()
@@ -155,6 +157,7 @@ class BlueprintHistoryManager:
             "image_height": image_height,
             "table_bbox": table_bbox,
             "quality_assessment": quality_assessment,
+            "processing_time_seconds": processing_time_seconds,
             "overall_verdict": overall_verdict,
             "verdict_label": verdict_label,
             "total_material_annotations": len(diagnoses),

@@ -100,6 +100,7 @@ export interface DrawingAnalysisResponse {
   filename: string;
   document_type: string;
   is_vector_pdf: boolean;
+  processing_time_seconds?: number;
   page_count?: number;
   current_page?: number;
   pages?: PageInfo[];
@@ -151,6 +152,7 @@ export interface DrawingHistorySummary {
   timestamp: string;
   document_type: string;
   is_vector_pdf: boolean;
+  processing_time_seconds?: number;
   page_count: number;
   overall_verdict: string;
   verdict_label: string;

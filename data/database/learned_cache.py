@@ -94,10 +94,7 @@ class LearnedMaterialCache:
                     json.dump(payload, f, ensure_ascii=False, indent=2)
 
                 # Atomic replacement
-                if os.name == "nt" and self.cache_file.exists():
-                    os.replace(temp_file, self.cache_file)
-                else:
-                    temp_file.replace(self.cache_file)
+                os.replace(temp_file, self.cache_file)
 
             except Exception as e:
                 logger.error(f"Failed to save learned material cache to {self.cache_file}: {e}")
@@ -119,7 +116,8 @@ class LearnedMaterialCache:
         matched_material_en: str,
         confidence: float,
         reasoning: str,
-        persist: bool = True
+        persist: bool = True,
+        source: str = "TIER_5_LLM_ARBITRATION"
     ) -> bool:
         """
         Records a newly arbitrated classification.
@@ -146,8 +144,8 @@ class LearnedMaterialCache:
             matched_material_ja=matched_material_ja.strip(),
             matched_material_en=matched_material_en.strip(),
             confidence=float(confidence),
-            regulatory_citation=f"Learned LLM Arbitration: {reasoning.strip()}",
-            source="TIER_5_LLM_ARBITRATION"
+            regulatory_citation=f"{source}: {reasoning.strip()}",
+            source=source
         )
 
         with self._lock:

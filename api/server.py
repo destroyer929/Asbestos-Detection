@@ -482,6 +482,7 @@ def analyze_sample(sample_id: str):
     sample_meta = BENCHMARK_SAMPLES[sample_id]
     img_path = Path(sample_meta["image_path"])
     gt_path = Path(sample_meta["gt_path"])
+    t_start = time.time()
 
     if not img_path.exists():
         raise HTTPException(status_code=404, detail=f"Image file missing: {img_path}")
@@ -571,12 +572,14 @@ def analyze_sample(sample_id: str):
     # Pre-Flight Adaptive Quality Assessment (Adaptive Preprocessing Brain)
     quality_assessment = pipeline.quality_assessor.assess(img_cv)
     quality_dict = quality_assessment.to_dict()
+    elapsed_seconds = round(time.time() - t_start, 2)
 
     result_payload = {
         "drawing_id": sample_id,
         "filename": img_path.name,
         "document_type": sample_meta["doc_type"],
         "is_vector_pdf": False,
+        "processing_time_seconds": elapsed_seconds,
         "page_count": 1,
         "current_page": 1,
         "pages": [
@@ -624,7 +627,8 @@ def analyze_sample(sample_id: str):
             image_width=w,
             image_height=h,
             table_bbox=table_box,
-            quality_assessment=quality_dict
+            quality_assessment=quality_dict,
+            processing_time_seconds=elapsed_seconds
         )
     except Exception as e:
         print(f"Warning: Failed to record sample to history: {e}")
@@ -645,6 +649,7 @@ async def analyze_drawing(
     file_id = f"UPLOAD-{uuid.uuid4().hex[:8]}"
     ext = Path(file.filename).suffix.lower()
     temp_path = UPLOAD_DIR / f"{file_id}{ext}"
+    t_start = time.time()
     update_session_progress(session_id, "ingest", 8.0, "Ingesting blueprint file and validating format...")
     await asyncio.sleep(0.01)
 
@@ -859,12 +864,14 @@ async def analyze_drawing(
         )
 
         img_b64 = encode_image_to_base64(preview_img) if preview_img is not None else ""
+        elapsed_seconds = round(time.time() - t_start, 2)
 
         result_payload = {
             "drawing_id": file_id,
             "filename": file.filename,
             "document_type": prep_res["doc_type"],
             "is_vector_pdf": is_vector,
+            "processing_time_seconds": elapsed_seconds,
             "page_count": total_pages,
             "current_page": 1,
             "pages": pages_meta,
@@ -905,7 +912,8 @@ async def analyze_drawing(
                 image_width=img_w,
                 image_height=img_h,
                 table_bbox=table_box,
-                quality_assessment=result_payload.get("quality_assessment")
+                quality_assessment=result_payload.get("quality_assessment"),
+                processing_time_seconds=elapsed_seconds
             )
         except Exception as e:
             print(f"Warning: Failed to record drawing to history: {e}")
