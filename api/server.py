@@ -28,7 +28,7 @@ from pathlib import Path
 from typing import List, Dict, Any, Optional
 import numpy as np
 import cv2
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
 from pydantic import BaseModel
@@ -309,6 +309,36 @@ def health_check():
 def get_database_summary():
     """Returns official Japanese MLIT database statistics."""
     return db.summary()
+
+
+@app.get("/api/v1/database/search")
+def search_database(
+    q: Optional[str] = Query(None, description="Search keyword for material name, manufacturer, or synonym"),
+    hazard_level: Optional[str] = Query(None, description="Filter by hazard level: LEVEL_1, LEVEL_2, LEVEL_3, NON_ASBESTOS"),
+    manufacturer: Optional[str] = Query(None, description="Filter by manufacturer name"),
+    limit: int = Query(25, ge=1, le=100)
+):
+    """
+    High-performance full-text search and structured filter over 3,400+ MLIT/JATI commercial materials.
+    Powered by SQLite WAL mode and FTS5 trigram indexing.
+    """
+    if q and q.strip():
+        results = db.search_fts(q.strip(), limit=limit)
+        if hazard_level:
+            results = [r for r in results if r.hazard_level == hazard_level.upper()]
+        if manufacturer:
+            results = [r for r in results if r.manufacturer and manufacturer.lower() in r.manufacturer.lower()]
+    else:
+        results = db.filter_materials(
+            hazard_level=hazard_level,
+            manufacturer=manufacturer,
+            limit=limit
+        )
+
+    return {
+        "total": len(results),
+        "results": [r.model_dump() for r in results]
+    }
 
 
 @app.get("/api/v1/download/sample/{filename}")

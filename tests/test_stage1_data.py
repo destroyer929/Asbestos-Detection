@@ -30,6 +30,26 @@ def test_database_loads_and_indexes():
     assert entry_safe is not None
     assert entry_safe.hazard_level == "NON_ASBESTOS"
     assert entry_safe.status == "NEGATIVE"
+    db.close()
+
+
+def test_sqlite_fts5_and_filter():
+    """Verifies that SQLite WAL mode, FTS5 trigram full-text search, and SQL filters work properly."""
+    db = MaterialsDatabase()
+    try:
+        # 1. FTS5 Trigram Substring Search
+        results = db.search_fts("トムレックス", limit=5)
+        assert len(results) > 0
+        assert any("トムレックス" in r.canonical_name_ja for r in results)
+        assert results[0].hazard_level == "LEVEL_1"
+
+        # 2. Structured SQL Filtering
+        filtered = db.filter_materials(hazard_level="LEVEL_1", manufacturer="ニチアス", limit=10)
+        assert len(filtered) > 0
+        assert all(f.hazard_level == "LEVEL_1" for f in filtered)
+        assert all("ニチアス" in f.manufacturer for f in filtered)
+    finally:
+        db.close()
 
 
 def test_cad_generation_bounding_boxes(tmp_path):
