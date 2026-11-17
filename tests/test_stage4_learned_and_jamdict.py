@@ -198,3 +198,54 @@ def test_learned_cache_tier1_fast_match():
         assert result.hazard_level == "LEVEL_2"
         assert result.similarity_score == 1.0
         assert "Tier 1 Learned Cache" in result.explanation
+
+
+def test_sqlite_wal_mode_and_l1_cache():
+    """Verifies that SQLite WAL mode, PRAGMA synchronous=NORMAL, and L1 cache operate properly."""
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        db_path = Path(tmp_dir) / "test_learned_wal.db"
+        cache = LearnedMaterialCache(db_path=db_path)
+        reloaded = None
+        try:
+            # 1. Verify PRAGMAs
+            assert cache._conn is not None
+            journal = cache._conn.execute("PRAGMA journal_mode;").fetchone()[0]
+            sync = cache._conn.execute("PRAGMA synchronous;").fetchone()[0]
+            assert journal.lower() == "wal"
+            assert sync == 1  # 1 = NORMAL
+
+            # 2. Verify Table & Indices
+            indices = [row[1] for row in cache._conn.execute("PRAGMA index_list('learned_materials');").fetchall()]
+            assert "idx_learned_query_key" in indices
+
+            # 3. Record decision
+            ok = cache.record_decision(
+                query_text="仕上高",
+                status="NEGATIVE",
+                hazard_level="NON_ASBESTOS",
+                matched_material_ja="仕上高",
+                matched_material_en="Finish Height (Non-Architectural Material)",
+                confidence=1.0,
+                reasoning="Gate 4 Spec",
+                persist=True
+            )
+            assert ok is True
+            assert len(cache) == 1
+
+            # 4. L1 Sub-Microsecond Lookup
+            rec = cache.lookup("仕上高")
+            assert rec is not None
+            assert rec.status == "NEGATIVE"
+            assert rec.matched_material_en == "Finish Height (Non-Architectural Material)"
+
+            # 5. Reload from SQLite into new L1 cache
+            cache.close()
+            reloaded = LearnedMaterialCache(db_path=db_path)
+            assert len(reloaded) == 1
+            rec2 = reloaded.lookup("仕上高")
+            assert rec2 is not None
+            assert rec2.status == "NEGATIVE"
+        finally:
+            cache.close()
+            if reloaded:
+                reloaded.close()

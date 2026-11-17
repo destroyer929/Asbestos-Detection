@@ -1,5 +1,1901 @@
 [
   {
+    "drawing_id": "UPLOAD-1d43a863",
+    "filename": "drawing.pdf",
+    "timestamp": "2026-11-18 00:50:31",
+    "document_type": "VECTOR_PDF",
+    "is_vector_pdf": true,
+    "page_count": 1,
+    "image_width": 4800,
+    "image_height": 3200,
+    "table_bbox": [
+      3020,
+      200,
+      4684,
+      792
+    ],
+    "quality_assessment": {
+      "intensity": "CLEAN_PASSTHROUGH",
+      "intensity_level": 0,
+      "sharpness": 2737.4,
+      "noise_sigma": 0.6,
+      "contrast_range": 0.173,
+      "skew_angle": 0.0,
+      "bimodal_clarity": 0.873,
+      "background_brightness": 255.0,
+      "recommendation_reason": "Pristine document detected (Noise=0.60, BG Brightness=255.0, Skew=0.00°). Destructive filters bypassed to preserve 100% fine CJK stroke fidelity.",
+      "applied_actions": [
+        "RAW_IMAGE_PASSTHROUGH",
+        "PRESERVE_FINE_STROKES"
+      ],
+      "metrics_summary": {
+        "noise_sigma": 0.6,
+        "sharpness": 2737.4,
+        "contrast_range": 0.173,
+        "skew_angle": 0.0,
+        "bimodal_clarity": 0.873,
+        "background_brightness": 255.0
+      }
+    },
+    "processing_time_seconds": 1.36,
+    "overall_verdict": "HAZARDOUS_ASBESTOS_DETECTED",
+    "verdict_label": "POSITIVE (12 hazardous materials)",
+    "total_material_annotations": 38,
+    "summary": {
+      "asbestos_positive": 12,
+      "non_asbestos": 26,
+      "uncertain": 0,
+      "review_required": 0,
+      "hazard_levels": {
+        "level_1_sprays": 2,
+        "level_2_insulation": 3,
+        "level_3_molded": 7
+      }
+    },
+    "positive_materials": [
+      "けい酸カルシウム板第1種",
+      "吹付けロックウール",
+      "耐火被覆板",
+      "石綿保温材",
+      "スレート波板",
+      "ビニル床タイル",
+      "岩綿吸音板"
+    ],
+    "diagnoses": [
+      {
+        "item_id": "ITEM-731DF599",
+        "raw_text": "特記仕上表 (FINISH SCHEDULE)",
+        "normalized_text": "特記仕上表 (FINISH SCHEDULE",
+        "bbox": [
+          3040.0,
+          150.0,
+          3546.0,
+          176.39999389648438
+        ],
+        "region_type": "MATERIAL_CALLOUT",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "仕上表",
+        "matched_material_en": "Finish Schedule",
+        "confidence": 1.0,
+        "match_tier": "TIER_1_EXACT",
+        "requires_human_review": false,
+        "regulatory_citation": "TIER_5_LLM_ARBITRATION: 特記仕上表は標準的な建設材料であり、アスベストを含まない。",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-9F894C06",
+        "raw_text": "機械室",
+        "normalized_text": "機械室",
+        "bbox": [
+          3032.0,
+          308.0,
+          3098.0,
+          334.3999938964844
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "機械室",
+        "matched_material_en": "Machine room (Non-Architectural Material)",
+        "confidence": 1.0,
+        "match_tier": "TIER_1_EXACT",
+        "requires_human_review": false,
+        "regulatory_citation": "GATE_4_ARCHITECTURAL_FILTER: Gate 4 Architectural Entity: Architectural room / space label pattern",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-9C2E11E7",
+        "raw_text": "モルタル金ゴテ",
+        "normalized_text": "モルタル金ゴテ",
+        "bbox": [
+          3312.0,
+          308.0,
+          3466.0,
+          334.3999938964844
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "モルタル金ゴテ仕上げ",
+        "matched_material_en": "Troweled Mortar Finish",
+        "confidence": 1.0,
+        "match_tier": "TIER_1_EXACT",
+        "requires_human_review": false,
+        "regulatory_citation": "Certified Non-Asbestos mineral floor finish.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-26A9F2DC",
+        "raw_text": "モルタル H=100",
+        "normalized_text": "モルタル H=100",
+        "bbox": [
+          3612.0,
+          308.0,
+          3832.0,
+          334.3999938964844
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "モルタル金ゴテ仕上げ",
+        "matched_material_en": "Troweled Mortar Finish",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "Certified Non-Asbestos mineral floor finish.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-95FA30C1",
+        "raw_text": "けい酸カルシウム板第1種 t=8",
+        "normalized_text": "けい酸カルシウム板第1種 t=8",
+        "bbox": [
+          3852.0,
+          308.0,
+          4204.0,
+          334.3999938964844
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "POSITIVE",
+        "hazard_level": "LEVEL_3",
+        "matched_material_ja": "けい酸カルシウム板第1種",
+        "matched_material_en": "Calcium Silicate Board Type 1",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "MLIT Level 3. Very common in commercial buildings. Phased out 2004.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-6AD4E29B",
+        "raw_text": "吹付けロックウール t=25",
+        "normalized_text": "吹付けロックウール t=25",
+        "bbox": [
+          4172.0,
+          308.0,
+          4480.0,
+          334.3999938964844
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "POSITIVE",
+        "hazard_level": "LEVEL_1",
+        "matched_material_ja": "吹付けロックウール",
+        "matched_material_en": "Sprayed Rock Wool (Asbestos-Containing)",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "MLIT Level 1. Used heavily until 1980 (semi-dry) and phased out in 1989.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-9472D7D6",
+        "raw_text": "耐火被覆",
+        "normalized_text": "耐火被覆",
+        "bbox": [
+          4532.0,
+          308.0,
+          4620.0,
+          334.3999938964844
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "POSITIVE",
+        "hazard_level": "LEVEL_2",
+        "matched_material_ja": "耐火被覆板",
+        "matched_material_en": "Fireproof Covering Board (Asbestos-Containing)",
+        "confidence": 0.8888888888888888,
+        "match_tier": "TIER_3_FUZZY",
+        "requires_human_review": false,
+        "regulatory_citation": "MLIT Level 2. Board form fireproofing with significant asbestos content.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-1A4AABE8",
+        "raw_text": "ボイラー室",
+        "normalized_text": "ボイラー室",
+        "bbox": [
+          3032.0,
+          392.0,
+          3142.0,
+          418.3999938964844
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "ボイラー室",
+        "matched_material_en": "ボイラー室 (Non-Architectural Material)",
+        "confidence": 1.0,
+        "match_tier": "TIER_1_EXACT",
+        "requires_human_review": false,
+        "regulatory_citation": "GATE_4_ARCHITECTURAL_FILTER: Gate 4 Architectural Entity: Architectural room / space label pattern",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-BE6EEB21",
+        "raw_text": "コンクリート直押え",
+        "normalized_text": "コンクリート直押え",
+        "bbox": [
+          3312.0,
+          392.0,
+          3510.0,
+          418.3999938964844
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "コンクリート直押え",
+        "matched_material_en": "Concrete Trowel Finish",
+        "confidence": 1.0,
+        "match_tier": "TIER_1_EXACT",
+        "requires_human_review": false,
+        "regulatory_citation": "MLIT Non-Asbestos Control. 検証済み石綿非含有材料（現場施工 / All Periods）。事前調査における除外確認対象。",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-ABE6B16D",
+        "raw_text": "石膏ボード t=12.5",
+        "normalized_text": "石膏ボード t=12.5",
+        "bbox": [
+          3852.0,
+          392.0,
+          4116.0,
+          418.3999938964844
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "石膏ボード",
+        "matched_material_en": "Gypsum Plaster Board",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "Safe standard Japanese drywall material (JIS A 6901).",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-D4E2B07D",
+        "raw_text": "石綿保温材 (配管部)",
+        "normalized_text": "石綿保温材 (配管部",
+        "bbox": [
+          4172.0,
+          392.0,
+          4414.0,
+          418.3999938964844
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "POSITIVE",
+        "hazard_level": "LEVEL_2",
+        "matched_material_ja": "石綿保温材",
+        "matched_material_en": "Asbestos Thermal Insulation",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "MLIT Level 2. Pipe covers and boiler jackets. Manufactured until ~1990.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-28975C66",
+        "raw_text": "保温要",
+        "normalized_text": "保温要",
+        "bbox": [
+          4532.0,
+          392.0,
+          4598.0,
+          418.3999938964844
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "保温要",
+        "matched_material_en": "Thermal Insulation Required (Non-Architectural Material)",
+        "confidence": 1.0,
+        "match_tier": "TIER_1_EXACT",
+        "requires_human_review": false,
+        "regulatory_citation": "GATE_4_ARCHITECTURAL_FILTER: Gate 4 Architectural Entity: Known blueprint non-material specification keyword",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-4C9E6FF0",
+        "raw_text": "倉庫 (1)",
+        "normalized_text": "倉庫 (1",
+        "bbox": [
+          3032.0,
+          476.0,
+          3164.0,
+          502.3999938964844
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "倉庫 (1)",
+        "matched_material_en": "倉庫 (1 (Non-Architectural Material)",
+        "confidence": 1.0,
+        "match_tier": "GATE_4",
+        "requires_human_review": false,
+        "regulatory_citation": "Gate 4 Auto-Resolved: Architectural room / space label pattern (Zero Ollama calls).",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-8A5388CB",
+        "raw_text": "防塵塗料仕上げ",
+        "normalized_text": "防塵塗料仕上げ",
+        "bbox": [
+          3312.0,
+          476.0,
+          3466.0,
+          502.3999938964844
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "防塵塗料仕上げ",
+        "matched_material_en": "Dust-Proof Epoxy/Polyurethane Floor Coating",
+        "confidence": 1.0,
+        "match_tier": "TIER_1_EXACT",
+        "requires_human_review": false,
+        "regulatory_citation": "Certified Non-Asbestos floor coating.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-DDE4E042",
+        "raw_text": "なし",
+        "normalized_text": "なし",
+        "bbox": [
+          3612.0,
+          476.0,
+          3656.0,
+          502.3999938964844
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "モルタル金ゴテ仕上げ",
+        "matched_material_en": "Troweled Mortar Finish",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "Certified Non-Asbestos mineral floor finish.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-DF1F9495",
+        "raw_text": "スレート波板 t=6.3",
+        "normalized_text": "スレート波板 t=6.3",
+        "bbox": [
+          3852.0,
+          476.0,
+          4116.0,
+          502.3999938964844
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "POSITIVE",
+        "hazard_level": "LEVEL_3",
+        "matched_material_ja": "スレート波板",
+        "matched_material_en": "Corrugated Asbestos Slate Sheet",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "MLIT Level 3. Molded product widely used for industrial roofs until 2004.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-413DC717",
+        "raw_text": "グラスウール保温材 t=50",
+        "normalized_text": "グラスウール保温材 t=50",
+        "bbox": [
+          4172.0,
+          476.0,
+          4480.0,
+          502.3999938964844
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "グラスウール保温材",
+        "matched_material_en": "Glass Wool Thermal Insulation",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "Safe. Made of spun glass filaments; zero asbestos content.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-08C4F984",
+        "raw_text": "事務室 (A)",
+        "normalized_text": "事務室 (A",
+        "bbox": [
+          3032.0,
+          560.0,
+          3186.0,
+          586.4000244140625
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "事務室 (A)",
+        "matched_material_en": "事務室 (A (Non-Architectural Material)",
+        "confidence": 1.0,
+        "match_tier": "GATE_4",
+        "requires_human_review": false,
+        "regulatory_citation": "Gate 4 Auto-Resolved: Architectural room / space label pattern (Zero Ollama calls).",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-7AF0B13B",
+        "raw_text": "ビニル床タイル 300x300",
+        "normalized_text": "ビニル床タイル 300x300",
+        "bbox": [
+          3312.0,
+          560.0,
+          3642.0,
+          586.4000244140625
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "POSITIVE",
+        "hazard_level": "LEVEL_3",
+        "matched_material_ja": "ビニル床タイル",
+        "matched_material_en": "Vinyl Floor Tile (Asbestos-Containing)",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "MLIT Level 3. Bound in resin matrix, phased out in 1987-1990 in Japan.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-8D8AA2EB",
+        "raw_text": "プラスターボード t=9.5",
+        "normalized_text": "プラスターボード t=9.5",
+        "bbox": [
+          3852.0,
+          560.0,
+          4160.0,
+          586.4000244140625
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "石膏ボード",
+        "matched_material_en": "Gypsum Plaster Board",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "Safe standard Japanese drywall material (JIS A 6901).",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-5F54CA0B",
+        "raw_text": "岩綿吸音板 t=12",
+        "normalized_text": "岩綿吸音板 t=12",
+        "bbox": [
+          4172.0,
+          560.0,
+          4392.0,
+          586.4000244140625
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "POSITIVE",
+        "hazard_level": "LEVEL_3",
+        "matched_material_ja": "岩綿吸音板",
+        "matched_material_en": "Mineral Wool Acoustic Ceiling Board (Asbestos-Containing)",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "MLIT Level 3. Pre-1988 products frequently contained chrysotile.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-27DFE616",
+        "raw_text": "一般部",
+        "normalized_text": "一般部",
+        "bbox": [
+          4532.0,
+          560.0,
+          4598.0,
+          586.4000244140625
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "一般部",
+        "matched_material_en": "Standard Area / General Section (Non-Architectural Material)",
+        "confidence": 1.0,
+        "match_tier": "TIER_1_EXACT",
+        "requires_human_review": false,
+        "regulatory_citation": "GATE_4_ARCHITECTURAL_FILTER: Gate 4 Architectural Entity: Known blueprint non-material specification keyword",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-D733F00F",
+        "raw_text": "給湯室",
+        "normalized_text": "給湯室",
+        "bbox": [
+          3032.0,
+          644.0,
+          3098.0,
+          670.4000244140625
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "給湯室",
+        "matched_material_en": "給湯室 (Non-Architectural Material)",
+        "confidence": 1.0,
+        "match_tier": "TIER_1_EXACT",
+        "requires_human_review": false,
+        "regulatory_citation": "GATE_4_ARCHITECTURAL_FILTER: Gate 4 Architectural Entity: Architectural room / space label pattern",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-CE4E641B",
+        "raw_text": "磁器質タイル 150角",
+        "normalized_text": "磁器質タイル 150角",
+        "bbox": [
+          3312.0,
+          644.0,
+          3554.0,
+          670.4000244140625
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "磁器質タイル",
+        "matched_material_en": "Porcelain Ceramic Tile",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "Safe fired clay/ceramic mineral product.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-F980D770",
+        "raw_text": "タイル巾木",
+        "normalized_text": "タイル巾木",
+        "bbox": [
+          3612.0,
+          644.0,
+          3722.0,
+          670.4000244140625
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "タイル巾木",
+        "matched_material_en": "Tile Board",
+        "confidence": 1.0,
+        "match_tier": "TIER_1_EXACT",
+        "requires_human_review": false,
+        "regulatory_citation": "TIER_5_LLM_ARBITRATION: タイル巾木は標準的な建設材料であり、アスベストを含まない。",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-A9277AF6",
+        "raw_text": "けい酸カルシウム板第2種 t=6",
+        "normalized_text": "けい酸カルシウム板第2種 t=6",
+        "bbox": [
+          3852.0,
+          644.0,
+          4204.0,
+          670.4000244140625
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "けい酸カルシウム板第2種",
+        "matched_material_en": "Calcium Silicate Board Type 2",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "Safe. Formulated without asbestos fibers; reinforced with cellulose pulp.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-27D93F4B",
+        "raw_text": "石膏ボード t=9.5 VP",
+        "normalized_text": "石膏ボード t=9.5 VP",
+        "bbox": [
+          4172.0,
+          644.0,
+          4480.0,
+          670.4000244140625
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "石膏ボード",
+        "matched_material_en": "Gypsum Plaster Board",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "Safe standard Japanese drywall material (JIS A 6901).",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-92E9CFCF",
+        "raw_text": "耐水",
+        "normalized_text": "耐水",
+        "bbox": [
+          4532.0,
+          644.0,
+          4576.0,
+          670.4000244140625
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "耐水",
+        "matched_material_en": "Waterproof Specification (Non-Architectural Material)",
+        "confidence": 1.0,
+        "match_tier": "TIER_1_EXACT",
+        "requires_human_review": false,
+        "regulatory_citation": "GATE_4_ARCHITECTURAL_FILTER: Gate 4 Architectural Entity: Known blueprint non-material specification keyword",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-F544FBCF",
+        "raw_text": "廊下・ホール",
+        "normalized_text": "廊下・ホール",
+        "bbox": [
+          3032.0,
+          728.0,
+          3164.0,
+          754.4000244140625
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "廊下・ホール",
+        "matched_material_en": "廊下・ホール (Non-Architectural Material)",
+        "confidence": 1.0,
+        "match_tier": "TIER_1_EXACT",
+        "requires_human_review": false,
+        "regulatory_citation": "GATE_4_ARCHITECTURAL_FILTER: Gate 4 Architectural Entity: Architectural room / space label pattern",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-D9764513",
+        "raw_text": "Pタイル t=2.0",
+        "normalized_text": "Pタイル t=2.0",
+        "bbox": [
+          3312.0,
+          728.0,
+          3532.0,
+          754.4000244140625
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "POSITIVE",
+        "hazard_level": "LEVEL_3",
+        "matched_material_ja": "ビニル床タイル",
+        "matched_material_en": "Vinyl Floor Tile (Asbestos-Containing)",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "MLIT Level 3. Bound in resin matrix, phased out in 1987-1990 in Japan.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-3628CCDC",
+        "raw_text": "せっこうボード t=12.5",
+        "normalized_text": "せっこうボード t=12.5",
+        "bbox": [
+          3852.0,
+          728.0,
+          4160.0,
+          754.4000244140625
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "石膏ボード",
+        "matched_material_en": "Gypsum Plaster Board",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "Safe standard Japanese drywall material (JIS A 6901).",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-022F2237",
+        "raw_text": "ロックウール吸音板 t=15",
+        "normalized_text": "ロックウール吸音板 t=15",
+        "bbox": [
+          4172.0,
+          728.0,
+          4480.0,
+          754.4000244140625
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "POSITIVE",
+        "hazard_level": "LEVEL_3",
+        "matched_material_ja": "岩綿吸音板",
+        "matched_material_en": "Mineral Wool Acoustic Ceiling Board (Asbestos-Containing)",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "MLIT Level 3. Pre-1988 products frequently contained chrysotile.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-EFCA3618",
+        "raw_text": "防音仕様",
+        "normalized_text": "防音仕様",
+        "bbox": [
+          4532.0,
+          728.0,
+          4620.0,
+          754.4000244140625
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "防音仕様",
+        "matched_material_en": "Soundproof Specification (Non-Architectural Material)",
+        "confidence": 1.0,
+        "match_tier": "TIER_1_EXACT",
+        "requires_human_review": false,
+        "regulatory_citation": "GATE_4_ARCHITECTURAL_FILTER: Gate 4 Architectural Entity: Known blueprint non-material specification keyword",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-57BE0878",
+        "raw_text": "鉄骨梁: 吹付けロックウール t=25 (耐火被覆)",
+        "normalized_text": "鉄骨梁: 吹付けロックウール t=25 (耐火被覆",
+        "bbox": [
+          180.0,
+          470.0,
+          752.0,
+          496.3999938964844
+        ],
+        "region_type": "MATERIAL_CALLOUT",
+        "room_context": "",
+        "status": "POSITIVE",
+        "hazard_level": "LEVEL_1",
+        "matched_material_ja": "吹付けロックウール",
+        "matched_material_en": "Sprayed Rock Wool (Asbestos-Containing)",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "MLIT Level 1. Used heavily until 1980 (semi-dry) and phased out in 1989.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-9179F73B",
+        "raw_text": "蒸気配管: 石綿保温材 100A",
+        "normalized_text": "蒸気配管: 石綿保温材 100A",
+        "bbox": [
+          1110.0,
+          490.0,
+          1462.0,
+          516.4000244140625
+        ],
+        "region_type": "MATERIAL_CALLOUT",
+        "room_context": "",
+        "status": "POSITIVE",
+        "hazard_level": "LEVEL_2",
+        "matched_material_ja": "石綿保温材",
+        "matched_material_en": "Asbestos Thermal Insulation",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "MLIT Level 2. Pipe covers and boiler jackets. Manufactured until ~1990.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-6FCE7EBD",
+        "raw_text": "外壁: スレート波板 t=6.3",
+        "normalized_text": "外壁: スレート波板 t=6.3",
+        "bbox": [
+          2820.0,
+          922.0,
+          3172.0,
+          948.4000244140625
+        ],
+        "region_type": "MATERIAL_CALLOUT",
+        "room_context": "",
+        "status": "POSITIVE",
+        "hazard_level": "LEVEL_3",
+        "matched_material_ja": "スレート波板",
+        "matched_material_en": "Corrugated Asbestos Slate Sheet",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "MLIT Level 3. Molded product widely used for industrial roofs until 2004.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-5AD99089",
+        "raw_text": "間仕切壁: グラスウール保温材 t=50 充填",
+        "normalized_text": "間仕切壁: グラスウール保温材 t=50 充填",
+        "bbox": [
+          190.0,
+          1740.0,
+          696.0,
+          1766.4000244140625
+        ],
+        "region_type": "MATERIAL_CALLOUT",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "グラスウール保温材",
+        "matched_material_en": "Glass Wool Thermal Insulation",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "Safe. Made of spun glass filaments; zero asbestos content.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-1BBA42A5",
+        "raw_text": "壁: 石膏ボード t=12.5 EP塗装",
+        "normalized_text": "壁: 石膏ボード t=12.5 EP塗装",
+        "bbox": [
+          1614.0,
+          1700.0,
+          2054.0,
+          1726.4000244140625
+        ],
+        "region_type": "MATERIAL_CALLOUT",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "石膏ボード",
+        "matched_material_en": "Gypsum Plaster Board",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "Safe standard Japanese drywall material (JIS A 6901).",
+        "page_number": 1
+      }
+    ],
+    "finish_schedule": [
+      {
+        "room": "機械室",
+        "floor": "モルタル金ゴテ",
+        "wall": "けい酸カルシウム板第1種 t=8",
+        "ceiling": "吹付けロックウール t=25",
+        "remarks": "耐火被覆"
+      },
+      {
+        "room": "ボイラー室",
+        "floor": "コンクリート直押え",
+        "wall": "石膏ボード t=12.5",
+        "ceiling": "石綿保温材 (配管部)",
+        "remarks": "保温要"
+      },
+      {
+        "room": "倉庫 (1)",
+        "floor": "防塵塗料仕上げ",
+        "wall": "スレート波板 t=6.3",
+        "ceiling": "グラスウール保温材 t=50",
+        "remarks": "外壁側"
+      },
+      {
+        "room": "事務室 (A)",
+        "floor": "ビニル床タイル 300x300",
+        "wall": "プラスターボード t=9.5",
+        "ceiling": "岩綿吸音板 t=12",
+        "remarks": "一般部"
+      },
+      {
+        "room": "給湯室",
+        "floor": "磁器質タイル 150角",
+        "wall": "けい酸カルシウム板第2種 t=6",
+        "ceiling": "石膏ボード t=9.5 VP",
+        "remarks": "耐水"
+      },
+      {
+        "room": "廊下・ホール",
+        "floor": "Pタイル t=2.0",
+        "wall": "せっこうボード t=12.5",
+        "ceiling": "ロックウール吸音板 t=15",
+        "remarks": "防音仕様"
+      }
+    ],
+    "room_assessments": [],
+    "thumbnail_base64": "",
+    "image_base64": ""
+  },
+  {
+    "drawing_id": "UPLOAD-a9597e3f",
+    "filename": "drawing.pdf",
+    "timestamp": "2026-11-18 00:46:39",
+    "document_type": "VECTOR_PDF",
+    "is_vector_pdf": true,
+    "page_count": 1,
+    "image_width": 4800,
+    "image_height": 3200,
+    "table_bbox": [
+      3020,
+      200,
+      4684,
+      792
+    ],
+    "quality_assessment": {
+      "intensity": "CLEAN_PASSTHROUGH",
+      "intensity_level": 0,
+      "sharpness": 2737.4,
+      "noise_sigma": 0.6,
+      "contrast_range": 0.173,
+      "skew_angle": 0.0,
+      "bimodal_clarity": 0.873,
+      "background_brightness": 255.0,
+      "recommendation_reason": "Pristine document detected (Noise=0.60, BG Brightness=255.0, Skew=0.00°). Destructive filters bypassed to preserve 100% fine CJK stroke fidelity.",
+      "applied_actions": [
+        "RAW_IMAGE_PASSTHROUGH",
+        "PRESERVE_FINE_STROKES"
+      ],
+      "metrics_summary": {
+        "noise_sigma": 0.6,
+        "sharpness": 2737.4,
+        "contrast_range": 0.173,
+        "skew_angle": 0.0,
+        "bimodal_clarity": 0.873,
+        "background_brightness": 255.0
+      }
+    },
+    "processing_time_seconds": 1.27,
+    "overall_verdict": "HAZARDOUS_ASBESTOS_DETECTED",
+    "verdict_label": "POSITIVE (12 hazardous materials)",
+    "total_material_annotations": 38,
+    "summary": {
+      "asbestos_positive": 12,
+      "non_asbestos": 26,
+      "uncertain": 0,
+      "review_required": 0,
+      "hazard_levels": {
+        "level_1_sprays": 2,
+        "level_2_insulation": 3,
+        "level_3_molded": 7
+      }
+    },
+    "positive_materials": [
+      "けい酸カルシウム板第1種",
+      "吹付けロックウール",
+      "耐火被覆板",
+      "石綿保温材",
+      "スレート波板",
+      "ビニル床タイル",
+      "岩綿吸音板"
+    ],
+    "diagnoses": [
+      {
+        "item_id": "ITEM-7B508E02",
+        "raw_text": "特記仕上表 (FINISH SCHEDULE)",
+        "normalized_text": "特記仕上表 (FINISH SCHEDULE",
+        "bbox": [
+          3040.0,
+          150.0,
+          3546.0,
+          176.39999389648438
+        ],
+        "region_type": "MATERIAL_CALLOUT",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "仕上表",
+        "matched_material_en": "Finish Schedule",
+        "confidence": 1.0,
+        "match_tier": "TIER_1_EXACT",
+        "requires_human_review": false,
+        "regulatory_citation": "TIER_5_LLM_ARBITRATION: 特記仕上表は標準的な建設材料であり、アスベストを含まない。",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-71F167FB",
+        "raw_text": "機械室",
+        "normalized_text": "機械室",
+        "bbox": [
+          3032.0,
+          308.0,
+          3098.0,
+          334.3999938964844
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "機械室",
+        "matched_material_en": "機械室 (Non-Architectural Material)",
+        "confidence": 1.0,
+        "match_tier": "TIER_1_EXACT",
+        "requires_human_review": false,
+        "regulatory_citation": "GATE_4_ARCHITECTURAL_FILTER: Gate 4 Architectural Entity: Architectural room / space label pattern",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-6EA8B2E3",
+        "raw_text": "モルタル金ゴテ",
+        "normalized_text": "モルタル金ゴテ",
+        "bbox": [
+          3312.0,
+          308.0,
+          3466.0,
+          334.3999938964844
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "モルタル金ゴテ仕上げ",
+        "matched_material_en": "Troweled Mortar Finish",
+        "confidence": 1.0,
+        "match_tier": "TIER_1_EXACT",
+        "requires_human_review": false,
+        "regulatory_citation": "Certified Non-Asbestos mineral floor finish.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-67EF94A8",
+        "raw_text": "モルタル H=100",
+        "normalized_text": "モルタル H=100",
+        "bbox": [
+          3612.0,
+          308.0,
+          3832.0,
+          334.3999938964844
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "モルタル金ゴテ仕上げ",
+        "matched_material_en": "Troweled Mortar Finish",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "Certified Non-Asbestos mineral floor finish.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-B34E6961",
+        "raw_text": "けい酸カルシウム板第1種 t=8",
+        "normalized_text": "けい酸カルシウム板第1種 t=8",
+        "bbox": [
+          3852.0,
+          308.0,
+          4204.0,
+          334.3999938964844
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "POSITIVE",
+        "hazard_level": "LEVEL_3",
+        "matched_material_ja": "けい酸カルシウム板第1種",
+        "matched_material_en": "Calcium Silicate Board Type 1",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "MLIT Level 3. Very common in commercial buildings. Phased out 2004.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-BCE94F11",
+        "raw_text": "吹付けロックウール t=25",
+        "normalized_text": "吹付けロックウール t=25",
+        "bbox": [
+          4172.0,
+          308.0,
+          4480.0,
+          334.3999938964844
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "POSITIVE",
+        "hazard_level": "LEVEL_1",
+        "matched_material_ja": "吹付けロックウール",
+        "matched_material_en": "Sprayed Rock Wool (Asbestos-Containing)",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "MLIT Level 1. Used heavily until 1980 (semi-dry) and phased out in 1989.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-DE163133",
+        "raw_text": "耐火被覆",
+        "normalized_text": "耐火被覆",
+        "bbox": [
+          4532.0,
+          308.0,
+          4620.0,
+          334.3999938964844
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "POSITIVE",
+        "hazard_level": "LEVEL_2",
+        "matched_material_ja": "耐火被覆板",
+        "matched_material_en": "Fireproof Covering Board (Asbestos-Containing)",
+        "confidence": 0.8888888888888888,
+        "match_tier": "TIER_3_FUZZY",
+        "requires_human_review": false,
+        "regulatory_citation": "MLIT Level 2. Board form fireproofing with significant asbestos content.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-47FCA3D1",
+        "raw_text": "ボイラー室",
+        "normalized_text": "ボイラー室",
+        "bbox": [
+          3032.0,
+          392.0,
+          3142.0,
+          418.3999938964844
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "ボイラー室",
+        "matched_material_en": "ボイラー室 (Non-Architectural Material)",
+        "confidence": 1.0,
+        "match_tier": "TIER_1_EXACT",
+        "requires_human_review": false,
+        "regulatory_citation": "GATE_4_ARCHITECTURAL_FILTER: Gate 4 Architectural Entity: Architectural room / space label pattern",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-D4166913",
+        "raw_text": "コンクリート直押え",
+        "normalized_text": "コンクリート直押え",
+        "bbox": [
+          3312.0,
+          392.0,
+          3510.0,
+          418.3999938964844
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "コンクリート直押え",
+        "matched_material_en": "Concrete Trowel Finish",
+        "confidence": 1.0,
+        "match_tier": "TIER_1_EXACT",
+        "requires_human_review": false,
+        "regulatory_citation": "MLIT Non-Asbestos Control. 検証済み石綿非含有材料（現場施工 / All Periods）。事前調査における除外確認対象。",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-DAB7C8A4",
+        "raw_text": "石膏ボード t=12.5",
+        "normalized_text": "石膏ボード t=12.5",
+        "bbox": [
+          3852.0,
+          392.0,
+          4116.0,
+          418.3999938964844
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "石膏ボード",
+        "matched_material_en": "Gypsum Plaster Board",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "Safe standard Japanese drywall material (JIS A 6901).",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-9A9A9552",
+        "raw_text": "石綿保温材 (配管部)",
+        "normalized_text": "石綿保温材 (配管部",
+        "bbox": [
+          4172.0,
+          392.0,
+          4414.0,
+          418.3999938964844
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "POSITIVE",
+        "hazard_level": "LEVEL_2",
+        "matched_material_ja": "石綿保温材",
+        "matched_material_en": "Asbestos Thermal Insulation",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "MLIT Level 2. Pipe covers and boiler jackets. Manufactured until ~1990.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-5C77673D",
+        "raw_text": "保温要",
+        "normalized_text": "保温要",
+        "bbox": [
+          4532.0,
+          392.0,
+          4598.0,
+          418.3999938964844
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "保温要",
+        "matched_material_en": "Thermal Insulation Required (Non-Architectural Material)",
+        "confidence": 1.0,
+        "match_tier": "TIER_1_EXACT",
+        "requires_human_review": false,
+        "regulatory_citation": "GATE_4_ARCHITECTURAL_FILTER: Gate 4 Architectural Entity: Known blueprint non-material specification keyword",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-C7B8E85B",
+        "raw_text": "倉庫 (1)",
+        "normalized_text": "倉庫 (1",
+        "bbox": [
+          3032.0,
+          476.0,
+          3164.0,
+          502.3999938964844
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "倉庫 (1)",
+        "matched_material_en": "倉庫 (1 (Non-Architectural Material)",
+        "confidence": 1.0,
+        "match_tier": "GATE_4",
+        "requires_human_review": false,
+        "regulatory_citation": "Gate 4 Auto-Resolved: Architectural room / space label pattern (Zero Ollama calls).",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-49544823",
+        "raw_text": "防塵塗料仕上げ",
+        "normalized_text": "防塵塗料仕上げ",
+        "bbox": [
+          3312.0,
+          476.0,
+          3466.0,
+          502.3999938964844
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "防塵塗料仕上げ",
+        "matched_material_en": "Dust-Proof Epoxy/Polyurethane Floor Coating",
+        "confidence": 1.0,
+        "match_tier": "TIER_1_EXACT",
+        "requires_human_review": false,
+        "regulatory_citation": "Certified Non-Asbestos floor coating.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-E978EF08",
+        "raw_text": "なし",
+        "normalized_text": "なし",
+        "bbox": [
+          3612.0,
+          476.0,
+          3656.0,
+          502.3999938964844
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "モルタル金ゴテ仕上げ",
+        "matched_material_en": "Troweled Mortar Finish",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "Certified Non-Asbestos mineral floor finish.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-C59BCA84",
+        "raw_text": "スレート波板 t=6.3",
+        "normalized_text": "スレート波板 t=6.3",
+        "bbox": [
+          3852.0,
+          476.0,
+          4116.0,
+          502.3999938964844
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "POSITIVE",
+        "hazard_level": "LEVEL_3",
+        "matched_material_ja": "スレート波板",
+        "matched_material_en": "Corrugated Asbestos Slate Sheet",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "MLIT Level 3. Molded product widely used for industrial roofs until 2004.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-C44CA602",
+        "raw_text": "グラスウール保温材 t=50",
+        "normalized_text": "グラスウール保温材 t=50",
+        "bbox": [
+          4172.0,
+          476.0,
+          4480.0,
+          502.3999938964844
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "グラスウール保温材",
+        "matched_material_en": "Glass Wool Thermal Insulation",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "Safe. Made of spun glass filaments; zero asbestos content.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-88D7CBC7",
+        "raw_text": "事務室 (A)",
+        "normalized_text": "事務室 (A",
+        "bbox": [
+          3032.0,
+          560.0,
+          3186.0,
+          586.4000244140625
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "事務室 (A)",
+        "matched_material_en": "事務室 (A (Non-Architectural Material)",
+        "confidence": 1.0,
+        "match_tier": "GATE_4",
+        "requires_human_review": false,
+        "regulatory_citation": "Gate 4 Auto-Resolved: Architectural room / space label pattern (Zero Ollama calls).",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-95592CFC",
+        "raw_text": "ビニル床タイル 300x300",
+        "normalized_text": "ビニル床タイル 300x300",
+        "bbox": [
+          3312.0,
+          560.0,
+          3642.0,
+          586.4000244140625
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "POSITIVE",
+        "hazard_level": "LEVEL_3",
+        "matched_material_ja": "ビニル床タイル",
+        "matched_material_en": "Vinyl Floor Tile (Asbestos-Containing)",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "MLIT Level 3. Bound in resin matrix, phased out in 1987-1990 in Japan.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-EB7266CE",
+        "raw_text": "プラスターボード t=9.5",
+        "normalized_text": "プラスターボード t=9.5",
+        "bbox": [
+          3852.0,
+          560.0,
+          4160.0,
+          586.4000244140625
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "石膏ボード",
+        "matched_material_en": "Gypsum Plaster Board",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "Safe standard Japanese drywall material (JIS A 6901).",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-E3766A50",
+        "raw_text": "岩綿吸音板 t=12",
+        "normalized_text": "岩綿吸音板 t=12",
+        "bbox": [
+          4172.0,
+          560.0,
+          4392.0,
+          586.4000244140625
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "POSITIVE",
+        "hazard_level": "LEVEL_3",
+        "matched_material_ja": "岩綿吸音板",
+        "matched_material_en": "Mineral Wool Acoustic Ceiling Board (Asbestos-Containing)",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "MLIT Level 3. Pre-1988 products frequently contained chrysotile.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-D8E5FC1F",
+        "raw_text": "一般部",
+        "normalized_text": "一般部",
+        "bbox": [
+          4532.0,
+          560.0,
+          4598.0,
+          586.4000244140625
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "一般部",
+        "matched_material_en": "Standard Area / General Section (Non-Architectural Material)",
+        "confidence": 1.0,
+        "match_tier": "TIER_1_EXACT",
+        "requires_human_review": false,
+        "regulatory_citation": "GATE_4_ARCHITECTURAL_FILTER: Gate 4 Architectural Entity: Known blueprint non-material specification keyword",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-3BE90A83",
+        "raw_text": "給湯室",
+        "normalized_text": "給湯室",
+        "bbox": [
+          3032.0,
+          644.0,
+          3098.0,
+          670.4000244140625
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "給湯室",
+        "matched_material_en": "給湯室 (Non-Architectural Material)",
+        "confidence": 1.0,
+        "match_tier": "TIER_1_EXACT",
+        "requires_human_review": false,
+        "regulatory_citation": "GATE_4_ARCHITECTURAL_FILTER: Gate 4 Architectural Entity: Architectural room / space label pattern",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-A1FB4A28",
+        "raw_text": "磁器質タイル 150角",
+        "normalized_text": "磁器質タイル 150角",
+        "bbox": [
+          3312.0,
+          644.0,
+          3554.0,
+          670.4000244140625
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "磁器質タイル",
+        "matched_material_en": "Porcelain Ceramic Tile",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "Safe fired clay/ceramic mineral product.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-A4B315B5",
+        "raw_text": "タイル巾木",
+        "normalized_text": "タイル巾木",
+        "bbox": [
+          3612.0,
+          644.0,
+          3722.0,
+          670.4000244140625
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "タイル巾木",
+        "matched_material_en": "Tile Board",
+        "confidence": 1.0,
+        "match_tier": "TIER_1_EXACT",
+        "requires_human_review": false,
+        "regulatory_citation": "TIER_5_LLM_ARBITRATION: タイル巾木は標準的な建設材料であり、アスベストを含まない。",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-488F8255",
+        "raw_text": "けい酸カルシウム板第2種 t=6",
+        "normalized_text": "けい酸カルシウム板第2種 t=6",
+        "bbox": [
+          3852.0,
+          644.0,
+          4204.0,
+          670.4000244140625
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "けい酸カルシウム板第2種",
+        "matched_material_en": "Calcium Silicate Board Type 2",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "Safe. Formulated without asbestos fibers; reinforced with cellulose pulp.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-CBB8BB4F",
+        "raw_text": "石膏ボード t=9.5 VP",
+        "normalized_text": "石膏ボード t=9.5 VP",
+        "bbox": [
+          4172.0,
+          644.0,
+          4480.0,
+          670.4000244140625
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "石膏ボード",
+        "matched_material_en": "Gypsum Plaster Board",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "Safe standard Japanese drywall material (JIS A 6901).",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-03931995",
+        "raw_text": "耐水",
+        "normalized_text": "耐水",
+        "bbox": [
+          4532.0,
+          644.0,
+          4576.0,
+          670.4000244140625
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "耐水",
+        "matched_material_en": "Waterproof Specification (Non-Architectural Material)",
+        "confidence": 1.0,
+        "match_tier": "TIER_1_EXACT",
+        "requires_human_review": false,
+        "regulatory_citation": "GATE_4_ARCHITECTURAL_FILTER: Gate 4 Architectural Entity: Known blueprint non-material specification keyword",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-7B546063",
+        "raw_text": "廊下・ホール",
+        "normalized_text": "廊下・ホール",
+        "bbox": [
+          3032.0,
+          728.0,
+          3164.0,
+          754.4000244140625
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "廊下・ホール",
+        "matched_material_en": "廊下・ホール (Non-Architectural Material)",
+        "confidence": 1.0,
+        "match_tier": "TIER_1_EXACT",
+        "requires_human_review": false,
+        "regulatory_citation": "GATE_4_ARCHITECTURAL_FILTER: Gate 4 Architectural Entity: Architectural room / space label pattern",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-3EA64474",
+        "raw_text": "Pタイル t=2.0",
+        "normalized_text": "Pタイル t=2.0",
+        "bbox": [
+          3312.0,
+          728.0,
+          3532.0,
+          754.4000244140625
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "POSITIVE",
+        "hazard_level": "LEVEL_3",
+        "matched_material_ja": "ビニル床タイル",
+        "matched_material_en": "Vinyl Floor Tile (Asbestos-Containing)",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "MLIT Level 3. Bound in resin matrix, phased out in 1987-1990 in Japan.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-98B5F2B2",
+        "raw_text": "せっこうボード t=12.5",
+        "normalized_text": "せっこうボード t=12.5",
+        "bbox": [
+          3852.0,
+          728.0,
+          4160.0,
+          754.4000244140625
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "石膏ボード",
+        "matched_material_en": "Gypsum Plaster Board",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "Safe standard Japanese drywall material (JIS A 6901).",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-6B907D35",
+        "raw_text": "ロックウール吸音板 t=15",
+        "normalized_text": "ロックウール吸音板 t=15",
+        "bbox": [
+          4172.0,
+          728.0,
+          4480.0,
+          754.4000244140625
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "POSITIVE",
+        "hazard_level": "LEVEL_3",
+        "matched_material_ja": "岩綿吸音板",
+        "matched_material_en": "Mineral Wool Acoustic Ceiling Board (Asbestos-Containing)",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "MLIT Level 3. Pre-1988 products frequently contained chrysotile.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-ADCD2357",
+        "raw_text": "防音仕様",
+        "normalized_text": "防音仕様",
+        "bbox": [
+          4532.0,
+          728.0,
+          4620.0,
+          754.4000244140625
+        ],
+        "region_type": "TABLE_CELL",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "防音仕様",
+        "matched_material_en": "Soundproof Specification (Non-Architectural Material)",
+        "confidence": 1.0,
+        "match_tier": "TIER_1_EXACT",
+        "requires_human_review": false,
+        "regulatory_citation": "GATE_4_ARCHITECTURAL_FILTER: Gate 4 Architectural Entity: Known blueprint non-material specification keyword",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-48C62BFD",
+        "raw_text": "鉄骨梁: 吹付けロックウール t=25 (耐火被覆)",
+        "normalized_text": "鉄骨梁: 吹付けロックウール t=25 (耐火被覆",
+        "bbox": [
+          180.0,
+          470.0,
+          752.0,
+          496.3999938964844
+        ],
+        "region_type": "MATERIAL_CALLOUT",
+        "room_context": "",
+        "status": "POSITIVE",
+        "hazard_level": "LEVEL_1",
+        "matched_material_ja": "吹付けロックウール",
+        "matched_material_en": "Sprayed Rock Wool (Asbestos-Containing)",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "MLIT Level 1. Used heavily until 1980 (semi-dry) and phased out in 1989.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-55369D06",
+        "raw_text": "蒸気配管: 石綿保温材 100A",
+        "normalized_text": "蒸気配管: 石綿保温材 100A",
+        "bbox": [
+          1110.0,
+          490.0,
+          1462.0,
+          516.4000244140625
+        ],
+        "region_type": "MATERIAL_CALLOUT",
+        "room_context": "",
+        "status": "POSITIVE",
+        "hazard_level": "LEVEL_2",
+        "matched_material_ja": "石綿保温材",
+        "matched_material_en": "Asbestos Thermal Insulation",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "MLIT Level 2. Pipe covers and boiler jackets. Manufactured until ~1990.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-AF94F3FF",
+        "raw_text": "外壁: スレート波板 t=6.3",
+        "normalized_text": "外壁: スレート波板 t=6.3",
+        "bbox": [
+          2820.0,
+          922.0,
+          3172.0,
+          948.4000244140625
+        ],
+        "region_type": "MATERIAL_CALLOUT",
+        "room_context": "",
+        "status": "POSITIVE",
+        "hazard_level": "LEVEL_3",
+        "matched_material_ja": "スレート波板",
+        "matched_material_en": "Corrugated Asbestos Slate Sheet",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "MLIT Level 3. Molded product widely used for industrial roofs until 2004.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-6A652DDD",
+        "raw_text": "間仕切壁: グラスウール保温材 t=50 充填",
+        "normalized_text": "間仕切壁: グラスウール保温材 t=50 充填",
+        "bbox": [
+          190.0,
+          1740.0,
+          696.0,
+          1766.4000244140625
+        ],
+        "region_type": "MATERIAL_CALLOUT",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "グラスウール保温材",
+        "matched_material_en": "Glass Wool Thermal Insulation",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "Safe. Made of spun glass filaments; zero asbestos content.",
+        "page_number": 1
+      },
+      {
+        "item_id": "ITEM-7D6AC1E0",
+        "raw_text": "壁: 石膏ボード t=12.5 EP塗装",
+        "normalized_text": "壁: 石膏ボード t=12.5 EP塗装",
+        "bbox": [
+          1614.0,
+          1700.0,
+          2054.0,
+          1726.4000244140625
+        ],
+        "region_type": "MATERIAL_CALLOUT",
+        "room_context": "",
+        "status": "NEGATIVE",
+        "hazard_level": "NON_ASBESTOS",
+        "matched_material_ja": "石膏ボード",
+        "matched_material_en": "Gypsum Plaster Board",
+        "confidence": 0.95,
+        "match_tier": "TIER_2_RULE",
+        "requires_human_review": false,
+        "regulatory_citation": "Safe standard Japanese drywall material (JIS A 6901).",
+        "page_number": 1
+      }
+    ],
+    "finish_schedule": [
+      {
+        "room": "機械室",
+        "floor": "モルタル金ゴテ",
+        "wall": "けい酸カルシウム板第1種 t=8",
+        "ceiling": "吹付けロックウール t=25",
+        "remarks": "耐火被覆"
+      },
+      {
+        "room": "ボイラー室",
+        "floor": "コンクリート直押え",
+        "wall": "石膏ボード t=12.5",
+        "ceiling": "石綿保温材 (配管部)",
+        "remarks": "保温要"
+      },
+      {
+        "room": "倉庫 (1)",
+        "floor": "防塵塗料仕上げ",
+        "wall": "スレート波板 t=6.3",
+        "ceiling": "グラスウール保温材 t=50",
+        "remarks": "外壁側"
+      },
+      {
+        "room": "事務室 (A)",
+        "floor": "ビニル床タイル 300x300",
+        "wall": "プラスターボード t=9.5",
+        "ceiling": "岩綿吸音板 t=12",
+        "remarks": "一般部"
+      },
+      {
+        "room": "給湯室",
+        "floor": "磁器質タイル 150角",
+        "wall": "けい酸カルシウム板第2種 t=6",
+        "ceiling": "石膏ボード t=9.5 VP",
+        "remarks": "耐水"
+      },
+      {
+        "room": "廊下・ホール",
+        "floor": "Pタイル t=2.0",
+        "wall": "せっこうボード t=12.5",
+        "ceiling": "ロックウール吸音板 t=15",
+        "remarks": "防音仕様"
+      }
+    ],
+    "room_assessments": [],
+    "thumbnail_base64": "",
+    "image_base64": ""
+  },
+  {
     "drawing_id": "UPLOAD-d9cb9bb5",
     "filename": "drawing.pdf",
     "timestamp": "2026-11-18 00:03:30",
@@ -428843,7 +430739,7 @@
   {
     "drawing_id": "ALFRED-DWG-1982-001",
     "filename": "ALFRED-DWG-1982-001_scanned.jpg",
-    "timestamp": "2026-11-18 00:05:13",
+    "timestamp": "2026-11-18 00:50:29",
     "document_type": "SCANNED_BLUEPRINT",
     "is_vector_pdf": false,
     "page_count": 1,
@@ -428878,7 +430774,7 @@
         "background_brightness": 252.0
       }
     },
-    "processing_time_seconds": 2.49,
+    "processing_time_seconds": 0.25,
     "overall_verdict": "HAZARDOUS_ASBESTOS_DETECTED",
     "verdict_label": "POSITIVE (12 hazardous materials)",
     "total_material_annotations": 38,
@@ -428904,7 +430800,7 @@
     ],
     "diagnoses": [
       {
-        "item_id": "ITEM-A829C40B",
+        "item_id": "ITEM-55CDF195",
         "raw_text": "特記仕上表 (FINISH SCHEDULE)",
         "normalized_text": "特記仕上表 (FINISH SCHEDULE",
         "bbox": [
@@ -428926,7 +430822,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-25823327",
+        "item_id": "ITEM-862672D1",
         "raw_text": "機械室",
         "normalized_text": "機械室",
         "bbox": [
@@ -428940,7 +430836,7 @@
         "status": "NEGATIVE",
         "hazard_level": "NON_ASBESTOS",
         "matched_material_ja": "機械室",
-        "matched_material_en": "機械室 (Non-Architectural Material)",
+        "matched_material_en": "Machine room (Non-Architectural Material)",
         "confidence": 1.0,
         "match_tier": "TIER_1_EXACT",
         "requires_human_review": false,
@@ -428948,7 +430844,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-1E66849A",
+        "item_id": "ITEM-46E79394",
         "raw_text": "モルタル金ゴテ",
         "normalized_text": "モルタル金ゴテ",
         "bbox": [
@@ -428970,7 +430866,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-BFE78D12",
+        "item_id": "ITEM-C1EAF413",
         "raw_text": "モルタル H=100",
         "normalized_text": "モルタル H=100",
         "bbox": [
@@ -428992,7 +430888,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-CDFB0BA6",
+        "item_id": "ITEM-670565DE",
         "raw_text": "けい酸カルシウム板第1種 t=8",
         "normalized_text": "けい酸カルシウム板第1種 t=8",
         "bbox": [
@@ -429014,7 +430910,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-A20A8367",
+        "item_id": "ITEM-9B7CF46A",
         "raw_text": "吹付けロックウール t=25",
         "normalized_text": "吹付けロックウール t=25",
         "bbox": [
@@ -429036,7 +430932,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-9261FD2B",
+        "item_id": "ITEM-8D74449C",
         "raw_text": "耐火被覆",
         "normalized_text": "耐火被覆",
         "bbox": [
@@ -429058,7 +430954,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-181F5CE1",
+        "item_id": "ITEM-344024E0",
         "raw_text": "ボイラー室",
         "normalized_text": "ボイラー室",
         "bbox": [
@@ -429080,7 +430976,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-C8CEFB3F",
+        "item_id": "ITEM-D47F362D",
         "raw_text": "コンクリート直押え",
         "normalized_text": "コンクリート直押え",
         "bbox": [
@@ -429102,7 +430998,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-DEBC05C1",
+        "item_id": "ITEM-ED140FB1",
         "raw_text": "石膏ボード t=12.5",
         "normalized_text": "石膏ボード t=12.5",
         "bbox": [
@@ -429124,7 +431020,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-7F1C2412",
+        "item_id": "ITEM-975A4E0A",
         "raw_text": "石綿保温材 (配管部)",
         "normalized_text": "石綿保温材 (配管部",
         "bbox": [
@@ -429146,7 +431042,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-1AAA351D",
+        "item_id": "ITEM-FC9FDF27",
         "raw_text": "保温要",
         "normalized_text": "保温要",
         "bbox": [
@@ -429168,7 +431064,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-0D02D626",
+        "item_id": "ITEM-7D43BE22",
         "raw_text": "倉庫 (1)",
         "normalized_text": "倉庫 (1",
         "bbox": [
@@ -429190,7 +431086,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-4AFD833E",
+        "item_id": "ITEM-F80EE50A",
         "raw_text": "防塵塗料仕上げ",
         "normalized_text": "防塵塗料仕上げ",
         "bbox": [
@@ -429212,7 +431108,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-C619208E",
+        "item_id": "ITEM-5A19D248",
         "raw_text": "なし",
         "normalized_text": "なし",
         "bbox": [
@@ -429234,7 +431130,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-D437E807",
+        "item_id": "ITEM-35B47ACD",
         "raw_text": "スレート波板 t=6.3",
         "normalized_text": "スレート波板 t=6.3",
         "bbox": [
@@ -429256,7 +431152,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-6D717D0E",
+        "item_id": "ITEM-F1D714FA",
         "raw_text": "グラスウール保温材 t=50",
         "normalized_text": "グラスウール保温材 t=50",
         "bbox": [
@@ -429278,7 +431174,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-49147025",
+        "item_id": "ITEM-2D598E12",
         "raw_text": "事務室 (A)",
         "normalized_text": "事務室 (A",
         "bbox": [
@@ -429300,7 +431196,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-F0A443A0",
+        "item_id": "ITEM-F54E8B13",
         "raw_text": "ビニル床タイル 300x300",
         "normalized_text": "ビニル床タイル 300x300",
         "bbox": [
@@ -429322,7 +431218,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-1F2BCEA6",
+        "item_id": "ITEM-34E1A781",
         "raw_text": "プラスターボード t=9.5",
         "normalized_text": "プラスターボード t=9.5",
         "bbox": [
@@ -429344,7 +431240,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-C7A94E36",
+        "item_id": "ITEM-50CD817D",
         "raw_text": "岩綿吸音板 t=12",
         "normalized_text": "岩綿吸音板 t=12",
         "bbox": [
@@ -429366,7 +431262,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-C9C2683B",
+        "item_id": "ITEM-D122C81B",
         "raw_text": "一般部",
         "normalized_text": "一般部",
         "bbox": [
@@ -429388,7 +431284,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-FD01FBC8",
+        "item_id": "ITEM-225CF2DC",
         "raw_text": "給湯室",
         "normalized_text": "給湯室",
         "bbox": [
@@ -429410,7 +431306,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-B7F928A7",
+        "item_id": "ITEM-AEA20E60",
         "raw_text": "磁器質タイル 150角",
         "normalized_text": "磁器質タイル 150角",
         "bbox": [
@@ -429432,7 +431328,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-BDA1D1A7",
+        "item_id": "ITEM-A7621CA1",
         "raw_text": "タイル巾木",
         "normalized_text": "タイル巾木",
         "bbox": [
@@ -429454,7 +431350,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-0028E701",
+        "item_id": "ITEM-D8B54E0F",
         "raw_text": "けい酸カルシウム板第2種 t=6",
         "normalized_text": "けい酸カルシウム板第2種 t=6",
         "bbox": [
@@ -429476,7 +431372,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-433B49DC",
+        "item_id": "ITEM-36975D0B",
         "raw_text": "石膏ボード t=9.5 VP",
         "normalized_text": "石膏ボード t=9.5 VP",
         "bbox": [
@@ -429498,7 +431394,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-C2C61CE7",
+        "item_id": "ITEM-715072EC",
         "raw_text": "耐水",
         "normalized_text": "耐水",
         "bbox": [
@@ -429520,7 +431416,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-1BE46F7C",
+        "item_id": "ITEM-1C0223E1",
         "raw_text": "廊下・ホール",
         "normalized_text": "廊下・ホール",
         "bbox": [
@@ -429542,7 +431438,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-801E5E66",
+        "item_id": "ITEM-951B38D0",
         "raw_text": "Pタイル t=2.0",
         "normalized_text": "Pタイル t=2.0",
         "bbox": [
@@ -429564,7 +431460,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-2231F722",
+        "item_id": "ITEM-2EF31CEC",
         "raw_text": "せっこうボード t=12.5",
         "normalized_text": "せっこうボード t=12.5",
         "bbox": [
@@ -429586,7 +431482,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-1FCE2434",
+        "item_id": "ITEM-58C1F0D2",
         "raw_text": "ロックウール吸音板 t=15",
         "normalized_text": "ロックウール吸音板 t=15",
         "bbox": [
@@ -429608,7 +431504,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-B4A8B3F9",
+        "item_id": "ITEM-76705EEB",
         "raw_text": "防音仕様",
         "normalized_text": "防音仕様",
         "bbox": [
@@ -429630,7 +431526,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-DD45CA31",
+        "item_id": "ITEM-1E4AC0D8",
         "raw_text": "鉄骨梁: 吹付けロックウール t=25 (耐火被覆)",
         "normalized_text": "鉄骨梁: 吹付けロックウール t=25 (耐火被覆",
         "bbox": [
@@ -429652,7 +431548,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-7DE0AEFD",
+        "item_id": "ITEM-39F54093",
         "raw_text": "蒸気配管: 石綿保温材 100A",
         "normalized_text": "蒸気配管: 石綿保温材 100A",
         "bbox": [
@@ -429674,7 +431570,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-9A460B22",
+        "item_id": "ITEM-7E24941B",
         "raw_text": "外壁: スレート波板 t=6.3",
         "normalized_text": "外壁: スレート波板 t=6.3",
         "bbox": [
@@ -429696,7 +431592,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-711C3BE7",
+        "item_id": "ITEM-8F1C44B1",
         "raw_text": "間仕切壁: グラスウール保温材 t=50 充填",
         "normalized_text": "間仕切壁: グラスウール保温材 t=50 充填",
         "bbox": [
@@ -429718,7 +431614,7 @@
         "page_number": 1
       },
       {
-        "item_id": "ITEM-258DC3B5",
+        "item_id": "ITEM-D058C8E5",
         "raw_text": "壁: 石膏ボード t=12.5 EP塗装",
         "normalized_text": "壁: 石膏ボード t=12.5 EP塗装",
         "bbox": [
