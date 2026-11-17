@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Karunakar (destroyer929). All rights reserved.
+# Proprietary & Confidential. Authorized for technical evaluation and portfolio review only.
 """
 Jamdict-Powered Semantic & Linguistic Filter for Japanese Architectural Blueprints.
 Uses local JMdict offline dictionary (via jamdict) to inspect English glosses and POS tags.

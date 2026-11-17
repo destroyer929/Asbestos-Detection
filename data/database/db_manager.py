@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Karunakar (destroyer929). All rights reserved.
+# Proprietary & Confidential. Authorized for technical evaluation and portfolio review only.
 """
 Asbestos Material Knowledge Base Manager.
 Integrates Japanese Ministry of Land, Infrastructure, Transport and Tourism (MLIT)

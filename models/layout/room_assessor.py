@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Karunakar (destroyer929). All rights reserved.
+# Proprietary & Confidential. Authorized for technical evaluation and portfolio review only.
 """
 Spatial Room Assessment & Risk Mapping Engine.
 Connects drawing room labels, physical floor plan zones, and Finish Schedule rows

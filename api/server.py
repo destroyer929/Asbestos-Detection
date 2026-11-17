@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Karunakar (destroyer929). All rights reserved.
+# Proprietary & Confidential. Authorized for technical evaluation and portfolio review only.
 """
 FastAPI Production Microservice for Asbestos Blueprint Diagnostics.
 Exposes endpoints:

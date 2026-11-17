@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Karunakar (destroyer929). All rights reserved.
+# Proprietary & Confidential. Authorized for technical evaluation and portfolio review only.
 """
 Finish Schedule (特記仕上表) Table Detection & Cell Structure Parser.
 Uses OpenCV morphological line kernels to locate architectural schedule grids,

@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Karunakar (destroyer929). All rights reserved.
+# Proprietary & Confidential. Authorized for technical evaluation and portfolio review only.
 """
 4-Tier Hierarchical Asbestos Material Matching Engine.
 Matches normalized architectural annotations against the official Japanese MLIT materials database.

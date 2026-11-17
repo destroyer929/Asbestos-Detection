@@ -1,22 +1,71 @@
-MIT License
+PROPRIETARY & EVALUATION SOURCE CODE LICENSE
+ALL RIGHTS RESERVED
 
-Copyright (c) 2026 destroyer929
+Copyright (c) 2026 Karunakar (destroyer929) <karunakarchinna33@gmail.com>.
+All rights reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+===============================================================================
+1. PREAMBLE & OWNERSHIP
+===============================================================================
+This software, including but not limited to its source code, documentation, 
+system architectures, mathematical models, machine learning pipelines, 
+computer vision algorithms, pre-flight assessment brains, regulatory databases 
+(including MLIT & JATI commercial catalogs), SQLite caches, and training 
+artifacts (collectively, the "Software"), is the proprietary intellectual 
+property of Karunakar (destroyer929) ("Copyright Holder").
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+===============================================================================
+2. LIMITED EVALUATION GRANT
+===============================================================================
+Permission is hereby granted to any individual or organization accessing this 
+Software to inspect, compile, and execute the Software locally and in a private 
+environment SOLELY for the purposes of:
+  (a) Non-commercial technical evaluation and code audit;
+  (b) Academic review and professional portfolio examination;
+  (c) Evaluating the technical qualifications and capabilities of the Author.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+No other rights, express or implied, are granted under this License.
 
+===============================================================================
+3. STRICT RESTRICTIONS & PROHIBITIONS
+===============================================================================
+Except as expressly permitted in Section 2, you may NOT:
+  (a) Sell, rent, lease, license, sublicense, lend, assign, distribute, or 
+      otherwise transfer or commercially exploit the Software or any portion 
+      thereof, directly or indirectly;
+  (b) Host, deploy, or operate the Software as a public or private hosted service, 
+      Application Programming Interface (API), Software-as-a-Service (SaaS), 
+      or cloud microservice for third-party access;
+  (c) Copy, reproduce, adapt, alter, modify, create derivative works from, or 
+      incorporate the Software, its 4-gate verification cascade, its 5-tier 
+      matching engine, or its databases into any proprietary or open-source product;
+  (d) Extract, scrape, repurpose, or distribute the curated asbestos regulatory 
+      databases (data/database/materials.db, data/database/learned_cache.db, 
+      mlit_materials.json, learned_materials.json), or use them to train, fine-tune, 
+      or benchmark external artificial intelligence or machine learning models;
+  (e) Remove, alter, obscure, or disguise any copyright notice, trademark, 
+      patent notice, authorship credit, or proprietary markings present in 
+      the Software or repository.
+
+===============================================================================
+4. COMMERCIAL & PRODUCTION INQUIRIES
+===============================================================================
+Any commercial use, enterprise deployment, proprietary customization, or 
+production licensing requires a separate, explicit, written commercial license 
+agreement signed by the Copyright Holder.
+
+For licensing, commercial inquiries, or partnership discussions, contact:
+  Karunakar (destroyer929)
+  Email: karunakarchinna33@gmail.com
+  GitHub: https://github.com/destroyer929
+
+===============================================================================
+5. DISCLAIMER OF WARRANTY & LIMITATION OF LIABILITY
+===============================================================================
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT. IN NO EVENT SHALL 
+THE COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES, LOSS OF PROFITS, DATA 
+LOSS, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, 
+ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+DEALINGS IN THE SOFTWARE.

@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Karunakar (destroyer929). All rights reserved.
+# Proprietary & Confidential. Authorized for technical evaluation and portfolio review only.
 """
 Adaptive Document Quality & Noise Assessor (Pre-Flight Decision Brain).
 Evaluates incoming architectural drawings to dynamically determine the optimal

@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Karunakar (destroyer929). All rights reserved.
+# Proprietary & Confidential. Authorized for technical evaluation and portfolio review only.
 """
 Tier-5 Local LLM Material Arbitrator (Ollama / Qwen3:1.7B).
 Resolves UNCERTAIN or low-confidence architectural material annotations

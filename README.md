@@ -10,10 +10,12 @@
 [![SQLite WAL](https://img.shields.io/badge/SQLite-WAL%20Mode%20%2B%20FTS5-003B57?style=flat&logo=sqlite&logoColor=white)](https://www.sqlite.org/wal.html)
 [![Ollama](https://img.shields.io/badge/Ollama-Qwen3%3A1.7B%20Arbitration-white?style=flat&logo=ollama&logoColor=black)](https://ollama.com/)
 [![CUDA Acceleration](https://img.shields.io/badge/CUDA-Hardware%20Accelerated-76B900?style=flat&logo=nvidia&logoColor=white)](https://developer.nvidia.com/cuda-toolkit)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License: All Rights Reserved](https://img.shields.io/badge/License-All%20Rights%20Reserved-red.svg)](LICENSE)
 [![MLIT & JATI Standards](https://img.shields.io/badge/Regulatory-MLIT%20%2F%20JATI%20Compliant-blue)](#japanese-regulatory-taxonomy-mlit--jati)
 
-> **Engineered for Alfred Company Ltd. (Hamamatsu, Shizuoka, Japan) R&D AI Engineer Evaluation**  
+> **Copyright (c) 2026 Karunakar (destroyer929). All rights reserved.**  
+> *Confidential & Proprietary. Shared strictly for technical evaluation, code auditing, and portfolio review.*  
+> *Engineered for Alfred Company Ltd. (Hamamatsu, Shizuoka, Japan) R&D AI Engineer Evaluation.*  
 > *Autonomous end-to-end deep learning system for automated bilingual OCR, Finish Schedule (特記仕上表) table parsing, adaptive pre-flight document quality assessment, 4 Safety Gates, 5-Tier MLIT/JATI regulatory asbestos determination, and sub-microsecond SQLite WAL caching from historical Japanese architectural blueprints.*
 
 ---
@@ -575,7 +577,7 @@ Asbestos-Detection/
 ├── docker-compose.yml                 # 1-Click production multi-container deployment
 ├── Dockerfile                         # Python backend Docker container specification
 ├── requirements.txt                   # Complete Python dependencies specification
-└── LICENSE                            # MIT License
+└── LICENSE                            # Proprietary & Evaluation License (All Rights Reserved)
 ```
 
 ---
@@ -589,6 +591,13 @@ Asbestos-Detection/
 
 ---
 
-## License
+## License & Intellectual Property
 
-This project is licensed under the [MIT License](LICENSE).
+**Copyright (c) 2026 Karunakar (destroyer929) <karunakarchinna33@gmail.com>. All rights reserved.**
+
+This project, its source code, MLIT & JATI regulatory databases, learned caches, computer vision architectures, and matching pipelines are proprietary intellectual property.
+
+* **Permitted Use**: Access is granted strictly for technical evaluation, code auditing, and professional portfolio review.
+* **Prohibitions**: No commercial use, reproduction, redistribution, cloud SaaS hosting, public distribution, or derivative works are permitted without prior explicit written permission from the copyright holder.
+
+See the complete [LICENSE](LICENSE) file for formal terms and conditions. Commercial inquiries: `karunakarchinna33@gmail.com`.
