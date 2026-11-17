@@ -16,10 +16,12 @@ dist/
 .paddlex/
 official_models/
 
-# Uploads & Temp processing files
-data/uploads/
+# Temp processing files (diagnosed uploads in data/uploads are preserved)
 data/output/large_sets/
 data/real_blueprints/
+blueprints_50/
+research model/
+scripts/download_all_50.py
 *.jpg
 !testing/*.jpg
 !data/**/*.jpg
