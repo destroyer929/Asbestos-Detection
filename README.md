@@ -14,8 +14,7 @@
 [![MLIT & JATI Standards](https://img.shields.io/badge/Regulatory-MLIT%20%2F%20JATI%20Compliant-blue)](#japanese-regulatory-taxonomy-mlit--jati)
 
 > **Copyright (c) 2026 Karunakar (destroyer929). All rights reserved.**  
-> *Confidential & Proprietary. Shared strictly for technical evaluation, code auditing, and portfolio review.*  
-> *Engineered for Alfred Company Ltd. (Hamamatsu, Shizuoka, Japan) R&D AI Engineer Evaluation.*  
+> *Confidential & Proprietary. Independent R&D Project.*  
 > *Autonomous end-to-end deep learning system for automated bilingual OCR, Finish Schedule (特記仕上表) table parsing, adaptive pre-flight document quality assessment, 4 Safety Gates, 5-Tier MLIT/JATI regulatory asbestos determination, and sub-microsecond SQLite WAL caching from historical Japanese architectural blueprints.*
 
 ---
@@ -197,17 +196,17 @@ Raw Document Text
 ```
 
 ### Gate 1: OCR Confidence & Dimension Noise Filter
-* **Source**: [`models/layout/region_classifier.py`](file:///d:/alfred/models/layout/region_classifier.py)
+* **Source**: [`models/layout/region_classifier.py`](models/layout/region_classifier.py)
 * **Function**: Filters out pure numbers, dimensional measurements (`4,500`, `2,400`), floor elevation indicators (`1FL+150`, `FL±0`), ceiling height callouts (`CH=2700`, `CH:2,400`), structural levels (`SL-50`), and low-confidence OCR character fragments ($\text{Confidence} < 0.35$).
 * **Guarantee**: Never discards legitimate material thickness specifications (e.g., `t=25`, `15mm`, `100A`).
 
 ### Gate 2: Architectural Whitelist & SudachiPy POS Gate
-* **Source**: [`nlp/tokenizer.py`](file:///d:/alfred/nlp/tokenizer.py)
+* **Source**: [`nlp/tokenizer.py`](nlp/tokenizer.py)
 * **Function**: Performs morphological analysis using **SudachiPy** (Core Dictionary, Split Mode C). Evaluates Part-of-Speech tags, segregating architectural nouns and compound material nouns (`吹付け` + `ロックウール`) from extraneous verbs, grammatical particles (`の`, `にて`, `とする`), punctuation marks, and structural formula fragments.
 * **Guarantee**: Normalizes full-width and half-width characters via Unicode NFKC before tokenization.
 
 ### Gate 3: Morphological Table Parser & Finish Schedule Grid Matrix Extractor
-* **Source**: [`models/layout/table_parser.py`](file:///d:/alfred/models/layout/table_parser.py)
+* **Source**: [`models/layout/table_parser.py`](models/layout/table_parser.py)
 * **Function**: Employs computer vision morphological contour extraction (`cv2.RETR_TREE`) and horizontal/vertical Hough line kernel convolutions to locate rectangular Finish Schedule grids (*特記仕上表*).
 * **Matrix Reconstruction**: Reconstructs room columns and finish rows:
   - **床 (Floor)**: e.g., `ビニル床タイル (Pタイル) 2.0mm`
@@ -217,7 +216,7 @@ Raw Document Text
   - **特記事項 (Remarks / Notes)**: e.g., `耐火被覆 吹付けロックウール`
 
 ### Gate 4: Tier-5 Safety Gate & Jamdict Semantic Filter
-* **Source**: [`nlp/jamdict_filter.py`](file:///d:/alfred/nlp/jamdict_filter.py) and [`nlp/matcher.py`](file:///d:/alfred/nlp/matcher.py)
+* **Source**: [`nlp/jamdict_filter.py`](nlp/jamdict_filter.py) and [`nlp/matcher.py`](nlp/matcher.py)
 * **Function**: Offline semantic analysis using local JMdict English glosses and Japanese architectural keywords.
 * **Non-Material Categorization**:
   - *Room & Spatial Labels*: `便所`, `機械室`, `更衣室`, `倉庫`, `事務室`, `EVホール`
@@ -240,7 +239,7 @@ To guarantee both **sub-microsecond execution** and **maximum hazardous recall**
 | **Tier 5** | **Local LLM Arbitration (Ollama `qwen3:1.7b`)** | **~1.2 s (Batched)** | **0.90–1.00** | Multi-page deduplicated local LLM arbitration with MLIT regulatory prompt. Results auto-ingested into SQLite learned cache. |
 
 ### Tier-5 Multi-Page Deduplication & Local LLM Arbitration
-When blueprints contain hundreds of annotations across multiple pages, naive LLM calling introduces latency and duplicate processing. DrawingScan implements an intelligent arbitration workflow ([`nlp/llm_arbitrator.py`](file:///d:/alfred/nlp/llm_arbitrator.py)):
+When blueprints contain hundreds of annotations across multiple pages, naive LLM calling introduces latency and duplicate processing. DrawingScan implements an intelligent arbitration workflow ([`nlp/llm_arbitrator.py`](nlp/llm_arbitrator.py)):
 1. **Multi-Page Deduplication (`UnidentifiedMaterialMap`)**: Gathers all unmatched strings across all pages in a blueprint set. Duplicate occurrences (e.g., `ダイロートン` appearing 50 times across 10 pages) are coalesced into a single canonical entry.
 2. **Batch Prompting**: Sends up to 10 unique candidate materials per batch to local Ollama (`qwen3:1.7b`) with `temperature: 0.0` and `repeat_penalty: 1.15`.
 3. **Structured 3-Way Triage**:
@@ -296,7 +295,7 @@ DrawingScan uses a dedicated two-database SQLite architecture designed for high 
 
 ## Adaptive Pre-Flight Quality Brain (Stage 2)
 
-DrawingScan features an automated image quality analyzer ([`core/preprocess/quality_assessor.py`](file:///d:/alfred/core/preprocess/quality_assessor.py)) that computes physical metrics in $< 15\text{ms}$:
+DrawingScan features an automated image quality analyzer ([`core/preprocess/quality_assessor.py`](core/preprocess/quality_assessor.py)) that computes physical metrics in $< 15\text{ms}$:
 
 | Physical Metric | Computation Method | Physical Significance | Clean CAD Threshold | Degraded Threshold |
 | :--- | :--- | :--- | :--- | :--- |
@@ -316,7 +315,7 @@ DrawingScan features an automated image quality analyzer ([`core/preprocess/qual
 
 ## Per-Page Hybrid Text & Deep Learning OCR Pipeline (Stage 3)
 
-Real multi-page blueprints combine digital text schedules with graphical drawings. DrawingScan uses an automated **per-page hybrid routing algorithm** ([`api/server.py`](file:///d:/alfred/api/server.py)):
+Real multi-page blueprints combine digital text schedules with graphical drawings. DrawingScan uses an automated **per-page hybrid routing algorithm** ([`api/server.py`](api/server.py)):
 * **Vector Text Extraction**: If a page contains $\ge 5$ native digital text entities, text is extracted directly via PyMuPDF with mathematical precision and zero OCR delay.
 * **Deep Learning OCR**: Graphical detail sheets or scanned pages with $< 5$ text entities are routed through GPU-accelerated PaddleOCR v4 / CRAFT deep learning models.
 * **Result**: Sub-second end-to-end processing per drawing sheet.
@@ -338,7 +337,7 @@ Under Japanese environmental statutes, materials are classified into three statu
 
 ## Spatial Room Risk Assessor
 
-DrawingScan correlates detected material items with reconstructed finish schedule table records through the **Spatial Room Risk Assessor** ([`models/layout/room_assessor.py`](file:///d:/alfred/models/layout/room_assessor.py)):
+DrawingScan correlates detected material items with reconstructed finish schedule table records through the **Spatial Room Risk Assessor** ([`models/layout/room_assessor.py`](models/layout/room_assessor.py)):
 * Maps materials to specific architectural spaces (e.g., *機械室* Machine Room, *廊下* Corridor, *事務室* Office).
 * Computes aggregate room hazard scores based on friability (Level 1 friable sprays receive maximum risk weighting).
 * Flags high-risk spaces where airborne fiber exposure during renovation is most critical.
