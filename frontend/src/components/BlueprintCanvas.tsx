@@ -517,7 +517,7 @@ export const BlueprintCanvas: React.FC<BlueprintCanvasProps> = ({
         })()}
       </div>
 
-      {/* Bottom Canvas Status Bar with Alfred Dark CAD Engineering Bar */}
+      {/* Bottom Canvas Status Bar with Dark CAD Engineering Bar */}
       <div className="bg-[#080d12] border-t-2 border-emerald-500/30 px-4 py-2.5 flex items-center justify-between text-xs text-slate-300 font-lab-mono">
         <div className="flex items-center gap-4 flex-wrap">
           <span className="flex items-center gap-1.5">

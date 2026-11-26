@@ -3,15 +3,15 @@
 :root {
   --background: #f7fbf6;
   --foreground: #0f172a;
-  --alfred-green: #28a745;
-  --alfred-green-dark: #1e7e34;
-  --alfred-green-vibrant: #24b05b;
-  --alfred-green-light: #eef7ee;
-  --alfred-green-subtle: #f0fdf4;
-  --alfred-border-subtle: #d1fae5;
-  --alfred-text-heading: #0f291e;
-  --alfred-text-body: #334155;
-  --alfred-card-bg: #ffffff;
+  --drawscan-green: #28a745;
+  --drawscan-green-dark: #1e7e34;
+  --drawscan-green-vibrant: #24b05b;
+  --drawscan-green-light: #eef7ee;
+  --drawscan-green-subtle: #f0fdf4;
+  --drawscan-border-subtle: #d1fae5;
+  --drawscan-text-heading: #0f291e;
+  --drawscan-text-body: #334155;
+  --drawscan-card-bg: #ffffff;
 }
 
 body {
@@ -21,12 +21,12 @@ body {
   overflow-x: hidden;
 }
 
-/* Technical Monospace Accent (From Alfred Company Design System) */
+/* Technical Monospace Accent (Drawscan Design System) */
 .font-lab-mono {
   font-family: "Courier Prime", "Courier New", monospace !important;
 }
 
-/* Custom Alfred Green & White Scrollbars */
+/* Custom Drawscan Green & White Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -45,7 +45,7 @@ body {
   background: #22c55e;
 }
 
-/* --- Alfred Website Button Hover Shimmer Effect (Green + White) --- */
+/* --- Drawscan Button Hover Shimmer Effect (Green + White) --- */
 .btn-hover-shine {
   position: relative !important;
   overflow: hidden !important;
@@ -73,7 +73,7 @@ body {
   left: 150% !important;
 }
 
-/* --- Alfred Clean Glass Card (Crisp White + Emerald Border) --- */
+/* --- Drawscan Clean Glass Card (Crisp White + Emerald Border) --- */
 .feature-glass-card {
   isolation: isolate;
   background: rgba(255, 255, 255, 0.95) !important;

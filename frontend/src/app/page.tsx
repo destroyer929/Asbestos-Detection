@@ -289,7 +289,7 @@ export default function HomePage() {
               <div className="w-20 h-20 rounded-3xl bg-white border border-emerald-200 flex items-center justify-center shadow-lg shadow-emerald-500/10">
                 <Image
                   src="/brand/bird.png"
-                  alt="Alfred Logo"
+                  alt="Drawscan Logo"
                   width={48}
                   height={48}
                   className="object-contain"
@@ -313,11 +313,11 @@ export default function HomePage() {
               {/* Soft decorative background tint */}
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[550px] h-48 bg-emerald-100/40 rounded-full blur-3xl pointer-events-none" />
 
-              {/* Alfred Brand Logo Emblem */}
+              {/* Drawscan Brand Logo Emblem */}
               <div className="relative w-24 h-24 mx-auto mb-6 rounded-3xl bg-gradient-to-br from-emerald-50 via-white to-emerald-50/50 flex items-center justify-center shadow-md shadow-emerald-900/10 ring-8 ring-emerald-500/10 border border-emerald-300">
                 <Image
                   src="/brand/bird.png"
-                  alt="Alfred Logo"
+                  alt="Drawscan Logo"
                   width={56}
                   height={56}
                   className="object-contain filter drop-shadow-sm"
@@ -328,19 +328,19 @@ export default function HomePage() {
               {/* Japanese Precision Tagline */}
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-[11px] font-bold text-emerald-800 mb-3 font-lab-mono shadow-2xs">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span>BUILT ON JAPANESE PRECISION • REIMAGINED FOR INDIA</span>
+                <span>BUILT ON JAPANESE PRECISION • ADVANCED AI DIAGNOSTICS</span>
               </div>
 
               {/* Headline */}
               <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-                Upload sample to diagnosis
+                Drawscan Asbestos Detection
               </h1>
               <p className="text-sm font-bold text-[#28a745] mt-2 font-sans">
-                図面・サンプルをアップロードして石綿診断を開始
+                建築図面・特記仕上表からの石綿含有建材自動AI診断
               </p>
 
               <p className="max-w-2xl mx-auto text-sm text-slate-600 mt-3.5 leading-relaxed font-sans">
-                2 Countries. 3+ Labs. 1 leading Asbestos Analysis platform. Upload architectural blueprints (PDF, High-Res Scanned JPG/PNG, CAD DXF) to run automated MLIT-compliant detection, PaddleOCR text extraction, and regulatory arbitration.
+                Autonomous AI Blueprint Analysis & Diagnostics. Upload architectural blueprints (PDF, High-Res Scanned JPG/PNG, CAD DXF) to run automated MLIT-compliant detection, PaddleOCR text extraction, and 5-Tier regulatory arbitration.
               </p>
 
               {/* Primary Action Buttons (Green + White) */}

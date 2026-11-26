@@ -33,42 +33,39 @@ export const Navbar: React.FC<NavbarProps> = ({
       <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
         {/* Brand & Identity */}
         <div className="flex items-center space-x-3.5">
-          <a
-            href="https://alfred-lab.in/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group flex items-center justify-center p-2 rounded-2xl bg-gradient-to-br from-emerald-50 to-white border border-emerald-200 shadow-sm hover:border-emerald-400 transition transform hover:scale-105"
-            title="Visit Alfred Lab Official Website"
+          <div
+            className="flex items-center justify-center p-2 rounded-2xl bg-gradient-to-br from-emerald-50 to-white border border-emerald-200 shadow-sm"
+            title="Drawscan Asbestos Detection"
           >
             <div className="relative w-8 h-8 flex items-center justify-center">
               <Image
                 src="/brand/bird.png"
-                alt="Alfred Logo"
+                alt="Drawscan Logo"
                 width={32}
                 height={32}
-                className="object-contain group-hover:brightness-105 transition filter drop-shadow-sm"
+                className="object-contain filter drop-shadow-sm"
                 priority
               />
             </div>
-          </a>
+          </div>
 
           <div>
             <div className="flex items-center space-x-2.5">
               <span className="font-extrabold text-xl tracking-tight text-[#0f291e]">
-                ALFRED
+                Drawscan
               </span>
               <span className="text-[11px] px-2.5 py-0.5 rounded-full font-bold bg-emerald-100/90 text-emerald-800 border border-emerald-300 shadow-xs flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                <span>Asbestos AI 診断</span>
+                <span>Asbestos Detection (石綿AI診断)</span>
               </span>
               <span className="hidden md:inline-flex text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200 font-mono">
                 JIS A 1481 / MLIT
               </span>
             </div>
             <p className="text-[11px] text-slate-500 font-lab-mono flex items-center gap-1.5 mt-0.5">
-              <span>Japan Labs (Hamamatsu & Fukuoka)</span>
+              <span>Autonomous AI Blueprint Analysis</span>
               <span className="text-emerald-500">•</span>
-              <span>New Delhi Liaison</span>
+              <span>Finish Schedule Diagnostics</span>
               <span className="text-emerald-500 hidden sm:inline">•</span>
               <span className="hidden sm:inline text-emerald-700 font-bold">Precision Diagnostics</span>
             </p>
@@ -77,7 +74,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Navigation Actions */}
         <div className="flex items-center space-x-2 sm:space-x-3">
-          {/* Upload Button — Primary Alfred Green Pill CTA */}
+          {/* Upload Button — Primary Green Pill CTA */}
           <button
             onClick={onOpenUpload}
             className="btn-hover-shine flex items-center gap-2 bg-gradient-to-r from-[#28a745] to-[#20923d] hover:from-[#218838] hover:to-[#1e7e34] text-white text-xs font-bold px-4.5 py-2.5 rounded-full shadow-md shadow-emerald-600/20 transition active:scale-95"

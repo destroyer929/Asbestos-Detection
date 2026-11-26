@@ -253,7 +253,7 @@ const ProgressModal: React.FC<{
           </div>
 
           <p className="text-center text-[11px] text-slate-500 font-lab-mono">
-            Alfred High-Precision Pipeline • MLIT JIS A 1481 Analysis
+            Drawscan High-Precision Pipeline • MLIT JIS A 1481 Analysis
           </p>
         </div>
       </div>
@@ -360,7 +360,7 @@ export const UploadModal: React.FC<UploadModalProps> = ({
             <div className="w-10 h-10 rounded-2xl bg-white border-2 border-emerald-200 flex items-center justify-center shadow-xs">
               <Image
                 src="/brand/bird.png"
-                alt="Alfred Logo"
+                alt="Drawscan Logo"
                 width={26}
                 height={26}
                 className="object-contain"

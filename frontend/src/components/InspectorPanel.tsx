@@ -123,7 +123,7 @@ export const InspectorPanel: React.FC<InspectorPanelProps> = ({
       };
       onOverrideSuccess(updated);
 
-      setSubmitFeedback("Verified & saved into Alfred Active Learning pool!");
+      setSubmitFeedback("Verified & saved into Drawscan Active Learning pool!");
       setTimeout(() => setSubmitFeedback(null), 4000);
     } catch (err: any) {
       setSubmitFeedback(`Error: ${err.message || "Failed to submit"}`);

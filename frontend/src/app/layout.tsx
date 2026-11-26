@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Alfred | Asbestos Analysis & Blueprint Diagnostics Platform",
+  title: "Drawscan | Asbestos Detection & Blueprint Diagnostics Platform",
   description:
-    "Built on Japanese Precision. Reimagined for India. Automated MLIT / JIS A 1481 compliance, PaddleOCR CJK extraction, and Tier-5 LLM regulatory arbitration for Alfred Co., Ltd.",
+    "Autonomous AI Asbestos Identification, Bilingual OCR & Architectural Finish Schedule Diagnostics. Automated MLIT / JIS A 1481 compliance, PaddleOCR CJK extraction, and Tier-5 LLM regulatory arbitration.",
   icons: {
     icon: "/brand/bird.png",
     shortcut: "/brand/bird.png",

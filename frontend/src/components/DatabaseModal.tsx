@@ -262,7 +262,7 @@ export const DatabaseModal: React.FC<DatabaseModalProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="font-extrabold text-base text-slate-900 tracking-wide">
-                  Alfred Database (図面データベース & 診断履歴)
+                  Drawscan Database (図面データベース & 診断履歴)
                 </h3>
                 <span className="text-[11px] px-2.5 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 font-lab-mono">
                   {historyList.length} Checked Files

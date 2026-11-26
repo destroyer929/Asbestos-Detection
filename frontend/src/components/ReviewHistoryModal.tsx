@@ -43,7 +43,7 @@ export const ReviewHistoryModal: React.FC<ReviewHistoryModalProps> = ({
                 Active Learning Ground-Truth Audit Log
               </h3>
               <p className="text-xs text-slate-500 font-sans">
-                Logged human expert verifications used for continuous Alfred MLIT model retraining
+                Logged human expert verifications used for continuous Drawscan MLIT model retraining
               </p>
             </div>
           </div>
