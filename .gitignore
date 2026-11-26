@@ -22,6 +22,7 @@ data/real_blueprints/
 blueprints_50/
 research model/
 scripts/download_all_50.py
+companies/
 *.jpg
 !testing/*.jpg
 !data/**/*.jpg
