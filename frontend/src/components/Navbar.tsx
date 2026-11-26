@@ -39,7 +39,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           >
             <div className="relative w-8 h-8 flex items-center justify-center">
               <Image
-                src="/brand/bird.png"
+                src="/brand/drawscan-logo.png"
                 alt="Drawscan Logo"
                 width={32}
                 height={32}

@@ -288,7 +288,7 @@ export default function HomePage() {
             <div className="relative mb-6">
               <div className="w-20 h-20 rounded-3xl bg-white border border-emerald-200 flex items-center justify-center shadow-lg shadow-emerald-500/10">
                 <Image
-                  src="/brand/bird.png"
+                  src="/brand/drawscan-logo.png"
                   alt="Drawscan Logo"
                   width={48}
                   height={48}
@@ -316,7 +316,7 @@ export default function HomePage() {
               {/* Drawscan Brand Logo Emblem */}
               <div className="relative w-24 h-24 mx-auto mb-6 rounded-3xl bg-gradient-to-br from-emerald-50 via-white to-emerald-50/50 flex items-center justify-center shadow-md shadow-emerald-900/10 ring-8 ring-emerald-500/10 border border-emerald-300">
                 <Image
-                  src="/brand/bird.png"
+                  src="/brand/drawscan-logo.png"
                   alt="Drawscan Logo"
                   width={56}
                   height={56}

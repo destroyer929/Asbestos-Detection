@@ -6,8 +6,8 @@ export const metadata: Metadata = {
   description:
     "Autonomous AI Asbestos Identification, Bilingual OCR & Architectural Finish Schedule Diagnostics. Automated MLIT / JIS A 1481 compliance, PaddleOCR CJK extraction, and Tier-5 LLM regulatory arbitration.",
   icons: {
-    icon: "/brand/bird.png",
-    shortcut: "/brand/bird.png",
+    icon: "/brand/drawscan-logo.png",
+    shortcut: "/brand/drawscan-logo.png",
   },
 };
 
